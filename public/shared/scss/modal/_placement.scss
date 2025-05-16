@@ -1,0 +1,128 @@
+body {
+  &.showing-modal {
+    #modal-container {
+      display: flex;
+      z-index: 1000;
+
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      #modal {
+        z-index: 1000;
+        position: fixed;
+        background-color: white;
+      }
+    }
+  }
+  &.mobile {
+    #modal {
+      width: 100%;
+      left: 0;
+      top: 0;
+      height: 100%;
+    }
+    &.showing-modal {
+      #main-content {
+        display: none;
+      }
+    }
+  }
+  &.pc {
+    #modal-background {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      background-color: black;
+      opacity: 0.1;
+    }
+    #modal {
+      top: 5%;
+      max-width: 600px;
+      width: 100%;
+      height: 90%;
+      left: 50%;
+      position: relative;
+      transform: translateX((-50%));
+      // border: 0.6px solid grey;
+    }
+  }
+  #modal-top-row button {
+    position: fixed;
+
+    width: 4rem;
+    height: 4rem;
+  }
+  #modal-top-row button.left-side {
+    left: 0;
+
+    border-radius: 0 0 50% 0;
+  }
+  #modal-top-row button.right-side {
+    right: 0;
+
+    border-radius: 0 0 0 50%;
+  }
+  #modal-container {
+    display: none;
+  }
+
+  #modal {
+    // position: relative;
+
+    #modal-content {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      #modal-top-row {
+        height: 0;
+      }
+      #modal-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 25%;
+      }
+      #modal-body {
+        margin: 0 auto;
+        height: calc(65% - 20px);
+        overflow-y: auto;
+        padding: 10px 20px;
+        max-width: 80%;
+      }
+      &.no-header {
+        #modal-header {
+          height: 8%;
+        }
+        #modal-body {
+          height: calc(82% - 20px);
+        }
+      }
+      #modal-footer {
+        height: 10%;
+        width: 100%;
+        bottom: 0;
+        position: relative;
+
+        #modal-footer-buttons {
+          height: 100%;
+          display: flex;
+          flex-direction: row;
+          // position: fixed;
+          width: 100%;
+          bottom: 0;
+          font-family: "Lemon";
+
+          .button {
+            height: 100%;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

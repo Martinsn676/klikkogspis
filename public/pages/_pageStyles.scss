@@ -1,0 +1,35 @@
+#main-content {
+  #main-menu-page,
+  #ordering-page,
+  #checkout-page {
+    display: none;
+  }
+  &[data-page="ordering"] {
+    #ordering-page {
+      display: block;
+    }
+  }
+  &[data-page="menu"] {
+    #main-menu-page {
+      display: block;
+    }
+  }
+  &[data-page="checkout"] {
+    #checkout-page {
+      display: block;
+    }
+  }
+}
+.bottom-bar {
+  width: 100vw;
+  height: 8vh;
+  button {
+    font-family: "Lemon";
+    width: 50%;
+    height: 100%;
+  }
+}
+.main-container {
+  max-height: 80vh;
+  overflow-y: scroll;
+}

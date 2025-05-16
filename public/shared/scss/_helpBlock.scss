@@ -1,0 +1,28 @@
+body {
+  .help-block,
+  .help-off {
+    display: none;
+  }
+  .help-on {
+    display: block;
+  }
+}
+body.showHelp {
+  .help-on {
+    display: none;
+  }
+  .help-off {
+    display: block;
+  }
+  #help-button-modal {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+  }
+  .help-block {
+    display: block;
+    background-color: rgba($color: #ccc, $alpha: 0.5);
+    padding: 12px;
+    border-radius: 10px;
+    margin: 10px;
+  }
+}

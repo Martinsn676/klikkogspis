@@ -1,0 +1,10 @@
+#load-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background-color: #4caf50;
+  width: 0%;
+  transition: width 2s ease-out;
+  z-index: 10000;
+}

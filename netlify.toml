@@ -1,0 +1,11 @@
+[build]
+  # Base directory for the build command, set this to the root if no build command is needed
+  base = "."
+  # Build command, if no build command is needed, this can be omitted or use a no-op command
+  command = "echo 'Static site build skipped.'"
+  # Directory where the static files to be deployed are located
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+

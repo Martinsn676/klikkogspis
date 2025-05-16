@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lemon&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tovoba Diary</title>
+    <link href="./css/styles.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+
+    <script defer type="module" src="./js/mainHandler.mjs"></script>
+  </head>
+  <body>
+    <header>
+      <div id="main-calendar-date-range-container" class="flex-row align">
+        <div id="calendar-date-range-container" class="flex-row align"></div>
+      </div>
+    </header>
+    <main>
+      <div id="main-content" data-page="">
+        <div id="main-menu-page"></div>
+        <div id="ordering-page">
+          <div id="ordering-top-bar"></div>
+          <div id="ordering-items-container" class="main-container"></div>
+          <div id="ordering-bottom-bar" class="bottom-bar"></div>
+        </div>
+        <div id="checkout-page">
+          <div id="checkout-top-bar"></div>
+          <div id="checkout-items-container" class="main-container"></div>
+          <div id="checkout-bottom-bar" class="bottom-bar"></div>
+        </div>
+        <div id="tracker-main-container"></div>
+      </div>
+      <div id="modal-container"></div>
+      <div id="main-menu-main-container" class="flex-column align">
+        <div id="main-menu-container-background"></div>
+        <div id="side-menu-container" class="flex-column align"></div>
+      </div>
+    </main>
+    <footer></footer>
+  </body>
+</html>

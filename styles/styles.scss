@@ -1,0 +1,11 @@
+@import "../public/shared/scss/lazy/bootstraps";
+@import "../public/shared/scss/lazy/lazy";
+@import "../public/shared/scss/modal/placement";
+@import "../public/shared/scss/helpBlock";
+@import "../public/pages/menuPage/styles";
+@import "../public/pages/pageStyles";
+@import "../public/pages/orderPage/styles";
+@import "../public/pages/checkoutPage/styles";
+body {
+  margin: 0;
+}
