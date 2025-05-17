@@ -18,13 +18,13 @@ export const orderHandler = {
     this.products = makeCopy(mainHandler.products);
     this.itemsContainer.innerHTML = "";
     this.products.forEach((item) => {
-      const { title, number, description, price, allergies, image } = item;
+      const { id, title, number, description, price, allergies, image } = item;
 
       const itemCard = document.createElement("div");
       itemCard.classList = "flex-column item-card";
       itemCard.id = number;
       itemCard.innerHTML = `
-        <div class="card-title">Nr ${number} ${title}</div>
+        <div class="card-title">${number ? `Nr ${number} ` : ""}${title}</div>
         <div class="top-part flex-row">
           <div class="image-container">
             <img src="${image}">
@@ -44,9 +44,11 @@ export const orderHandler = {
       orderButton.innerText = "Legg til";
       orderButton.classList =
         "button bootstrap-btn bootstrap-btn-success order-button";
-      orderButton.addEventListener("click", () => {
+      orderButton.addEventListener("click", (event) => {
         console.log("Ordering!", number);
-        checkOutHandler.add(number);
+        checkOutHandler.add(id, 1);
+        event.target.innerText = "Lagt til!";
+
         this.updateCount();
         checkOutHandler.build();
       });

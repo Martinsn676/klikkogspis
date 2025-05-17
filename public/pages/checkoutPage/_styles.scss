@@ -15,16 +15,26 @@
       }
       .options-container {
         .option {
+          position: relative;
           padding: 10px;
-          height: 40px;
+          height: 35px;
           font-size: 1rem;
-          .option-adder {
-            position: absolute;
-            right: 0;
-            button {
-              margin: 5px 10px;
-            }
-          }
+        }
+      }
+      .top-part {
+        position: relative;
+      }
+      .option-adder,
+      .card-adder {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        button {
+          background-color: #0056b3;
+          color: white;
+          border-color: #004085;
+          margin: 5px 10px;
+          width: 10px;
         }
       }
       .image-container {

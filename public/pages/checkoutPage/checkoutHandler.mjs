@@ -8,33 +8,70 @@ export const checkOutHandler = {
   async init() {
     this.topBar = document.getElementById("checkout-top-bar");
     this.itemsContainer = document.getElementById("checkout-items-container");
-    this.content = (await lsList.get("cart")) || [];
+    this.content = (await lsList.get("cart")) || [
+      { id: 24, options: {}, count: 0 },
+    ];
     this.bottomBar = document.getElementById("checkout-bottom-bar");
     this.build();
     this.buildBottomBar();
     this.buildTopBar();
   },
-  add(number) {
-    const foundItem = this.content.find((e) => e.id == number);
-    if (foundItem) {
-      foundItem.count++;
+  add(id, value) {
+    console.log("id", id);
+    const foundItemIndex = this.content.findIndex((e) => e.id == id);
+    let returnValue;
+    if (foundItemIndex > 0) {
+      this.content[foundItemIndex].count += value;
+      returnValue = this.content[foundItemIndex].count;
     } else {
-      this.content.push({ id: number, count: 1, options: {} });
+      this.content.push({ id, count: 1, options: {} });
+      returnValue = 1;
+    }
+    if (returnValue == 0) {
+      this.content.splice(foundItemIndex, 1);
     }
     lsList.save("cart", this.content);
+    this.updateTotal();
+    return returnValue;
+  },
+  updateTotal() {
+    let totalCost = 0;
+    this.content.forEach((cartItem) => {
+      const item = mainHandler.products.find((e) => e.id == cartItem.id);
+      totalCost += cartItem.count * item.price;
+      if (cartItem.options) {
+        for (const optionID in cartItem.options) {
+          const option = item.options.find((e) => e.id == optionID);
+
+          totalCost += cartItem.options[optionID] * option.price;
+        }
+      }
+      this.cartTotal.innerText = totalCost;
+    });
   },
   buildTopBar() {
-    this.topBar.innerHTML = `<div class="container">Top bar</div>`;
+    this.topBar.innerHTML = `<div class="container"><div id="cart-total"></div></div>`;
+    this.cartTotal = this.topBar.querySelector("#cart-total");
+    this.updateTotal();
   },
   build() {
     console.log(" this.content", this.content);
     this.itemsContainer.innerHTML = "";
     this.content.forEach((cartItem) => {
-      console.log("cartItem.number", cartItem.id);
-      const item = mainHandler.products.find((e) => e.number == cartItem.id);
+      console.log("cartItem", cartItem);
+      const item = mainHandler.products.find((e) => e.id == cartItem.id);
       console.log("item", item);
-      const { title, number, description, price, allergies, image, options } =
-        item;
+      const {
+        id,
+        title,
+        number,
+        description,
+        price,
+        allergies,
+        image,
+        options,
+        fixed,
+      } = item;
       const itemCard = document.createElement("div");
       itemCard.classList = "flex-column item-card";
       itemCard.id = number;
@@ -45,13 +82,14 @@ export const checkOutHandler = {
         options.forEach((option) => {
           const optionsDiv = document.createElement("div");
           optionsDiv.classList = "flex-row align option";
+          console.log("cartItem.options", cartItem.options);
           const cartData = cartItem.options[option.id];
           optionsDiv.innerHTML += `
             <div class="option-title">${option.title}, ${option.price}kr</div>
             <div class="option-adder flex-row align">
-                <button class="minus-button button bootstrap-btn">-</button>
+                <button class="minus-button button bootstrap-btn flex-column align">-</button>
                 <div class="option-count">${cartData || 0}</div>
-                <button class="pluss-button button bootstrap-btn">+</button>
+                <button class="pluss-button button bootstrap-btn flex-column align">+</button>
             </div>`;
           const counter = optionsDiv.querySelector(".option-count");
 
@@ -65,6 +103,7 @@ export const checkOutHandler = {
               }
               counter.innerText = cartItem.options[option.id];
               lsList.save("cart", this.content);
+              this.updateTotal();
             });
           optionsDiv
             .querySelector(".pluss-button")
@@ -77,6 +116,7 @@ export const checkOutHandler = {
               counter.innerText = cartItem.options[option.id];
               console.log("this.content", this.content);
               lsList.save("cart", this.content);
+              this.updateTotal();
             });
           optionContainer.appendChild(optionsDiv);
         });
@@ -87,14 +127,47 @@ export const checkOutHandler = {
                 <img src="${image}">
             </div>
             <div class="flex-column right-side">
-                <div class="card-title">Nr ${number} ${title}</div>
-                <div class="card-count">${cartItem.count} stk</div>
-            </div>
-        </div>
+                <div class="card-title">${
+                  number ? `Nr ${number} ` : ""
+                }${title}</div>
 
- 
-    
-`;
+           ${
+             !fixed
+               ? ` 
+            <div class="card-adder flex-row align">
+                <button class="minus-button button bootstrap-btn flex-column align">-</button>
+                <div class="option-count">${cartItem.count}</div>
+                <button class="pluss-button button bootstrap-btn flex-column align">+</button>
+            </div>
+            `
+               : ""
+           }
+            </div>
+        </div>`;
+      // <div class="card-count">${
+      //   cartItem.count ? `${cartItem.count} stk` : ""
+      // }</div>
+      console.log("fixed", fixed);
+      console.log(item);
+      if (!fixed) {
+        const optionCount = itemCard.querySelector(".option-count");
+        itemCard
+          .querySelector(".minus-button")
+          .addEventListener("click", () => {
+            const newValue = this.add(id, -1);
+            if (newValue == 0) {
+              itemCard.classList.add("d-none");
+            } else {
+              optionCount.innerText = newValue;
+            }
+          });
+        itemCard
+          .querySelector(".pluss-button")
+          .addEventListener("click", () => {
+            optionCount.innerText = this.add(id, 1);
+          });
+      }
+
       itemCard.appendChild(optionContainer);
       this.itemsContainer.appendChild(itemCard);
     });

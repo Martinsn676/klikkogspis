@@ -24,11 +24,10 @@ function updateAppHeight() {
 }
 window.addEventListener("resize", updateAppHeight);
 window.addEventListener("popstate", (event) => {
-  const pageName =
-    new URLSearchParams(location.search).get("page") || "calendar";
+  const pageName = new URLSearchParams(location.search).get("page") || "menu";
   navigateTo(pageName);
 });
-const pageName = new URLSearchParams(location.search).get("page") || "calendar";
+const pageName = new URLSearchParams(location.search).get("page") || "menu";
 navigateTo(pageName);
 mainHandler.init();
 updateAppHeight();

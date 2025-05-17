@@ -30,6 +30,10 @@
   }
 }
 .main-container {
-  max-height: 80vh;
+  height: 80vh;
   overflow-y: scroll;
+}
+.item-card {
+  background-color: white;
+  border-radius: 10px;
 }
