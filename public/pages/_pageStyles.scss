@@ -3,6 +3,8 @@
   #ordering-page,
   #checkout-page {
     display: none;
+    height: var(--app-height);
+    position: relative;
   }
   &[data-page="ordering"] {
     #ordering-page {
@@ -22,7 +24,7 @@
 }
 .bottom-bar {
   width: 100vw;
-  height: 8vh;
+  height: 8%;
   button {
     font-family: "Lemon";
     width: 50%;
@@ -30,7 +32,7 @@
   }
 }
 .main-container {
-  height: 80vh;
+  height: 80%;
   overflow-y: scroll;
 }
 .item-card {

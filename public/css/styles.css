@@ -780,6 +780,8 @@ body.showHelp .help-block {
 #main-content #ordering-page,
 #main-content #checkout-page {
   display: none;
+  height: var(--app-height);
+  position: relative;
 }
 #main-content[data-page=ordering] #ordering-page {
   display: block;
@@ -793,7 +795,7 @@ body.showHelp .help-block {
 
 .bottom-bar {
   width: 100vw;
-  height: 8vh;
+  height: 8%;
 }
 .bottom-bar button {
   font-family: "Lemon";
@@ -802,7 +804,7 @@ body.showHelp .help-block {
 }
 
 .main-container {
-  height: 80vh;
+  height: 80%;
   overflow-y: scroll;
 }
 
@@ -976,4 +978,6 @@ body.showHelp .help-block {
 body {
   margin: 0;
   background-color: #f2f2f2;
+  height: var(--app-height);
+  position: relative;
 }
