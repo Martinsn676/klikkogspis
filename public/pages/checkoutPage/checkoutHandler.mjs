@@ -18,10 +18,11 @@ export const checkOutHandler = {
     this.buildTopBar();
   },
   add(id, value) {
-    console.log("id", id);
     const foundItemIndex = this.content.findIndex((e) => e.id == id);
     let returnValue;
-    if (foundItemIndex > 0) {
+
+    console.log("id, value", id, value, foundItemIndex);
+    if (foundItemIndex >= 0) {
       this.content[foundItemIndex].count += value;
       returnValue = this.content[foundItemIndex].count;
     } else {
@@ -31,6 +32,7 @@ export const checkOutHandler = {
     if (returnValue == 0) {
       this.content.splice(foundItemIndex, 1);
     }
+    console.log("returnValue", returnValue);
     lsList.save("cart", this.content);
     this.updateTotal();
     return returnValue;
@@ -56,12 +58,10 @@ export const checkOutHandler = {
     this.updateTotal();
   },
   build() {
-    console.log(" this.content", this.content);
+    console.log("    this.content", this.content);
     this.itemsContainer.innerHTML = "";
     this.content.forEach((cartItem) => {
-      console.log("cartItem", cartItem);
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
-      console.log("item", item);
       const {
         id,
         title,
@@ -78,12 +78,10 @@ export const checkOutHandler = {
       itemCard.id = number;
       const optionContainer = document.createElement("div");
       optionContainer.classList = "flex-column options-container";
-      console.log("options", options);
       if (options) {
         options.forEach((option) => {
           const optionsDiv = document.createElement("div");
           optionsDiv.classList = "flex-row align option";
-          console.log("cartItem.options", cartItem.options);
           const cartData = cartItem.options[option.id];
           optionsDiv.innerHTML += `
             <div class="option-title">${option.title}, ${option.price}kr</div>
@@ -115,7 +113,7 @@ export const checkOutHandler = {
                 cartItem.options[option.id] = 1;
               }
               counter.innerText = cartItem.options[option.id];
-              console.log("this.content", this.content);
+
               lsList.save("cart", this.content);
               this.updateTotal();
             });
@@ -151,8 +149,7 @@ export const checkOutHandler = {
       // <div class="card-count">${
       //   cartItem.count ? `${cartItem.count} stk` : ""
       // }</div>
-      console.log("fixed", fixed);
-      console.log(item);
+
       if (!fixed) {
         const optionCount = itemCard.querySelector(".option-count");
         itemCard

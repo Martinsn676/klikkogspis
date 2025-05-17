@@ -278,10 +278,10 @@ export const mockProducts = [
     fixed: true,
     options: [
       { id: 0, title: "Coca-Cola 1,5L", price: 35 },
-      { id: 0, title: "Coca-Cola 1,5L", price: 35 },
-      { id: 0, title: "Coca-Cola 1,5L", price: 35 },
-      { id: 0, title: "Coca-Cola 1,5L", price: 35 },
-      { id: 0, title: "Coca-Cola 1,5L", price: 35 },
+      { id: 1, title: "Coca-Cola Zero 1,5L", price: 35 },
+      { id: 2, title: "Solo 1,5L", price: 35 },
+
+      { id: 3, title: "Vatn 1,5L", price: 30 },
     ],
   },
   {
