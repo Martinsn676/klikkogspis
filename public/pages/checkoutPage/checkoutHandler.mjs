@@ -178,7 +178,13 @@ export const checkOutHandler = {
       createButton({ text: "Bestilling", action: () => navigateTo("ordering") })
     );
     this.bottomBar.appendChild(
-      createButton({ text: "Betaling", action: () => navigateTo("payment") })
+      createButton({
+        text: "Betaling",
+        action: () => {
+          lsList.remove("cart");
+          navigateTo("payment");
+        },
+      })
     );
   },
 };
