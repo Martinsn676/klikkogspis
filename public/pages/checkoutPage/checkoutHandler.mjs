@@ -10,6 +10,7 @@ export const checkOutHandler = {
     this.itemsContainer = document.getElementById("checkout-items-container");
     this.content = (await lsList.get("cart")) || [
       { id: 24, options: {}, count: 0 },
+      { id: 25, options: {}, count: 0 },
     ];
     this.bottomBar = document.getElementById("checkout-bottom-bar");
     this.build();
@@ -24,7 +25,7 @@ export const checkOutHandler = {
       this.content[foundItemIndex].count += value;
       returnValue = this.content[foundItemIndex].count;
     } else {
-      this.content.push({ id, count: 1, options: {} });
+      this.content.unshift({ id, count: 1, options: {} });
       returnValue = 1;
     }
     if (returnValue == 0) {
@@ -123,14 +124,17 @@ export const checkOutHandler = {
       }
       itemCard.innerHTML = `
         <div class="top-part flex-row">
-            <div class="image-container">
-                <img src="${image}">
-            </div>
-            <div class="flex-column right-side">
-                <div class="card-title">${
-                  number ? `Nr ${number} ` : ""
-                }${title}</div>
-
+        ${
+          image
+            ? `  <div class="image-container">
+                        <img src="${image}">
+                    </div>`
+            : ""
+        }
+        <div class="flex-column right-side">
+            <div class="card-title">${
+              number ? `Nr ${number} ` : ""
+            }${title}</div>          
            ${
              !fixed
                ? ` 
