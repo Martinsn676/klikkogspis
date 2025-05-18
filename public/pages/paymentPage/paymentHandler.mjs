@@ -1,4 +1,5 @@
 import { navigateTo } from "../../js/pageNav.mjs";
+import { lang } from "../../shared/js/lang.mjs";
 import { createButton } from "../../shared/js/lazyFunctions.mjs";
 
 export const paymentHandler = {
@@ -13,18 +14,23 @@ export const paymentHandler = {
   },
   build() {},
   buildBottomBar() {
+    this.bottomBar.innerHTML = "";
     this.bottomBar.appendChild(
-      createButton({ text: "Utsjekking", action: () => navigateTo("checkout") })
+      createButton({
+        text: lang({ no: "Se ordre", en: "See order" }),
+        action: () => navigateTo("checkout"),
+      })
     );
     this.bottomBar.appendChild(
       createButton({
-        text: "Send ordre",
+        text: lang({ no: "Send ordre", en: "Send order" }),
         action: () => {},
       })
     );
   },
   buildTopBar() {
     this.topBar.classList = "flex-row";
+    this.topBar.innerHTML = "";
     const container = document.createElement("div");
     container.classList = "container flex-column top-bar";
     container.innerHTML = `

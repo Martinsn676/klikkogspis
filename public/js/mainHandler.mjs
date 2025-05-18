@@ -8,12 +8,15 @@ export const mainHandler = {
   versionNr: "0.0.1",
   restaurantName: "China Restaurant Husnes",
   async init() {
+    this.reload();
+  },
+  async reload() {
+    console.log("reload");
     menuHandler.init();
-
     await this.loadProducts();
     orderHandler.init();
 
-    checkOutHandler.init();
+    await checkOutHandler.init();
     orderHandler.init();
     paymentHandler.init();
   },

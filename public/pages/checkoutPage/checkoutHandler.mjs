@@ -1,5 +1,6 @@
 import { mainHandler } from "../../js/mainHandler.mjs";
 import { navigateTo } from "../../js/pageNav.mjs";
+import { lang } from "../../shared/js/lang.mjs";
 import {
   createButton,
   numberAdjuster,
@@ -61,6 +62,7 @@ export const checkOutHandler = {
   },
   buildTopBar() {
     this.topBar.classList = "flex-row";
+    this.topBar.innerHTML = "";
     const container = document.createElement("div");
     container.classList = "container flex-column top-bar";
     container.innerHTML = `
@@ -165,18 +167,39 @@ export const checkOutHandler = {
           plussAction: () => this.add(id, 1),
         });
       }
-
+      const imageContainer = itemCard.querySelector(".image-container");
+      if (imageContainer) {
+        imageContainer.addEventListener("click", () => {
+          navigateTo("ordering");
+          console.log("order-item-" + number);
+          console.log("id", number);
+          const targetItem = document.getElementById("order-item-" + number);
+          console.log("targetItem", targetItem);
+          console.log("item", item);
+          const elementPosition =
+            targetItem.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - 40;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        });
+      }
       itemCard.appendChild(optionContainer);
       this.itemsContainer.appendChild(itemCard);
     });
   },
   buildBottomBar() {
+    this.bottomBar.innerHTML = "";
     this.bottomBar.appendChild(
-      createButton({ text: "Bestilling", action: () => navigateTo("ordering") })
+      createButton({
+        text: lang({ no: "Se meny", en: "See menu" }),
+        action: () => navigateTo("ordering"),
+      })
     );
     this.bottomBar.appendChild(
       createButton({
-        text: "Betaling",
+        text: lang({ no: "Betaling", en: "Payment" }),
         action: () => {
           lsList.remove("cart");
           navigateTo("payment");

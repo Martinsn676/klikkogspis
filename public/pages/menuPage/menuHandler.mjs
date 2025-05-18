@@ -5,6 +5,7 @@ import { createButtons, createP } from "./../../shared/js/lazyFunctions.mjs";
 const address = "Sentrumsvegen 15, 5460 Husnes";
 export const menuHandler = {
   init() {
+    console.log("===menuHandler===");
     this.mainContainer = document.getElementById("main-menu-page");
     this.mainContainer.innerHTML = "";
     this.mainContainer.classList = "flex-column align";
@@ -25,7 +26,7 @@ export const menuHandler = {
         icon: "./icons/restaurantMenuIcon.png",
         page: "ordering",
         change: this.mainContentContainer,
-        classes: "",
+        classes: "bootstrap-btn-neutral",
         action: () => navigateTo("ordering"),
       },
       {
@@ -33,7 +34,7 @@ export const menuHandler = {
         icon: "./icons/infoIcon.png",
         page: "ordering",
         change: this.mainContentContainer,
-        classes: "",
+        classes: "bootstrap-btn-neutral",
         action: () => console.log("Open about us"),
       },
       {
@@ -41,11 +42,36 @@ export const menuHandler = {
         icon: "./icons/mapIcon.png",
         page: "ordering",
         change: this.mainContentContainer,
-        classes: "",
+        classes: "bootstrap-btn-neutral",
         action: () =>
           window.open("https://maps.app.goo.gl/mnEBGD6N2fzBMYc8A", "_new"),
       },
+      {
+        text: lang({ no: "Se bilder", en: "View images" }),
+        icon: "./icons/photoIcon.png",
+        page: "ordering",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: () => console.log("Open about us"),
+      },
+      {
+        text: mainHandler.lng == "en" ? "Norsk" : "English",
+
+        onClick: (event) => {
+          const params = new URLSearchParams(location.search);
+          params.set("lng", mainHandler.lng == "en" ? "no" : "en"); // or whatever value you want to set
+          const newUrl = `${location.pathname}?${params.toString()}`;
+
+          mainHandler.lng = mainHandler.lng == "en" ? "no" : "en";
+          console.log("mainHandler.lng ", mainHandler.lng);
+          history.pushState(null, "", newUrl); // Updates the URL without reloading the page
+
+          mainHandler.reload(true);
+        },
+        classes: "bootstrap-btn-neutral",
+      },
     ];
+
     createButtons(this.mainContainer, buttons);
 
     this.mainContainer.appendChild(

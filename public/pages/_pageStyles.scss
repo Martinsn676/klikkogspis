@@ -44,6 +44,9 @@
 .item-card {
   background-color: white;
   border-radius: 10px;
+  border: 1px dotted #ccc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 .top-bar {
   padding: 0 10px;

@@ -98,6 +98,11 @@
   border-color: #6c757d;
 }
 
+.bootstrap-btn-neutral {
+  background-color: #f2f2f2;
+  border-color: #6c757d;
+}
+
 .bootstrap-btn-secondary:hover {
   background-color: #5a6268;
   border-color: #545b62;
@@ -794,6 +799,7 @@ body.showHelp .help-block {
 }
 
 #main-menu-page {
+  background-color: white;
   margin: 0 auto;
 }
 #main-menu-page #main-image {
@@ -845,6 +851,9 @@ body.showHelp .help-block {
 .item-card {
   background-color: white;
   border-radius: 10px;
+  border: 1px dotted #ccc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
 .top-bar {

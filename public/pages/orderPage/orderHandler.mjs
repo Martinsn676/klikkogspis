@@ -1,5 +1,6 @@
 import { mainHandler } from "../../js/mainHandler.mjs";
 import { navigateTo } from "../../js/pageNav.mjs";
+import { lang } from "../../shared/js/lang.mjs";
 import { createButton, makeCopy } from "../../shared/js/lazyFunctions.mjs";
 import { checkOutHandler } from "../checkoutPage/checkoutHandler.mjs";
 
@@ -23,7 +24,7 @@ export const orderHandler = {
       if (!fixed) {
         const itemCard = document.createElement("div");
         itemCard.classList = "flex-column item-card";
-        itemCard.id = number;
+        itemCard.id = "order-item-" + number;
         let allergiesDiv = "";
 
         for (const allergy in allergies) {
@@ -53,13 +54,13 @@ ${allergiesDiv}
         <div class="bottom-part flex-row">
         </div>`;
         const orderButton = document.createElement("button");
-        orderButton.innerText = "Legg til";
+        orderButton.innerText = lang({ no: "Legg til", en: "Add" });
         orderButton.classList =
           "button bootstrap-btn bootstrap-btn-success order-button";
         orderButton.addEventListener("click", (event) => {
           console.log("Ordering!", number);
           checkOutHandler.add(id, 1);
-          event.target.innerText = "Lagt til!";
+          event.target.innerText = lang({ no: "Lagt til!", en: "Added!" });
 
           this.updateCount();
           checkOutHandler.build();
@@ -78,7 +79,7 @@ ${allergiesDiv}
     this.topBar.innerHTML = "";
     const container = document.createElement("div");
     container.classList = "container flex-row top-bar";
-    console.trace();
+
     container.innerHTML = `
     <div class="top-bar-title">${mainHandler.restaurantName}</div>
     <div id="order-icon-container">
@@ -92,19 +93,27 @@ ${allergiesDiv}
     container
       .querySelector("#order-icon-container")
       .addEventListener("click", () => navigateTo("checkout"));
+
     this.topBar.appendChild(container);
   },
   buildBottomBar() {
     this.bottomBar.innerHTML = "";
     this.bottomBar.appendChild(
-      createButton({ text: "Meny", action: () => navigateTo("menu") })
+      createButton({
+        text: lang({ no: "Hovedmeny", en: "Main menu" }),
+        action: () => navigateTo("menu"),
+      })
     );
     this.bottomBar.appendChild(
-      createButton({ text: "Utsjekking", action: () => navigateTo("checkout") })
+      createButton({
+        text: lang({ no: "Se ordre", en: "See order" }),
+        action: () => navigateTo("checkout"),
+      })
     );
   },
   updateCount() {
     let count = 0;
+
     checkOutHandler.content.forEach((e) => (count += e.count));
     document.getElementById("order-counter").innerText = count;
   },
