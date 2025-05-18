@@ -1,7 +1,11 @@
 import { mainHandler } from "../../js/mainHandler.mjs";
 import { navigateTo } from "../../js/pageNav.mjs";
-import { createButton } from "../../shared/js/lazyFunctions.mjs";
+import {
+  createButton,
+  numberAdjuster,
+} from "../../shared/js/lazyFunctions.mjs";
 import { lsList } from "../../shared/js/lists.mjs";
+import { orderHandler } from "../orderPage/orderHandler.mjs";
 
 export const checkOutHandler = {
   content: [],
@@ -39,21 +43,32 @@ export const checkOutHandler = {
   },
   updateTotal() {
     let totalCost = 0;
+    let totalCount = 0;
     this.content.forEach((cartItem) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
       totalCost += cartItem.count * item.price;
+      totalCount += item.count;
       if (cartItem.options) {
         for (const optionID in cartItem.options) {
           const option = item.options.find((e) => e.id == optionID);
 
           totalCost += cartItem.options[optionID] * option.price;
+          totalCount += cartItem.options[optionID];
         }
       }
-      this.cartTotal.innerText = totalCost;
+      this.cartTotal.innerText = `${totalCost} kr`;
     });
   },
   buildTopBar() {
-    this.topBar.innerHTML = `<div class="container"><div id="cart-total"></div></div>`;
+    this.topBar.classList = "flex-row";
+    const container = document.createElement("div");
+    container.classList = "container flex-column top-bar";
+    container.innerHTML = `
+    <div class="top-bar-title">Din bestilling</div>
+    <div id="cart-total"></div>
+    `;
+
+    this.topBar.appendChild(container);
     this.cartTotal = this.topBar.querySelector("#cart-total");
     this.updateTotal();
   },
@@ -72,6 +87,7 @@ export const checkOutHandler = {
         image,
         options,
         fixed,
+        stock,
       } = item;
       const itemCard = document.createElement("div");
       itemCard.classList = "flex-column item-card";
@@ -86,37 +102,34 @@ export const checkOutHandler = {
           optionsDiv.innerHTML += `
             <div class="option-title">${option.title}, ${option.price}kr</div>
             <div class="option-adder flex-row align">
-                <button class="minus-button button bootstrap-btn flex-column align">-</button>
-                <div class="option-count">${cartData || 0}</div>
-                <button class="pluss-button button bootstrap-btn flex-column align">+</button>
             </div>`;
-          const counter = optionsDiv.querySelector(".option-count");
 
-          optionsDiv
-            .querySelector(".minus-button")
-            .addEventListener("click", () => {
+          numberAdjuster({
+            place: optionsDiv.querySelector(".option-adder"),
+            startValue: cartData || 0,
+            maxValue: option.stock,
+            minusAction: () => {
               if (cartItem.options[option.id]) {
                 cartItem.options[option.id]--;
               } else {
                 cartItem.options[option.id] = 0;
               }
-              counter.innerText = cartItem.options[option.id];
+
               lsList.save("cart", this.content);
               this.updateTotal();
-            });
-          optionsDiv
-            .querySelector(".pluss-button")
-            .addEventListener("click", () => {
+            },
+            plussAction: () => {
               if (cartItem.options[option.id]) {
                 cartItem.options[option.id]++;
               } else {
                 cartItem.options[option.id] = 1;
               }
-              counter.innerText = cartItem.options[option.id];
 
               lsList.save("cart", this.content);
               this.updateTotal();
-            });
+            },
+          });
+
           optionContainer.appendChild(optionsDiv);
         });
       }
@@ -133,40 +146,24 @@ export const checkOutHandler = {
             <div class="card-title">${
               number ? `Nr ${number} ` : ""
             }${title}</div>          
-           ${
-             !fixed
-               ? ` 
-            <div class="card-adder flex-row align">
-                <button class="minus-button button bootstrap-btn flex-column align">-</button>
-                <div class="option-count">${cartItem.count}</div>
-                <button class="pluss-button button bootstrap-btn flex-column align">+</button>
-            </div>
-            `
-               : ""
-           }
+       ${!fixed ? `<div class="">${price} kr</div>` : ""}
+            <div class="adder"></div>
             </div>
         </div>`;
-      // <div class="card-count">${
-      //   cartItem.count ? `${cartItem.count} stk` : ""
-      // }</div>
-
       if (!fixed) {
-        const optionCount = itemCard.querySelector(".option-count");
-        itemCard
-          .querySelector(".minus-button")
-          .addEventListener("click", () => {
+        numberAdjuster({
+          place: itemCard.querySelector(".adder"),
+          startValue: cartItem.count,
+          minusAction: () => {
             const newValue = this.add(id, -1);
             if (newValue == 0) {
               itemCard.classList.add("d-none");
             } else {
-              optionCount.innerText = newValue;
+              newValue;
             }
-          });
-        itemCard
-          .querySelector(".pluss-button")
-          .addEventListener("click", () => {
-            optionCount.innerText = this.add(id, 1);
-          });
+          },
+          plussAction: () => this.add(id, 1),
+        });
       }
 
       itemCard.appendChild(optionContainer);

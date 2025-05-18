@@ -2,7 +2,7 @@ import { mainHandler } from "../../js/mainHandler.mjs";
 import { navigateTo } from "../../js/pageNav.mjs";
 import { lang } from "./../../shared/js/lang.mjs";
 import { createButtons, createP } from "./../../shared/js/lazyFunctions.mjs";
-
+const address = "Sentrumsvegen 15, 5460 Husnes";
 export const menuHandler = {
   init() {
     this.mainContainer = document.getElementById("main-menu-page");
@@ -11,64 +11,39 @@ export const menuHandler = {
     const menuText = document.createElement("div");
     menuText.id = "menu-text";
 
-    menuText.innerText = this.userName
-      ? lang({
-          no: `Logget inn som ${this.userName}`,
-          en: `Logged in as ${this.userName}`,
-        })
-      : "";
-    this.mainContainer.appendChild(menuText);
-
+    this.mainContainer.innerHTML = `
+    <div>
+      <img id="main-image" src="./icons/mainImage.png">
+    </div>
+    <div>
+      <div class="text-center">${address}</div>
+    </div>
+    `;
     const buttons = [
       {
-        text: lang({ no: "Bestill", en: "Order" }),
+        text: lang({ no: "Se menyen", en: "See menu" }),
+        icon: "./icons/restaurantMenuIcon.png",
         page: "ordering",
         change: this.mainContentContainer,
-        classes: "bootstrap-btn-primary",
-        action: changePage,
+        classes: "",
+        action: () => navigateTo("ordering"),
       },
       {
-        text: lang({ no: "Markering", en: "Markings" }),
-        page: "mark-calendar",
+        text: lang({ no: "Om oss", en: "About us" }),
+        icon: "./icons/infoIcon.png",
+        page: "ordering",
         change: this.mainContentContainer,
-        action: changePage,
-        classes: "bootstrap-btn-primary",
+        classes: "",
+        action: () => console.log("Open about us"),
       },
-
       {
-        text: lang({ no: "Instillinger", en: "Settings" }),
-        page: "settings",
+        text: lang({ no: "Finn oss", en: "Find us" }),
+        icon: "./icons/mapIcon.png",
+        page: "ordering",
         change: this.mainContentContainer,
-        action: changePage,
-        classes: "bootstrap-btn-primary",
-      },
-      {
-        text: mainHandler.lng == "en" ? "Norsk" : "English",
-
-        onClick: (event) => {
-          const params = new URLSearchParams(location.search);
-          params.set("lng", mainHandler.lng == "en" ? "no" : "en"); // or whatever value you want to set
-          const newUrl = `${location.pathname}?${params.toString()}`;
-          mainHandler.lng = mainHandler.lng == "en" ? "no" : "en";
-          history.pushState(null, "", newUrl); // Updates the URL without reloading the page
-          mainHandler.reload(true);
-          settingsHandler.build();
-          mainHandler.addSideMenu();
-          mainHandler.addTopMenu();
-        },
-        classes: "bootstrap-btn-primary",
-      },
-      {
-        text: lang({ no: "Logg ut", en: "Log out" }),
-        action: async () => {
-          await lsList.clearAll();
-          await ssList.clearAll();
-          changePage();
-
-          userLogin();
-        },
-
-        classes: "bootstrap-btn-danger",
+        classes: "",
+        action: () =>
+          window.open("https://maps.app.goo.gl/mnEBGD6N2fzBMYc8A", "_new"),
       },
     ];
     createButtons(this.mainContainer, buttons);
@@ -81,16 +56,5 @@ export const menuHandler = {
         })
       )
     );
-    function changePage(data) {
-      document.body.classList.remove("menuOpen");
-      document.body.classList.add("menuClosed");
-      if (data && data.page) {
-        navigateTo(data.page);
-        // data.change.dataset.page = data.page;
-      }
-      // setTimeout(() => {
-      //   document.body.classList.remove("menuClosed");
-      // }, 500);
-    }
   },
 };

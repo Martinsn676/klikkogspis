@@ -5,10 +5,13 @@
       position: relative;
       padding: 10px;
       margin: 10px;
+      padding-bottom: 40px;
       .right-side {
         padding-left: 10px;
+
         .card-title {
           font-family: "lemon";
+          padding-bottom: 20px;
         }
         .card-count {
         }
@@ -21,21 +24,9 @@
           font-size: 1rem;
         }
       }
-      .top-part {
-        position: relative;
-      }
+
       .option-adder,
       .card-adder {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        button {
-          background-color: #0056b3;
-          color: white;
-          border-color: #004085;
-          margin: 5px 10px;
-          width: 10px;
-        }
       }
       .image-container {
         position: relative;

@@ -24,6 +24,19 @@ export const orderHandler = {
         const itemCard = document.createElement("div");
         itemCard.classList = "flex-column item-card";
         itemCard.id = number;
+        let allergiesDiv = "";
+
+        for (const allergy in allergies) {
+          if (allergies[allergy] == true) {
+            if (allergy == "eggs") {
+              allergiesDiv += `<img class="allergy-icon" src="./icons/eggsAllergy.png">`;
+            } else if (allergy == "gluten") {
+              allergiesDiv += `<img class="allergy-icon" src="./icons/glutenAllergy.png">`;
+            } else if (allergy == "nuts") {
+              allergiesDiv += `<img class="allergy-icon" src="./icons/peanutAllergy.png">`;
+            }
+          }
+        }
         itemCard.innerHTML = `
         <div class="card-title">${number ? `Nr ${number} ` : ""}${title}</div>
         <div class="top-part flex-row">
@@ -31,16 +44,14 @@ export const orderHandler = {
             <img src="${image}">
           </div>
           <div class="allergieses-container">
+${allergiesDiv}
           </div>
         </div>
         <div class="middle-part flex-row">
           <div class="card-description">${description}</div>
         </div>
         <div class="bottom-part flex-row">
-
-        </div>
-  
-`;
+        </div>`;
         const orderButton = document.createElement("button");
         orderButton.innerText = "Legg til";
         orderButton.classList =
@@ -52,6 +63,10 @@ export const orderHandler = {
 
           this.updateCount();
           checkOutHandler.build();
+          orderHandler.orderIcon.classList.remove("bump");
+          setTimeout(() => {
+            orderHandler.orderIcon.classList.add("bump");
+          }, 10);
         });
         itemCard.querySelector(".bottom-part").appendChild(orderButton);
         this.itemsContainer.appendChild(itemCard);
@@ -60,24 +75,27 @@ export const orderHandler = {
   },
   buildTopBar() {
     this.topBar.classList = "flex-row";
+    this.topBar.innerHTML = "";
     const container = document.createElement("div");
-    container.classList = "container flex-row";
-
+    container.classList = "container flex-row top-bar";
+    console.trace();
     container.innerHTML = `
-    <div id="order-restaurant-title">${mainHandler.restaurantName}</div>
+    <div class="top-bar-title">${mainHandler.restaurantName}</div>
     <div id="order-icon-container">
       <div id="order-icon">
-      <img class="icon" src="./icons/orderIcon.png">
-      <div id="order-counter" class="flex-column align">0</div>
+        <img class="icon" src="./icons/orderIcon.png">
+        <div id="order-counter" class="flex-column align">0</div>
       </div>
     </div>
     `;
+    this.orderIcon = container.querySelector("#order-icon");
     container
       .querySelector("#order-icon-container")
       .addEventListener("click", () => navigateTo("checkout"));
     this.topBar.appendChild(container);
   },
   buildBottomBar() {
+    this.bottomBar.innerHTML = "";
     this.bottomBar.appendChild(
       createButton({ text: "Meny", action: () => navigateTo("menu") })
     );

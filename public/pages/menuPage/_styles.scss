@@ -1,9 +1,11 @@
 #main-menu-page {
-  width: 80%;
   margin: 0 auto;
-  button {
-    margin: 10px 0;
+  #main-image {
     width: 100%;
+  }
+  button {
+    margin: 10px auto;
+    width: 80%;
     padding: 20px;
     font-family: "lemon";
   }

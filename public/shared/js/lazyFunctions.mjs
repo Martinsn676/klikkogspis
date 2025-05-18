@@ -183,13 +183,19 @@ export function createButton(data) {
     action,
     action2,
     action3,
+    icon,
   } = data;
 
   const button = document.createElement("button");
-  button.classList = "button bootstrap-btn ";
+  button.classList = "button bootstrap-btn flex-column align ";
   if (classes) button.classList += classes;
+  if (icon) {
+    button.classList.add("custom-button-text");
+    button.innerHTML = `<div class="flex-row align">${text}<img src="${icon}" class="icon"></div>`;
+  } else {
+    button.innerHTML = text || "Click";
+  }
 
-  button.innerText = text || "Click";
   if (text)
     button.id = id || text?.toLowerCase().replace(/\s+/g, "-") + "-button";
   if (onClick) {
@@ -629,4 +635,56 @@ export function showLoadBar(sec) {
   bar.id = "load-bar";
   document.body.appendChild(bar);
   setTimeout(() => bar.remove(), sec * 1200); // optional cleanup
+}
+
+export function numberAdjuster({
+  place,
+  minusAction,
+  plussAction,
+  startValue = 0,
+  maxValue,
+}) {
+  const div = document.createElement("div");
+  div.classList = "custom-adder flex-row align";
+
+  const minusButton = document.createElement("button");
+  minusButton.classList = "minus-button button bootstrap-btn flex-column align";
+  minusButton.innerText = "-";
+  minusButton.addEventListener("click", () => {
+    const oldValue = Number(display.innerText);
+    if (oldValue > 0) {
+      display.innerText = oldValue - 1;
+      generalClick();
+      minusAction();
+    }
+  });
+  div.appendChild(minusButton);
+  const display = document.createElement("div");
+  display.classList = "option-count";
+  display.innerText = startValue;
+  div.appendChild(display);
+  const plussButton = document.createElement("button");
+  plussButton.classList = "button bootstrap-btn flex-column align";
+  plussButton.innerText = "+";
+  plussButton.addEventListener("click", () => {
+    const oldValue = Number(display.innerText);
+    if (!maxValue || oldValue < maxValue) {
+      display.innerText = oldValue + 1;
+      generalClick();
+      plussAction();
+    }
+  });
+  div.appendChild(plussButton);
+  generalClick();
+  place.appendChild(div);
+  function generalClick() {
+    minusButton.classList.remove("capped");
+    plussButton.classList.remove("capped");
+    const newValue = Number(display.innerText);
+    if (newValue == 0) {
+      minusButton.classList.add("capped");
+    } else if (maxValue && newValue == maxValue) {
+      plussButton.classList.add("capped");
+    }
+  }
 }
