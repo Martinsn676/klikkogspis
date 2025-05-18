@@ -178,7 +178,7 @@ export const mockProducts = [
     title: "Szechuan Biff",
     number: "21",
     description:
-      "Biff Szechuan med grønnsaker chili-hvitløksaus ( Retten er meget sterk)",
+      "Biff Szechuan med grønnsaker chili-hvitløksaus (Retten er meget sterk)",
     price: 199,
     allergies: {},
     image:

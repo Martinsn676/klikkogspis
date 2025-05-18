@@ -880,6 +880,7 @@ body.showHelp .help-block {
 }
 #ordering-page #ordering-items-container .item-card .card-title {
   font-family: "lemon";
+  padding: 0 2px 2px 2px;
 }
 #ordering-page #ordering-items-container .item-card .card-description {
   padding-top: 20px;

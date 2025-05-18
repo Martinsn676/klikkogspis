@@ -171,18 +171,9 @@ export const checkOutHandler = {
       if (imageContainer) {
         imageContainer.addEventListener("click", () => {
           navigateTo("ordering");
-          console.log("order-item-" + number);
-          console.log("id", number);
+
           const targetItem = document.getElementById("order-item-" + number);
-          console.log("targetItem", targetItem);
-          console.log("item", item);
-          const elementPosition =
-            targetItem.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition - 40;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
+          targetItem.scrollIntoView({ behavior: "smooth", block: "start" });
         });
       }
       itemCard.appendChild(optionContainer);
