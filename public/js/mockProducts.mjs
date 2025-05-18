@@ -187,7 +187,7 @@ export const mockProducts = [
   {
     id: 16,
     title: "Vårull",
-    numebr: "26",
+    number: "26",
     description:
       "Vårull fylt med kjøttdeig av okse og grønnsaker, serveres med salat, ris og karrisaus eller søt-chili dip",
     price: 209,

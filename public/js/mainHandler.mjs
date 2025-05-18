@@ -21,7 +21,12 @@ export const mainHandler = {
     paymentHandler.init();
   },
   async loadProducts() {
-    this.products = mockProducts;
+    this.products = mockProducts.sort((a, b) => {
+      console.log(a.number, a);
+      if (a.number) {
+        return a.number.localeCompare(b.number);
+      }
+    });
     console.log("this.products", this.products);
   },
 };

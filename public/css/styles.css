@@ -887,6 +887,11 @@ body.showHelp .help-block {
 #ordering-page #ordering-items-container .item-card .allergy-icon {
   height: 30px;
 }
+#ordering-page #ordering-items-container .item-card .card-price {
+  font-family: "lemon";
+  padding: 10px;
+  font-size: 14px;
+}
 #ordering-page #ordering-items-container .item-card .image-container {
   position: relative;
   width: 50%;

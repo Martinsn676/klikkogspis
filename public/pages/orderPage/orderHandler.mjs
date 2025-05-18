@@ -52,6 +52,7 @@ ${allergiesDiv}
           <div class="card-description">${description}</div>
         </div>
         <div class="bottom-part flex-row">
+          <div class="card-price">${price} kr</div>
         </div>`;
         const orderButton = document.createElement("button");
         orderButton.innerText = lang({ no: "Legg til", en: "Add" });
