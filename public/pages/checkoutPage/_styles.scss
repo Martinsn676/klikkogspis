@@ -5,18 +5,24 @@
       position: relative;
       padding: 10px;
       margin: 10px;
-      padding-bottom: 40px;
+      padding-bottom: 10px;
       .right-side {
         padding-left: 10px;
-
+        width: 70%;
         .card-title {
           font-family: "lemon";
+
           padding-bottom: 20px;
         }
-        .card-count {
+        .middle-part {
+          position: relative;
+          .custom-adder {
+            transform: translateY(-50%);
+          }
         }
       }
       .options-container {
+        padding-top: 30px;
         .option {
           position: relative;
           padding: 10px;
@@ -25,9 +31,6 @@
         }
       }
 
-      .option-adder,
-      .card-adder {
-      }
       .image-container {
         position: relative;
         width: 30%;
@@ -52,50 +55,15 @@
     }
   }
   #checkout-top-bar {
-    // position: fixed;
-    // top: 0;
-    // z-index: 2;
-    // width: 96%;
     .container {
-      position: relative;
       width: 100%;
-      height: 12vh;
-      background-color: white;
-      #order-restaurant-title {
-        max-width: 100%;
-        font-family: "lemon";
-        font-size: 25px;
-        width: 80%;
-        margin: 2vh auto;
-      }
-      #order-icon-container {
-        // position: absolute;
-        // right: 5%;
-        width: 20%;
-        position: relative;
-        cursor: pointer;
-        #order-icon {
-          position: relative;
-          width: 70%;
-          //   height: 70%;
-          margin: 2vh auto;
-          .icon {
-            width: 100%;
-            height: 100%;
-          }
-          #order-counter {
-            position: absolute;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 50%;
-            width: 15px;
-            height: 15px;
-            padding: 5px;
-            background-color: red;
-            color: white;
-          }
-        }
-      }
+    }
+    .top-bar-title {
+      max-width: 100%;
+      font-family: "lemon";
+      font-size: 18px;
+      width: 80%;
+      // margin: 2vh auto;s
     }
   }
 }

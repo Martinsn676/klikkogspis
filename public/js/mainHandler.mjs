@@ -22,7 +22,6 @@ export const mainHandler = {
   },
   async loadProducts() {
     this.products = mockProducts.sort((a, b) => {
-      console.log(a.number, a);
       if (a.number) {
         return a.number.localeCompare(b.number);
       }

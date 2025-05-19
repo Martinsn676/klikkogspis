@@ -31,10 +31,13 @@
 .bottom-bar {
   width: 100vw;
   height: 8%;
+  position: relative;
   button {
     font-family: "Lemon";
     width: 50%;
     height: 100%;
+    border-radius: 0;
+    border: 0.5px solid #ccc;
   }
 }
 .main-container {
@@ -48,16 +51,27 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
-.top-bar {
-  padding: 0 10px;
-  border-bottom: 0.5px solid black;
-  .top-bar-title {
-    font-family: "lemon";
-    font-size: 25px;
-    width: 80%;
-    margin: 2%;
-  }
-  #cart-total {
-    margin: 2%;
+.top-bar-container {
+  width: 100vw;
+  position: relative;
+  height: 12vh;
+  display: flex;
+  .top-bar {
+    // padding: 0 10px;
+    border-bottom: 0.5px solid black;
+    width: 100%;
+    position: relative;
+    padding: 10px;
+    background-color: white;
+
+    // .top-bar-title {
+    //   font-family: "lemon";
+    //   font-size: 25px;
+    //   width: 80%;
+    //   margin: 2%;
+    // }
+    #cart-total {
+      margin: 2%;
+    }
   }
 }

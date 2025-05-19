@@ -3,6 +3,8 @@ import { navigateTo } from "../../js/pageNav.mjs";
 import { lang } from "../../shared/js/lang.mjs";
 import { createButton, makeCopy } from "../../shared/js/lazyFunctions.mjs";
 import { checkOutHandler } from "../checkoutPage/checkoutHandler.mjs";
+import { paymentHandler } from "../paymentPage/paymentHandler.mjs";
+import { template } from "../templates/itemCards.mjs";
 
 export const orderHandler = {
   async init() {
@@ -25,35 +27,20 @@ export const orderHandler = {
         const itemCard = document.createElement("div");
         itemCard.classList = "flex-column item-card";
         itemCard.id = "order-item-" + number;
-        let allergiesDiv = "";
+        item.allergiesDiv = "";
 
         for (const allergy in allergies) {
           if (allergies[allergy] == true) {
             if (allergy == "eggs") {
-              allergiesDiv += `<img class="allergy-icon" src="./icons/eggsAllergy.png">`;
+              item.allergiesDiv += `<img class="allergy-icon" src="./icons/eggsAllergy.png">`;
             } else if (allergy == "gluten") {
-              allergiesDiv += `<img class="allergy-icon" src="./icons/glutenAllergy.png">`;
+              item.allergiesDiv += `<img class="allergy-icon" src="./icons/glutenAllergy.png">`;
             } else if (allergy == "nuts") {
-              allergiesDiv += `<img class="allergy-icon" src="./icons/peanutAllergy.png">`;
+              item.allergiesDiv += `<img class="allergy-icon" src="./icons/peanutAllergy.png">`;
             }
           }
         }
-        itemCard.innerHTML = `
-        <div class="card-title">${number ? `Nr ${number} ` : ""}${title}</div>
-        <div class="top-part flex-row">
-          <div class="image-container">
-            <img src="${image}">
-          </div>
-          <div class="allergieses-container">
-${allergiesDiv}
-          </div>
-        </div>
-        <div class="middle-part flex-row">
-          <div class="card-description">${description}</div>
-        </div>
-        <div class="bottom-part flex-row">
-          <div class="card-price">${price} kr</div>
-        </div>`;
+        itemCard.innerHTML = template.orderCard(item);
         const orderButton = document.createElement("button");
         orderButton.innerText = lang({ no: "Legg til", en: "Add" });
         orderButton.classList =
@@ -65,6 +52,7 @@ ${allergiesDiv}
 
           this.updateCount();
           checkOutHandler.build();
+          paymentHandler.build();
           orderHandler.orderIcon.classList.remove("bump");
           setTimeout(() => {
             orderHandler.orderIcon.classList.add("bump");
@@ -76,7 +64,7 @@ ${allergiesDiv}
     });
   },
   buildTopBar() {
-    this.topBar.classList = "flex-row";
+    this.topBar.classList.add("flex-row");
     this.topBar.innerHTML = "";
     const container = document.createElement("div");
     container.classList = "container flex-row top-bar";

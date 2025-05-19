@@ -1,6 +1,6 @@
 export function lang(message) {
   const lng = new URLSearchParams(location.search).get("lng");
-  console.log("lng", lng);
+
   if (!message.no || !message.en) {
     console.warn("Missing a language in", message.no, message.en);
     return message || "";

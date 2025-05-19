@@ -149,6 +149,7 @@ export const mockProducts = [
     description: "Stekt ris med kylling, skinke, egg og grønnsaker",
     price: 209,
     allergies: { eggs: "replacable" },
+    options: [{ id: 2, title: "Esktra kjøtt", stock: 5, price: 50 }],
     image:
       "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114409461442._szw120h100_.jpg?etag=%221b68c-5db44839af051%22&sourceContentType=",
   },
@@ -291,7 +292,7 @@ export const mockProducts = [
     fixed: true,
     options: [
       { id: 1, title: "1 stk Vårrul", stock: 5, price: 35 },
-      { id: 2, title: "Esktra kjøtt", stock: 5, price: 50 },
+
       { id: 3, title: "Karrisaus", stock: 5, price: 20 },
       { id: 4, title: "Peppersaus", stock: 5, price: 20 },
       { id: 5, title: "Chilisaus", stock: 5, price: 20 },

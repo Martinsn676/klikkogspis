@@ -7,6 +7,7 @@ import {
 } from "../../shared/js/lazyFunctions.mjs";
 import { lsList } from "../../shared/js/lists.mjs";
 import { orderHandler } from "../orderPage/orderHandler.mjs";
+import { template } from "../templates/itemCards.mjs";
 
 export const checkOutHandler = {
   content: [],
@@ -61,7 +62,7 @@ export const checkOutHandler = {
     });
   },
   buildTopBar() {
-    this.topBar.classList = "flex-row";
+    this.topBar.classList.add("flex-row");
     this.topBar.innerHTML = "";
     const container = document.createElement("div");
     container.classList = "container flex-column top-bar";
@@ -135,23 +136,7 @@ export const checkOutHandler = {
           optionContainer.appendChild(optionsDiv);
         });
       }
-      itemCard.innerHTML = `
-        <div class="top-part flex-row">
-        ${
-          image
-            ? `  <div class="image-container">
-                        <img src="${image}">
-                    </div>`
-            : ""
-        }
-        <div class="flex-column right-side">
-            <div class="card-title">${
-              number ? `Nr ${number} ` : ""
-            }${title}</div>          
-       ${!fixed ? `<div class="">${price} kr</div>` : ""}
-            <div class="adder"></div>
-            </div>
-        </div>`;
+      itemCard.innerHTML = template.checkoutCard(item);
       if (!fixed) {
         numberAdjuster({
           place: itemCard.querySelector(".adder"),
@@ -192,7 +177,6 @@ export const checkOutHandler = {
       createButton({
         text: lang({ no: "Betaling", en: "Payment" }),
         action: () => {
-          lsList.remove("cart");
           navigateTo("payment");
         },
       })
