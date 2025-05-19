@@ -56,6 +56,10 @@
   position: relative;
   height: 12vh;
   display: flex;
+  .top-bar-title {
+    font-size: 18px;
+    font-family: "lemon";
+  }
   .top-bar {
     // padding: 0 10px;
     border-bottom: 0.5px solid black;

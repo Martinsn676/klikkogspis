@@ -142,11 +142,11 @@ export const mockProducts = [
     options: [
       {
         id: 1,
-        title: "Uten egg",
+        title: "Eggfri?",
         price: 0,
         toggle: "no",
       },
-      { id: 2, title: "Esktra kjøtt", stock: 5, price: 50 },
+      { id: 2, title: "Esktra kjøtt", price: 50, toggle: "no" },
     ],
     image:
       "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114412552311._szw120h100_.jpg?etag=%221b68c-5db44839af051%22&sourceContentType=",
@@ -161,11 +161,11 @@ export const mockProducts = [
     options: [
       {
         id: 1,
-        title: "Uten egg",
+        title: "Eggfri?",
         price: 0,
         toggle: "no",
       },
-      { id: 2, title: "Esktra kjøtt", stock: 5, price: 50 },
+      { id: 2, title: "Esktra kjøtt", price: 50, toggle: "no" },
     ],
     image:
       "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114409461442._szw120h100_.jpg?etag=%221b68c-5db44839af051%22&sourceContentType=",

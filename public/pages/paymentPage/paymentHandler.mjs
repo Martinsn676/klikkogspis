@@ -18,17 +18,50 @@ export const paymentHandler = {
   },
   build() {
     this.itemsContainer.innerHTML = "";
+    let totalCost = 0;
     checkOutHandler.content.forEach((cartItem) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
 
-      const { id, title, number, description, price, allergies, image, fixed } =
-        item;
+      const {
+        id,
+        title,
+        number,
+        description,
+        price,
+        allergies,
+        image,
+        options,
+        fixed,
+      } = item;
+
+      console.log(item);
+      if (!fixed) {
+        item.count = cartItem.count;
+        totalCost += cartItem.count * item.price;
+        addItem(item);
+      } else if (options) {
+        options.forEach((option) => {
+          if (cartItem.options[option.id]) {
+            option.count = cartItem.options[option.id];
+            totalCost += option.count * option.price;
+            addItem(option);
+          }
+        });
+      }
+    });
+    console.warn(totalCost);
+    const totalDiv = document.createElement("div");
+    totalDiv.innerHTML = `<div id="payment-total">${totalCost} kr</div>`;
+    paymentHandler.itemsContainer.appendChild(totalDiv);
+    function addItem(item) {
+      console.log(item);
       const itemDiv = document.createElement("div");
       itemDiv.classList.add("payment-card");
-
       itemDiv.innerHTML = template.paymentCard(item);
-      this.itemsContainer.appendChild(itemDiv);
-    });
+      console.log(itemDiv.innerHTML);
+      paymentHandler.itemsContainer.appendChild(itemDiv);
+      console.log(checkOutHandler.itemsContainer);
+    }
   },
   buildBottomBar() {
     this.bottomBar.innerHTML = "";

@@ -25,7 +25,11 @@ export const template = {
         <div class="card-title">${item.number ? `Nr ${item.number} ` : ""}${
       item.title
     }</div>          
-    ${!item.fixed ? `<div class="">${item.price} kr</div>` : ""}
+    ${
+      !item.fixed
+        ? `<div class="payment-card-price">${item.count} x ${item.price} kr</div>`
+        : ""
+    }
 
     </div>`;
   },
