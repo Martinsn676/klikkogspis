@@ -11,13 +11,13 @@
         width: 70%;
         .card-title {
           font-family: "lemon";
-
+          // max-width: calc(100% - 101px);
           padding-bottom: 20px;
         }
         .middle-part {
           position: relative;
-          .custom-adder {
-            transform: translateY(-50%);
+          .custom-adder-container {
+            // transform: translateY(-50%);
           }
         }
       }

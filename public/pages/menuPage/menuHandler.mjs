@@ -3,6 +3,16 @@ import { navigateTo } from "../../js/pageNav.mjs";
 import { lang } from "./../../shared/js/lang.mjs";
 import { createButtons, createP } from "./../../shared/js/lazyFunctions.mjs";
 const address = "Sentrumsvegen 15, 5460 Husnes";
+const openingHours = [
+  [lang({ no: "Mandag", en: "Monday" })],
+  [lang({ no: "Tirsdag", en: "Tuesday" })],
+  [lang({ no: "Onsdag", en: "Wednesday" }), 14, 22],
+  [lang({ no: "Torsdag", en: "Thursday" }), 14, 22],
+  [lang({ no: "Fredag", en: "Friday" }), 14, 22],
+  [lang({ no: "Lørdag", en: "Saturday" }), 14, 22],
+  [lang({ no: "Søndag", en: "Sunday" }), 14, 22],
+];
+
 export const menuHandler = {
   init() {
     console.log("===menuHandler===");
@@ -19,7 +29,26 @@ export const menuHandler = {
     <div>
       <div class="text-center">${address}</div>
     </div>
+        <div>
+      <div class="text-center">Mandag-Tirdag: Stengt</div>
+      <div class="text-center">Onsdag-Søndag: 14:00-22:00</div>
+    </div>
+
     `;
+    const date = new Date();
+    const dayNumber = date.getDay() - 1;
+    console.log(dayNumber);
+    const splitValue = dayNumber == 0 ? 7 : dayNumber;
+    const sortedDays = [
+      ...openingHours.slice(splitValue),
+      ...openingHours.slice(0, splitValue),
+    ];
+    console.log(sortedDays);
+    const openingHoursDiv = document.createElement("div");
+    sortedDays.forEach((name, opening, closing) => {
+      openingHoursDiv.innerHTML += `<div>${name}</div>`;
+    });
+    // this.mainContainer.appendChild(openingHoursDiv);
     const buttons = [
       {
         text: lang({ no: "Se menyen", en: "See menu" }),
@@ -53,6 +82,14 @@ export const menuHandler = {
         change: this.mainContentContainer,
         classes: "bootstrap-btn-neutral",
         action: () => console.log("Open about us"),
+      },
+      {
+        text: lang({ no: "Ring oss", en: "Call us" }),
+        icon: "./icons/callIcon.png",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+
+        action: () => window.open("tel:90418429", "_new"),
       },
       {
         text: mainHandler.lng == "en" ? "Norsk" : "English",

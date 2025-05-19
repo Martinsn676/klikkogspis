@@ -643,7 +643,9 @@ export function numberAdjuster({
   plussAction,
   startValue = 0,
   maxValue,
+  endAction,
 }) {
+  place.classList.add("custom-adder-container");
   const div = document.createElement("div");
   div.classList = "custom-adder flex-row align";
 
@@ -656,6 +658,7 @@ export function numberAdjuster({
       display.innerText = oldValue - 1;
       generalClick();
       minusAction();
+      if (endAction) endAction();
     }
   });
   div.appendChild(minusButton);
@@ -672,6 +675,7 @@ export function numberAdjuster({
       display.innerText = oldValue + 1;
       generalClick();
       plussAction();
+      if (endAction) endAction();
     }
   });
   div.appendChild(plussButton);
@@ -687,4 +691,38 @@ export function numberAdjuster({
       plussButton.classList.add("capped");
     }
   }
+}
+export function toggleAdjuster({
+  place,
+  noAction,
+  yesAction,
+  startValue,
+
+  endAction,
+}) {
+  const div = document.createElement("div");
+  place.classList.add("custom-toggler-container");
+  div.classList = "custom-toggler flex-row align";
+
+  const noButton = document.createElement("button");
+  noButton.classList = "no-button button bootstrap-btn flex-column align";
+  noButton.innerText = lang({ no: "Nei", en: "No" });
+  noButton.addEventListener("click", () => {
+    noAction();
+    if (endAction) endAction();
+    div.dataset.selected = "no";
+  });
+  div.appendChild(noButton);
+
+  const yesButton = document.createElement("button");
+  yesButton.classList = "yes-button button bootstrap-btn flex-column align";
+  yesButton.innerText = lang({ no: "Ja", en: "Yes" });
+  yesButton.addEventListener("click", () => {
+    yesAction();
+    if (endAction) endAction();
+    div.dataset.selected = "yes";
+  });
+  div.appendChild(yesButton);
+  div.dataset.selected = startValue;
+  place.appendChild(div);
 }

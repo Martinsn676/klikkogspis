@@ -20,7 +20,6 @@ export const template = {
     </div>`;
   },
   paymentCard(item) {
-    console.log("item", item);
     return `
     <div class="flex-row align">
         <div class="card-title">${item.number ? `Nr ${item.number} ` : ""}${

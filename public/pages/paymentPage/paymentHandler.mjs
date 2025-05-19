@@ -25,7 +25,7 @@ export const paymentHandler = {
         item;
       const itemDiv = document.createElement("div");
       itemDiv.classList.add("payment-card");
-      console.log(template.paymentCard(item));
+
       itemDiv.innerHTML = template.paymentCard(item);
       this.itemsContainer.appendChild(itemDiv);
     });

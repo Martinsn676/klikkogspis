@@ -139,6 +139,15 @@ export const mockProducts = [
       "Woket eggnudler med marinert kyllingfilet og grønnsaker i kinesisk svart-bønnersaus",
     price: 199,
     allergies: { eggs: true },
+    options: [
+      {
+        id: 1,
+        title: "Uten egg",
+        price: 0,
+        toggle: "no",
+      },
+      { id: 2, title: "Esktra kjøtt", stock: 5, price: 50 },
+    ],
     image:
       "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114412552311._szw120h100_.jpg?etag=%221b68c-5db44839af051%22&sourceContentType=",
   },
@@ -149,7 +158,15 @@ export const mockProducts = [
     description: "Stekt ris med kylling, skinke, egg og grønnsaker",
     price: 209,
     allergies: { eggs: "replacable" },
-    options: [{ id: 2, title: "Esktra kjøtt", stock: 5, price: 50 }],
+    options: [
+      {
+        id: 1,
+        title: "Uten egg",
+        price: 0,
+        toggle: "no",
+      },
+      { id: 2, title: "Esktra kjøtt", stock: 5, price: 50 },
+    ],
     image:
       "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114409461442._szw120h100_.jpg?etag=%221b68c-5db44839af051%22&sourceContentType=",
   },
@@ -160,6 +177,15 @@ export const mockProducts = [
     description: "Stekt ris med grønnsaker, egg og stekt and",
     price: 237,
     allergies: { eggs: "replacable" },
+    options: [
+      {
+        id: 1,
+        title: "Uten egg",
+        price: 0,
+        toggle: "no",
+      },
+      { id: 2, title: "Esktra kjøtt", stock: 5, price: 50 },
+    ],
     image:
       "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114412552503._szw120h100_.jpg?etag=%222269-637cb0aa%22&sourceContentType=image%2Fjpeg",
   },

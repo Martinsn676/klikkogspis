@@ -1,16 +1,64 @@
-.custom-adder {
+.custom-adder-container {
   position: absolute;
-  right: 0;
-  // bottom: 0;
-  button {
-    background-color: #0056b3;
-    color: white;
-    border-color: #004085;
-    margin: 5px 10px;
-    width: 10px;
-    &.capped {
-      background-color: #ccc !important;
-      border-color: #ddd !important;
+  right: 5px;
+  .custom-adder {
+    position: relative;
+    width: 100px;
+    // bottom: 0;
+    .option-count {
+      width: 30%;
+      text-align: center;
+    }
+    button {
+      background-color: #0056b3;
+      color: white;
+      border-color: #004085;
+      border-radius: 10px;
+      width: 35%;
+      &.capped {
+        background-color: #ccc !important;
+        border-color: #ddd !important;
+      }
+    }
+  }
+}
+.custom-toggler-container {
+  position: absolute;
+  right: 5px;
+  .custom-toggler {
+    // right: 10px;
+    width: 100px;
+    // bottom: 0;
+    position: relative;
+    .no-button {
+      border-radius: 10px 0 0 10px;
+    }
+    .yes-button {
+      border-radius: 0 10px 10px 0;
+    }
+    &[data-selected="yes"] {
+      .no-button {
+        background-color: #ccc !important;
+        border-color: #ddd !important;
+      }
+    }
+    &[data-selected="no"] {
+      .yes-button {
+        background-color: #ccc !important;
+        border-color: #ddd !important;
+      }
+    }
+    button {
+      background-color: #0056b3;
+      color: white;
+      border-color: #004085;
+      margin: 0;
+      width: 50%;
+
+      &.capped {
+        background-color: #ccc !important;
+        border-color: #ddd !important;
+      }
     }
   }
 }

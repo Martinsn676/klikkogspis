@@ -4,6 +4,7 @@ import { lang } from "../../shared/js/lang.mjs";
 import {
   createButton,
   numberAdjuster,
+  toggleAdjuster,
 } from "../../shared/js/lazyFunctions.mjs";
 import { lsList } from "../../shared/js/lists.mjs";
 import { orderHandler } from "../orderPage/orderHandler.mjs";
@@ -102,37 +103,59 @@ export const checkOutHandler = {
           const optionsDiv = document.createElement("div");
           optionsDiv.classList = "flex-row align option";
           const cartData = cartItem.options[option.id];
-          optionsDiv.innerHTML += `
+          if (!option.toggle) {
+            optionsDiv.innerHTML += `
             <div class="option-title">${option.title}, ${option.price}kr</div>
-            <div class="option-adder flex-row align">
-            </div>`;
+            <div class="option-adder flex-row align"></div>`;
 
-          numberAdjuster({
-            place: optionsDiv.querySelector(".option-adder"),
-            startValue: cartData || 0,
-            maxValue: option.stock,
-            minusAction: () => {
-              if (cartItem.options[option.id]) {
-                cartItem.options[option.id]--;
-              } else {
+            numberAdjuster({
+              place: optionsDiv.querySelector(".option-adder"),
+              startValue: cartData || 0,
+              maxValue: option.stock,
+              minusAction: () => {
+                if (cartItem.options[option.id]) {
+                  cartItem.options[option.id]--;
+                } else {
+                  cartItem.options[option.id] = 0;
+                }
+              },
+              plussAction: () => {
+                if (cartItem.options[option.id]) {
+                  cartItem.options[option.id]++;
+                } else {
+                  cartItem.options[option.id] = 1;
+                }
+              },
+              endAction: () => {
+                lsList.save("cart", this.content);
+                this.updateTotal();
+                orderHandler.updateCount();
+              },
+            });
+          } else {
+            optionsDiv.innerHTML = `
+               <div class="option-title">${option.title}${
+              option.price ? `, ${option.price} kr` : ""
+            }</div>
+              <div class="option-changer flex-row align"></div>`;
+            const cartData = cartItem.options[option.id];
+
+            toggleAdjuster({
+              place: optionsDiv.querySelector(".option-changer"),
+              startValue: cartData ? "yes" : option.toggle,
+              noAction: () => {
                 cartItem.options[option.id] = 0;
-              }
-
-              lsList.save("cart", this.content);
-              this.updateTotal();
-            },
-            plussAction: () => {
-              if (cartItem.options[option.id]) {
-                cartItem.options[option.id]++;
-              } else {
+              },
+              yesAction: () => {
                 cartItem.options[option.id] = 1;
-              }
-
-              lsList.save("cart", this.content);
-              this.updateTotal();
-            },
-          });
-
+              },
+              endAction: () => {
+                lsList.save("cart", this.content);
+                this.updateTotal();
+                orderHandler.updateCount();
+              },
+            });
+          }
           optionContainer.appendChild(optionsDiv);
         });
       }
