@@ -3,8 +3,10 @@ export const mockProducts = [
     id: 0,
     title: "",
     number: "103",
-    description:
-      "Kylling spyd x 3 stk med stekt ris med grønnsaker og egg i karri. Servert med peanøttsaus og salat. Retten er litt sterk",
+    description: {
+      no: "Kylling spyd x 3 stk med stekt ris med grønnsaker og egg i karri. Servert med peanøttsaus og salat. Retten er litt sterk",
+      en: "Chicken skewers x 3 pcs with fried rice, vegetables and egg in curry. Served with peanut sauce and salad. Slightly spicy",
+    },
     price: 209,
     allergies: { eggs: true },
 
@@ -14,10 +16,15 @@ export const mockProducts = [
 
   {
     id: 1,
-    title: "Honing Kylling",
+    title: {
+      no: "Honing Kylling",
+      en: "Honey Chicken",
+    },
     number: "99",
-    description:
-      "kylling i glasert kinesisk honing/tomat saus med ananas, serveres med ris og salat",
+    description: {
+      no: "kylling i glasert kinesisk honing/tomat saus med ananas, serveres med ris og salat",
+      en: "Chicken in glazed Chinese honey/tomato sauce with pineapple, served with rice and salad",
+    },
     price: 199,
     allergies: {},
     image:
@@ -26,10 +33,15 @@ export const mockProducts = [
 
   {
     id: 2,
-    title: "Gong Bao Kylling",
+    title: {
+      no: "Gong Bao Kylling",
+      en: "Kung Pao Chicken",
+    },
     number: "1",
-    description:
-      "En berømt rett fra Szechuan, laget med grønnsaker og chilisaus. Serveres med cashewnøtter og ris",
+    description: {
+      no: "En berømt rett fra Szechuan, laget med grønnsaker og chilisaus. Serveres med cashewnøtter og ris",
+      en: "A famous dish from Szechuan made with vegetables and chili sauce. Served with cashew nuts and rice.",
+    },
     price: 209,
     allergies: { nuts: true },
     image:
@@ -37,9 +49,15 @@ export const mockProducts = [
   },
   {
     id: 3,
-    title: "Kyllingfilet i Soya",
+    title: {
+      no: "Kyllingfilet i Soya",
+      en: "Chicken Fillet in Soy Sauce",
+    },
     number: "2",
-    description: "Marinert kyllingfilet med woket grønnsaker i soyasaus.",
+    description: {
+      no: "Marinert kyllingfilet med woket grønnsaker i soyasaus.",
+      en: "Marinated chicken fillet with stir-fried vegetables in soy sauce.",
+    },
     price: 199,
     allergies: {},
     image:
@@ -47,10 +65,15 @@ export const mockProducts = [
   },
   {
     id: 4,
-    title: "Kyllingfilet i karri",
+    title: {
+      no: "Kyllingfilet i karri",
+      en: "Chicken Fillet in Curry",
+    },
     number: "3",
-    description:
-      "Marinert kyllingfilet i skiver med grønnsaker i gul karrisaus",
+    description: {
+      no: "Marinert kyllingfilet i skiver med grønnsaker i gul karrisaus",
+      en: "Sliced marinated chicken fillet with vegetables in yellow curry sauce.",
+    },
     price: 209,
     allergies: { gluten: "free" },
     image:
@@ -142,7 +165,7 @@ export const mockProducts = [
     options: [
       {
         id: 1,
-        title: "Eggfri?",
+        title: "Uten egg",
         price: 0,
         toggle: "no",
       },
@@ -161,7 +184,7 @@ export const mockProducts = [
     options: [
       {
         id: 1,
-        title: "Eggfri?",
+        title: "Uten egg",
         price: 0,
         toggle: "no",
       },

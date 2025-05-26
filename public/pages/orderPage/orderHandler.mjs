@@ -2,6 +2,7 @@ import { mainHandler } from "../../js/mainHandler.mjs";
 import { navigateTo } from "../../js/pageNav.mjs";
 import { lang } from "../../shared/js/lang.mjs";
 import { createButton, makeCopy } from "../../shared/js/lazyFunctions.mjs";
+import { lsList } from "../../shared/js/lists.mjs";
 import { checkOutHandler } from "../checkoutPage/checkoutHandler.mjs";
 import { paymentHandler } from "../paymentPage/paymentHandler.mjs";
 import { template } from "../templates/itemCards.mjs";
@@ -44,15 +45,16 @@ export const orderHandler = {
         const orderButton = document.createElement("button");
         orderButton.innerText = lang({ no: "Legg til", en: "Add" });
         orderButton.classList =
-          "button bootstrap-btn bootstrap-btn-success order-button";
-        orderButton.addEventListener("click", (event) => {
-          console.log("Ordering!", number);
-          checkOutHandler.add(id, 1);
+          "button bootstrap-btn bootstrap-btn-primary order-button";
+        orderButton.addEventListener("click", async (event) => {
+          checkOutHandler.content.unshift({
+            id,
+            count: 1,
+            options: {},
+          });
+          mainHandler.refresh(true);
           event.target.innerText = lang({ no: "Lagt til!", en: "Added!" });
 
-          this.updateCount();
-          checkOutHandler.build();
-          paymentHandler.build();
           orderHandler.orderIcon.classList.remove("bump");
           setTimeout(() => {
             orderHandler.orderIcon.classList.add("bump");

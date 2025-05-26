@@ -3,6 +3,7 @@ import { navigateTo } from "../../js/pageNav.mjs";
 import { lang } from "../../shared/js/lang.mjs";
 import {
   createButton,
+  makeCopy,
   numberAdjuster,
   toggleAdjuster,
 } from "../../shared/js/lazyFunctions.mjs";
@@ -15,48 +16,73 @@ export const checkOutHandler = {
   async init() {
     this.topBar = document.getElementById("checkout-top-bar");
     this.itemsContainer = document.getElementById("checkout-items-container");
-    this.content = (await lsList.get("cart")) || [
-      { id: 24, options: {}, count: 0 },
-      { id: 25, options: {}, count: 0 },
-    ];
+    this.content = await lsList.get("cart");
+    if (!this.content || this.content.length == 0) {
+      this.content = [
+        { id: 24, options: {}, count: 0, fixed: true },
+        { id: 25, options: {}, count: 0, fixed: true },
+      ];
+    }
+
     this.bottomBar = document.getElementById("checkout-bottom-bar");
     this.build();
     this.buildBottomBar();
     this.buildTopBar();
   },
-  add(id, value) {
-    const foundItemIndex = this.content.findIndex((e) => e.id == id);
-    let returnValue;
-
-    console.log("id, value", id, value, foundItemIndex);
-    if (foundItemIndex >= 0) {
-      this.content[foundItemIndex].count += value;
-      returnValue = this.content[foundItemIndex].count;
-    } else {
-      this.content.unshift({ id, count: 1, options: {} });
-      returnValue = 1;
-    }
-    if (returnValue == 0) {
-      this.content.splice(foundItemIndex, 1);
-    }
-    console.log("returnValue", returnValue);
-    lsList.save("cart", this.content);
-    this.updateTotal();
-    return returnValue;
-  },
+  // add(id, value, newAdd) {
+  //   fasdf;
+  //   let returnValue;
+  //   if (newAdd) {
+  //     this.content.unshift({
+  //       id,
+  //       count: 1,
+  //       options: {},
+  //       place: this.content.length,
+  //     });
+  //   } else {
+  //     // const foundItemIndex = this.content.findIndex((e) => e.id == id);
+  //     // let returnValue;
+  //     // if (foundItemIndex >= 0) {
+  //     //   this.content[foundItemIndex].count += value;
+  //     //   returnValue = this.content[foundItemIndex].count;
+  //     // } else {
+  //     //   this.content.unshift({ id, count: 1, options: {} });
+  //     //   returnValue = 1;
+  //     // }
+  //     // if (returnValue == 0) {
+  //     //   this.content.splice(foundItemIndex, 1);
+  //     // }
+  //     // lsList.save("cart", this.content);
+  //     // this.updateTotal();
+  //     // console.log("returnValue", returnValue);
+  //     // return returnValue;
+  //     // this.content[id].count += value;
+  //     // returnValue = this.content[id].count;
+  //     // if (returnValue == 0) {
+  //     //   this.content.splice(id, 1);
+  //     // }
+  //   }
+  //   console.log("  this.content", this.content);
+  //   lsList.save("cart", this.content);
+  //   this.updateTotal();
+  //   console.log("returnValue", returnValue);
+  //   return returnValue;
+  // },
   updateTotal() {
     let totalCost = 0;
     let totalCount = 0;
+
     this.content.forEach((cartItem) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
       totalCost += cartItem.count * item.price;
       totalCount += item.count;
       if (cartItem.options) {
-        for (const optionID in cartItem.options) {
+        for (const optionString in cartItem.options) {
+          const optionID = optionString.replace("id", "");
           const option = item.options.find((e) => e.id == optionID);
 
-          totalCost += cartItem.options[optionID] * option.price;
-          totalCount += cartItem.options[optionID];
+          totalCost += cartItem.options[optionString] * option.price;
+          totalCount += cartItem.options[optionString];
         }
       }
       this.cartTotal.innerText = `${totalCost} kr`;
@@ -77,9 +103,32 @@ export const checkOutHandler = {
     this.updateTotal();
   },
   build() {
-    console.log("    this.content", this.content);
+    console.trace();
+    console.log("this.content", this.content);
     this.itemsContainer.innerHTML = "";
-    this.content.forEach((cartItem) => {
+    const newSort = [];
+
+    this.content.forEach((cartItem, index) => {
+      const item = mainHandler.products.find((e) => e.id == cartItem.id);
+      if (!item.fixed) {
+        cartItem.number = item.number;
+        newSort.push(cartItem);
+      }
+    });
+    newSort.products = newSort.sort((a, b) => {
+      if (a.number) {
+        return a.number.localeCompare(b.number);
+      }
+    });
+
+    this.content.forEach((cartItem, index) => {
+      const item = mainHandler.products.find((e) => e.id == cartItem.id);
+      if (item.fixed) {
+        newSort.push(cartItem);
+      }
+    });
+    this.content = newSort;
+    this.content.forEach((cartItem, index) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
       const {
         id,
@@ -102,7 +151,7 @@ export const checkOutHandler = {
         options.forEach((option) => {
           const optionsDiv = document.createElement("div");
           optionsDiv.classList = "flex-row align option";
-          const cartData = cartItem.options[option.id];
+          const cartData = cartItem.options["id" + option.id];
           if (!option.toggle) {
             optionsDiv.innerHTML += `
             <div class="option-title">${option.title}, ${option.price}kr</div>
@@ -113,79 +162,93 @@ export const checkOutHandler = {
               startValue: cartData || 0,
               maxValue: option.stock,
               minusAction: () => {
-                if (cartItem.options[option.id]) {
-                  cartItem.options[option.id]--;
+                if (cartItem.options["id" + option.id]) {
+                  cartItem.options["id" + option.id]--;
                 } else {
-                  cartItem.options[option.id] = 0;
+                  cartItem.options["id" + option.id] = 0;
                 }
               },
               plussAction: () => {
-                if (cartItem.options[option.id]) {
-                  cartItem.options[option.id]++;
+                if (cartItem.options["id" + option.id]) {
+                  cartItem.options["id" + option.id]++;
                 } else {
-                  cartItem.options[option.id] = 1;
+                  cartItem.options["id" + option.id] = 1;
                 }
               },
-              endAction: () => {
-                lsList.save("cart", this.content);
-                this.updateTotal();
-                orderHandler.updateCount();
+              endAction: async () => {
+                mainHandler.refresh();
               },
             });
           } else {
             optionsDiv.innerHTML = `
-               <div class="option-title">${option.title}${
-              option.price ? `, ${option.price} kr` : ""
+               <div class="option-title">${option.title}?${
+              option.price ? ` ${option.price} kr` : ""
             }</div>
               <div class="option-changer flex-row align"></div>`;
-            const cartData = cartItem.options[option.id];
+            const cartData = cartItem.options["id" + option.id];
 
             toggleAdjuster({
               place: optionsDiv.querySelector(".option-changer"),
               startValue: cartData ? "yes" : option.toggle,
               noAction: () => {
-                cartItem.options[option.id] = 0;
+                cartItem.options["id" + option.id] = 0;
               },
               yesAction: () => {
-                cartItem.options[option.id] = 1;
+                cartItem.options["id" + option.id] = 1;
               },
-              endAction: () => {
-                lsList.save("cart", this.content);
-                this.updateTotal();
-                orderHandler.updateCount();
+              endAction: async () => {
+                mainHandler.refresh();
               },
             });
           }
           optionContainer.appendChild(optionsDiv);
         });
       }
-      itemCard.innerHTML = template.checkoutCard(item);
-      if (!fixed) {
-        numberAdjuster({
-          place: itemCard.querySelector(".adder"),
-          startValue: cartItem.count,
-          minusAction: () => {
-            const newValue = this.add(id, -1);
-            if (newValue == 0) {
-              itemCard.classList.add("d-none");
-            } else {
-              newValue;
-            }
-          },
-          plussAction: () => this.add(id, 1),
-        });
-      }
-      const imageContainer = itemCard.querySelector(".image-container");
-      if (imageContainer) {
-        imageContainer.addEventListener("click", () => {
-          navigateTo("ordering");
+      if (cartItem.count > 0 || fixed) {
+        itemCard.innerHTML = template.checkoutCard(item);
+        if (!fixed) {
+          itemCard.appendChild(
+            createButton({
+              text: lang({ no: "Fjern", en: "Remove" }),
+              classes: "checkout-remove-button",
+              action: () => {
+                cartItem.count -= 1;
+                if (cartItem.count <= 0) {
+                  itemCard.classList.add("d-none");
+                }
+                mainHandler.refresh();
+              },
+            })
+          );
+          // numberAdjuster({
+          //   place: itemCard.querySelector(".adder"),
+          //   startValue: cartItem.count,
+          //   minusAction: () => {
+          //     cartItem.count -= 1;
+          //     if (cartItem.count <= 0) {
+          //       itemCard.classList.add("d-none");
+          //     }
+          //   },
+          //   plussAction: () => (cartItem.count += 1),
+          //   endAction: () => {
+          //     this.updateTotal();
+          //     lsList.save("cart", this.content);
+          //     orderHandler.updateCount();
+          //   },
+          // });
+        }
+        const imageContainer = itemCard.querySelector(".image-container");
+        if (imageContainer) {
+          imageContainer.addEventListener("click", () => {
+            navigateTo("ordering");
 
-          const targetItem = document.getElementById("order-item-" + number);
-          targetItem.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+            const targetItem = document.getElementById("order-item-" + number);
+            targetItem.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+        itemCard.appendChild(optionContainer);
+        this.itemsContainer.appendChild(itemCard);
       }
-      itemCard.appendChild(optionContainer);
-      this.itemsContainer.appendChild(itemCard);
     });
   },
   buildBottomBar() {

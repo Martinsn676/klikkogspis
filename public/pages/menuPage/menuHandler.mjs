@@ -37,13 +37,11 @@ export const menuHandler = {
     `;
     const date = new Date();
     const dayNumber = date.getDay() - 1;
-    console.log(dayNumber);
     const splitValue = dayNumber == 0 ? 7 : dayNumber;
     const sortedDays = [
       ...openingHours.slice(splitValue),
       ...openingHours.slice(0, splitValue),
     ];
-    console.log(sortedDays);
     const openingHoursDiv = document.createElement("div");
     sortedDays.forEach((name, opening, closing) => {
       openingHoursDiv.innerHTML += `<div>${name}</div>`;
@@ -100,7 +98,6 @@ export const menuHandler = {
           const newUrl = `${location.pathname}?${params.toString()}`;
 
           mainHandler.lng = mainHandler.lng == "en" ? "no" : "en";
-          console.log("mainHandler.lng ", mainHandler.lng);
           history.pushState(null, "", newUrl); // Updates the URL without reloading the page
 
           mainHandler.reload(true);
@@ -108,7 +105,17 @@ export const menuHandler = {
         classes: "bootstrap-btn-neutral",
       },
     ];
-
+    const orderID = new URLSearchParams(location.search).get("order");
+    if (orderID) {
+      buttons.splice(1, 0, {
+        text: lang({ no: "Se din bestilling", en: "See your order" }),
+        // icon: "./icons/infoIcon.png",
+        page: "waiting",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: () => navigateTo("waiting"),
+      });
+    }
     createButtons(this.mainContainer, buttons);
 
     this.mainContainer.appendChild(

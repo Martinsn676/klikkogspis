@@ -44,9 +44,7 @@ export function fixDate(value) {
 export function capitalizeFirstLetter(event) {
   let string = event.target.value;
   if (event.target.value.length == 1) {
-    console.log("string", string);
     string = string.charAt(0).toUpperCase() + string.slice(1);
-    console.log("string", string);
     event.target.value = string;
   }
 }
@@ -185,7 +183,7 @@ export function createButton(data) {
     action3,
     icon,
   } = data;
-
+  console.log("data", data);
   const button = document.createElement("button");
   button.classList = "button bootstrap-btn flex-column align ";
   if (classes) button.classList += classes;
@@ -195,7 +193,7 @@ export function createButton(data) {
   } else {
     button.innerHTML = text || "Click";
   }
-
+  console.log("id", id);
   if (text)
     button.id = id || text?.toLowerCase().replace(/\s+/g, "-") + "-button";
   if (onClick) {
@@ -375,13 +373,13 @@ export function createInput(options) {
           displayMessage("");
           buttonDiv.classList.remove("disabled");
         } else {
-          displayMessage(
-            lang({
-              no: `Minimum ${minLength} tegn`,
-              en: `Minimum ${minLength} signs`,
-            }),
-            "light-danger"
-          );
+          // displayMessage(
+          //   lang({
+          //     no: `Minimum ${minLength} tegn`,
+          //     en: `Minimum ${minLength} signs`,
+          //   }),
+          //   "light-danger"
+          // );
           valid = false;
           buttonDiv.classList.add("disabled");
         }

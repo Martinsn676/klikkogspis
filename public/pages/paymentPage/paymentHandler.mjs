@@ -5,6 +5,7 @@ import { createButton } from "../../shared/js/lazyFunctions.mjs";
 import { checkOutHandler } from "../checkoutPage/checkoutHandler.mjs";
 import { orderHandler } from "../orderPage/orderHandler.mjs";
 import { template } from "../templates/itemCards.mjs";
+import { waitingHandler } from "../waitingPage/waitingHandler.mjs";
 
 export const paymentHandler = {
   content: [],
@@ -12,13 +13,14 @@ export const paymentHandler = {
     this.topBar = document.getElementById("payment-top-bar");
     this.itemsContainer = document.getElementById("payment-items-container");
     this.bottomBar = document.getElementById("payment-bottom-bar");
-    this.build();
     this.buildBottomBar();
     this.buildTopBar();
+    this.build();
   },
   build() {
     this.itemsContainer.innerHTML = "";
-    let totalCost = 0;
+    this.totalCost = 0;
+
     checkOutHandler.content.forEach((cartItem) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
 
@@ -34,33 +36,41 @@ export const paymentHandler = {
         fixed,
       } = item;
 
-      console.log(item);
       if (!fixed) {
         item.count = cartItem.count;
-        totalCost += cartItem.count * item.price;
+        // totalCost += cartItem.count * item.price;
+        item.cartItemDetails = cartItem;
         addItem(item);
       } else if (options) {
         options.forEach((option) => {
-          if (cartItem.options[option.id]) {
-            option.count = cartItem.options[option.id];
-            totalCost += option.count * option.price;
-            addItem(option);
+          if (cartItem.options["id" + option.id]) {
+            option.count = cartItem.options["id" + option.id];
+            // totalCost += option.count * option.price;
+            console.log("option.count", option.count);
+            addItem(option, option.count);
           }
         });
       }
     });
-    console.warn(totalCost);
-    const totalDiv = document.createElement("div");
-    totalDiv.innerHTML = `<div id="payment-total">${totalCost} kr</div>`;
-    paymentHandler.itemsContainer.appendChild(totalDiv);
-    function addItem(item) {
-      console.log(item);
+
+    function addItem(item, count) {
       const itemDiv = document.createElement("div");
       itemDiv.classList.add("payment-card");
-      itemDiv.innerHTML = template.paymentCard(item);
-      console.log(itemDiv.innerHTML);
+      itemDiv.innerHTML = template.paymentCard(item, count);
       paymentHandler.itemsContainer.appendChild(itemDiv);
-      console.log(checkOutHandler.itemsContainer);
+    }
+    if (this.totalCost == 0) {
+      const noItemsDiv = document.createElement("div");
+      noItemsDiv.innerHTML = `<div id="payment-message">${lang({
+        no: "Du har ingenting i bestillingen din",
+        en: "You have nothing in your order",
+      })}</div>`;
+      document.getElementById("send-order-button").disabled = true;
+      paymentHandler.itemsContainer.appendChild(noItemsDiv);
+    } else {
+      const totalDiv = document.createElement("div");
+      totalDiv.innerHTML = `<div id="payment-total">${this.totalCost} kr</div>`;
+      paymentHandler.itemsContainer.appendChild(totalDiv);
     }
   },
   buildBottomBar() {
@@ -74,7 +84,11 @@ export const paymentHandler = {
     this.bottomBar.appendChild(
       createButton({
         text: lang({ no: "Send ordre", en: "Send order" }),
-        action: () => {},
+        id: "send-order-button",
+        action: () => {
+          waitingHandler.init();
+          navigateTo("waiting", false, { order: "asdadaw3424" });
+        },
       })
     );
   },

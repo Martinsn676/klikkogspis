@@ -13,6 +13,7 @@
           font-family: "lemon";
           // max-width: calc(100% - 101px);
           padding-bottom: 20px;
+          padding-right: 100px;
         }
         .middle-part {
           position: relative;
@@ -20,6 +21,13 @@
             // transform: translateY(-50%);
           }
         }
+      }
+      .checkout-remove-button {
+        position: absolute;
+        font-family: "lemon";
+        top: 0;
+        right: 0;
+        border-radius: 0 10px 0 10px;
       }
       .options-container {
         padding-top: 30px;
