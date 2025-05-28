@@ -9,6 +9,11 @@ export function navigateTo(
   endDetails,
   skipHistory = false
 ) {
+  let validPages = ["menu", "payment", "checkout", "waiting", "ordering"];
+  if (!validPages.find((e) => e == pageName)) {
+    pageName = "menu";
+  }
+  console.log(pageName);
   // Change URL without reloading
   window.scrollTo({ top: 0, behavior: "instant" });
 
@@ -64,7 +69,6 @@ export function navigateTo(
     waitingHandler.init();
   } else {
     console.log("pageName", pageName);
-    mainHandler.init();
   }
   if (reload) window.location.reload();
 }
@@ -83,3 +87,4 @@ window.addEventListener("popstate", (event) => {
     navigateTo(pageName, false, null, true);
   }
 });
+mainHandler.init();

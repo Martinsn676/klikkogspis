@@ -241,9 +241,13 @@ export const checkOutHandler = {
         if (imageContainer) {
           imageContainer.addEventListener("click", () => {
             navigateTo("ordering");
-
             const targetItem = document.getElementById("order-item-" + number);
             targetItem.scrollIntoView({ behavior: "smooth", block: "start" });
+            console.error("targetItem", targetItem);
+            targetItem.classList.remove("bump-card");
+            setInterval(() => {
+              targetItem.classList.add("bump-card");
+            }, 10);
           });
         }
         itemCard.appendChild(optionContainer);
