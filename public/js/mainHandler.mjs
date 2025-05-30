@@ -2,6 +2,8 @@ import { checkOutHandler } from "../pages/checkoutPage/checkoutHandler.mjs";
 import { menuHandler } from "../pages/menuPage/menuHandler.mjs";
 import { orderHandler } from "../pages/orderPage/orderHandler.mjs";
 import { paymentHandler } from "../pages/paymentPage/paymentHandler.mjs";
+import { api } from "../shared/js/api.mjs";
+import { tryParse } from "../shared/js/lazyFunctions.mjs";
 import { lsList } from "../shared/js/lists.mjs";
 import { mockProducts } from "./mockProducts.mjs";
 import { navigateTo } from "./pageNav.mjs";
@@ -27,7 +29,7 @@ export const mainHandler = {
     checkOutHandler.content = checkOutHandler.content.filter(
       (cartItem) => cartItem.count !== 0 || cartItem.fixed
     );
-    console.log("checkOutHandler.content", checkOutHandler.content);
+
     orderHandler.updateCount();
     checkOutHandler.updateTotal();
     paymentHandler.build();
@@ -36,12 +38,20 @@ export const mainHandler = {
     }
   },
   async loadProducts() {
-    this.products = mockProducts.sort((a, b) => {
+    const response = await api.try("getProducts", { storeName: "china" });
+    console.log("response", response);
+    this.products = response.content;
+    this.products = this.products.sort((a, b) => {
       if (a.number) {
         return a.number.localeCompare(b.number);
       }
     });
-    console.log("this.products", this.products);
+    // this.products.forEach((e) => {
+    //   e.title = tryParse(e.meta["title_translations"]);
+    //   e.options = tryParse(e.meta["foodoptions"]);
+    //   e.description = tryParse(e.meta["description_translations"]);
+    // });
+    console.log("   this.products ", this.products);
   },
 };
 

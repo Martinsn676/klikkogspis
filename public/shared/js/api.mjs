@@ -7,7 +7,7 @@ export const api = {
     body.token = token;
     let response;
 
-    const local = window.location.origin == "http://127.0.0.1:5501";
+    const local = window.location.origin == "http://127.0.0.1:5500";
     console.log("local", local);
     if (local) {
       response = await this.tryLocal(path, body);
@@ -50,13 +50,14 @@ export const api = {
   },
   async tryLocal(path, body = {}) {
     const content = { body: JSON.stringify(body) };
+    console.log("content", content);
     try {
       content.method = "POST";
       content.headers = {
         "Content-Type": "application/json",
       };
       const response = await fetch(
-        "http://localhost:3001/api/" + path,
+        "http://localhost:3002/api/" + path,
         content
       );
       return response;

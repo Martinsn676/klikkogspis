@@ -1,20 +1,5 @@
 export const mockProducts = [
   {
-    id: 0,
-    title: "",
-    number: "103",
-    description: {
-      no: "Kylling spyd x 3 stk med stekt ris med grønnsaker og egg i karri. Servert med peanøttsaus og salat. Retten er litt sterk",
-      en: "Chicken skewers x 3 pcs with fried rice, vegetables and egg in curry. Served with peanut sauce and salad. Slightly spicy",
-    },
-    price: 209,
-    allergies: { eggs: true },
-
-    image:
-      "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114428713849._szw120h100_.jpg?etag=%221b68c-5db44839af051%22&sourceContentType=",
-  },
-
-  {
     id: 1,
     title: {
       no: "Honing Kylling",
@@ -207,7 +192,7 @@ export const mockProducts = [
         price: 0,
         toggle: "no",
       },
-      { id: 2, title: "Esktra kjøtt", stock: 5, price: 50 },
+      { id: 2, title: "Esktra kjøtt", price: 50, toggle: "no" },
     ],
     image:
       "https://chinarestauranthusnes.com/____impro/1/onewebmedia/i285697114412552503._szw120h100_.jpg?etag=%222269-637cb0aa%22&sourceContentType=image%2Fjpeg",

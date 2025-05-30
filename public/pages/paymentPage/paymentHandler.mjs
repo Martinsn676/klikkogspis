@@ -46,7 +46,7 @@ export const paymentHandler = {
           if (cartItem.options["id" + option.id]) {
             option.count = cartItem.options["id" + option.id];
             // totalCost += option.count * option.price;
-            console.log("option.count", option.count);
+
             addItem(option, option.count);
           }
         });

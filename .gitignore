@@ -1,0 +1,9 @@
+node_modules/
+backup/
+env.mjs
+test.php
+testing/**
+php/**
+# Local Netlify folder
+.netlify
+.env

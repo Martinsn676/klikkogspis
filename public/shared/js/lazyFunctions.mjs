@@ -143,7 +143,7 @@ export function createForm({
   const form = document.createElement("form");
   form.id = id;
   form.classList = classes;
-  console.log("inputs", inputSettings);
+
   inputSettings.place = form;
   createManyInputs(inputSettings);
 
@@ -164,7 +164,7 @@ export function createForm({
     event.preventDefault();
     action(form);
   });
-  console.log("form", form);
+
   form.appendChild(buttonDiv);
 
   return form;
@@ -183,7 +183,7 @@ export function createButton(data) {
     action3,
     icon,
   } = data;
-  console.log("data", data);
+
   const button = document.createElement("button");
   button.classList = "button bootstrap-btn flex-column align ";
   if (classes) button.classList += classes;
@@ -193,7 +193,7 @@ export function createButton(data) {
   } else {
     button.innerHTML = text || "Click";
   }
-  console.log("id", id);
+
   if (text)
     button.id = id || text?.toLowerCase().replace(/\s+/g, "-") + "-button";
   if (onClick) {

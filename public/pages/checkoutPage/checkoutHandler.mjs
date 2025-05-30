@@ -18,10 +18,17 @@ export const checkOutHandler = {
     this.itemsContainer = document.getElementById("checkout-items-container");
     this.content = await lsList.get("cart");
     if (!this.content || this.content.length == 0) {
-      this.content = [
-        { id: 24, options: {}, count: 0, fixed: true },
-        { id: 25, options: {}, count: 0, fixed: true },
-      ];
+      this.content = [];
+      mainHandler.products.forEach((e) => {
+        if (e.meta.fixeditem) {
+          this.content.push({
+            id: e.id,
+            options: {},
+            count: 0,
+            fixed: true,
+          });
+        }
+      });
     }
 
     this.bottomBar = document.getElementById("checkout-bottom-bar");
@@ -74,12 +81,16 @@ export const checkOutHandler = {
 
     this.content.forEach((cartItem) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
-      totalCost += cartItem.count * item.price;
+      const count = Number(cartItem.count) || 0;
+      const price = Number(item.regular_price) || 0;
+
+      totalCost += count * price;
+
       totalCount += item.count;
       if (cartItem.options) {
         for (const optionString in cartItem.options) {
           const optionID = optionString.replace("id", "");
-          const option = item.options.find((e) => e.id == optionID);
+          const option = item.meta.foodoptions.find((e) => e.id == optionID);
 
           totalCost += cartItem.options[optionString] * option.price;
           totalCount += cartItem.options[optionString];
@@ -103,13 +114,12 @@ export const checkOutHandler = {
     this.updateTotal();
   },
   build() {
-    console.trace();
-    console.log("this.content", this.content);
     this.itemsContainer.innerHTML = "";
     const newSort = [];
 
     this.content.forEach((cartItem, index) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
+
       if (!item.fixed) {
         cartItem.number = item.number;
         newSort.push(cartItem);
@@ -128,6 +138,7 @@ export const checkOutHandler = {
       }
     });
     this.content = newSort;
+    console.log("    this.content", this.content);
     this.content.forEach((cartItem, index) => {
       const item = mainHandler.products.find((e) => e.id == cartItem.id);
       const {
@@ -138,13 +149,16 @@ export const checkOutHandler = {
         price,
         allergies,
         image,
-        options,
-        fixed,
+
         stock,
       } = item;
+
+      const options = item.meta.foodoptions;
+      item.fixed = cartItem.fixed;
+
       const itemCard = document.createElement("div");
       itemCard.classList = "flex-column item-card";
-      itemCard.id = number;
+      itemCard.id = id;
       const optionContainer = document.createElement("div");
       optionContainer.classList = "flex-column options-container";
       if (options) {
@@ -182,7 +196,7 @@ export const checkOutHandler = {
           } else {
             optionsDiv.innerHTML = `
                <div class="option-title">${option.title}?${
-              option.price ? ` ${option.price} kr` : ""
+              option.regular_price ? ` ${option.regular_price} kr` : ""
             }</div>
               <div class="option-changer flex-row align"></div>`;
             const cartData = cartItem.options["id" + option.id];
@@ -201,12 +215,13 @@ export const checkOutHandler = {
               },
             });
           }
+
           optionContainer.appendChild(optionsDiv);
         });
       }
-      if (cartItem.count > 0 || fixed) {
+      if (cartItem.count > 0 || cartItem.fixed) {
         itemCard.innerHTML = template.checkoutCard(item);
-        if (!fixed) {
+        if (!cartItem.fixed) {
           itemCard.appendChild(
             createButton({
               text: lang({ no: "Fjern", en: "Remove" }),
@@ -251,6 +266,7 @@ export const checkOutHandler = {
           });
         }
         itemCard.appendChild(optionContainer);
+
         this.itemsContainer.appendChild(itemCard);
       }
     });

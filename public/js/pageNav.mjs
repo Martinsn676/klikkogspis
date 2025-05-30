@@ -2,6 +2,7 @@ import { waitingHandler } from "../pages/waitingPage/waitingHandler.mjs";
 import { lang } from "../shared/js/lang.mjs";
 import { makeCopy } from "../shared/js/lazyFunctions.mjs";
 import { mainHandler } from "./mainHandler.mjs";
+import { mockProducts } from "./mockProducts.mjs";
 
 export function navigateTo(
   pageName = "menu",
@@ -88,3 +89,48 @@ window.addEventListener("popstate", (event) => {
   }
 });
 mainHandler.init();
+
+const rows = [];
+mockProducts.forEach((element, index) => {
+  if (index > -1) {
+    if (!element.description) element.description = "";
+    const line = [
+      "simple",
+      element.number,
+      element.title.no
+        ? JSON.stringify(element.title.no).replace(/"/g, '""')
+        : element.title,
+      "1",
+      element.image || "",
+      "0",
+      element.description.no
+        ? JSON.stringify(element.description).replace(/"/g, '""')
+        : element.description,
+      "1",
+      "1000",
+      element.price,
+      "", // Categories empty
+      element.title.no ? JSON.stringify(element.title).replace(/"/g, '""') : "",
+      element.description.no
+        ? JSON.stringify(element.description).replace(/"/g, '""')
+        : "{}",
+      element.allergies
+        ? JSON.stringify(element.allergies).replace(/"/g, '""')
+        : "{}",
+      element.options
+        ? JSON.stringify(element.options).replace(/"/g, '""').replace(/\n/g, "")
+        : "[]",
+      element.fixed ? true : false,
+      element.number || "",
+    ]
+      .map((field) => `"${field}"`)
+      .join(",");
+
+    rows.push(line);
+  }
+});
+const header =
+  "Type,SKU,Name,Published,Images,Is featured?,Description,In stock?,Stock,Regular price,Categories,meta:title_translations,meta:description_translations,meta:allergies,meta:foodOptions,meta:fixedItem,meta:itemNumber";
+
+const csvContent = [header, ...rows].join("\n");
+console.warn(csvContent);
