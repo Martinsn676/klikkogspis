@@ -1,5 +1,3 @@
-import { verifyUserID } from "../utils/auth.js";
-
 exports.handler = async (event) => {
   let response;
   const baseUrl = "https://kos.craftedbymartin.com";
