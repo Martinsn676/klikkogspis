@@ -45,6 +45,7 @@ export const api = {
 
       return json;
     } catch (err) {
+      console.error(err);
       console.warn("No json", response);
     }
   },
