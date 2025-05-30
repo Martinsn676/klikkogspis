@@ -2,7 +2,8 @@ exports.handler = async (event) => {
   let response;
   const baseUrl = "https://kos.craftedbymartin.com";
   const productsUrl = "/wp-json/wc/v3/products?per_page=100";
-
+  const apiKey = process.env.CONSUMER_KEY;
+  const apiSecret = process.env.CONSUMER_SECRET;
   try {
     // Parse request body
     const { storeName } = JSON.parse(event.body);
