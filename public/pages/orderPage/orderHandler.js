@@ -1,11 +1,11 @@
-import { mainHandler } from "../../js/mainHandler.mjs";
-import { navigateTo } from "../../js/pageNav.mjs";
-import { lang } from "../../shared/js/lang.mjs";
-import { createButton, makeCopy } from "../../shared/js/lazyFunctions.mjs";
-import { lsList } from "../../shared/js/lists.mjs";
-import { checkOutHandler } from "../checkoutPage/checkoutHandler.mjs";
-import { paymentHandler } from "../paymentPage/paymentHandler.mjs";
-import { template } from "../templates/itemCards.mjs";
+import { mainHandler } from "../../js/mainHandler.js";
+import { navigateTo } from "../../js/pageNav.js";
+import { lang } from "../../shared/js/lang.js";
+import { createButton, makeCopy } from "../../shared/js/lazyFunctions.js";
+import { lsList } from "../../shared/js/lists.js";
+import { checkOutHandler } from "../checkoutPage/checkoutHandler.js";
+import { paymentHandler } from "../paymentPage/paymentHandler.js";
+import { template } from "../templates/itemCards.js";
 
 export const orderHandler = {
   async init() {
@@ -19,15 +19,15 @@ export const orderHandler = {
     this.updateCount();
   },
   build() {
-    this.products = makeCopy(mainHandler.products);
+    this.products = makeCopy(mainHandler.mainItems);
     this.itemsContainer.innerHTML = "";
     this.products.forEach((item) => {
-      const { id, title, number, description, price, allergies, image, fixed } =
+      const { id, title, meta, description, price, allergies, image, fixed } =
         item;
       if (!fixed) {
         const itemCard = document.createElement("div");
         itemCard.classList = "flex-column item-card";
-        itemCard.id = "order-item-" + number;
+        itemCard.id = "order-item-" + id;
         item.allergiesDiv = "";
 
         for (const allergy in allergies) {

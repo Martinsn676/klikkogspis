@@ -1,4 +1,4 @@
-import { lsList, ssList } from "./lists.mjs";
+import { lsList, ssList } from "./lists.js";
 
 export const api = {
   busy: false,
@@ -51,7 +51,7 @@ export const api = {
   },
   async tryLocal(path, body = {}) {
     const content = { body: JSON.stringify(body) };
-    console.log("content", content);
+
     try {
       content.method = "POST";
       content.headers = {

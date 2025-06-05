@@ -1,5 +1,5 @@
-import { helpBlock } from "./helpBlock.mjs";
-import { lang } from "./lang.mjs";
+import { helpBlock } from "./helpBlock.js";
+import { lang } from "./lang.js";
 
 export function editStringFormat(string, settings) {
   if (typeof string != "string") {
@@ -142,15 +142,11 @@ export function createForm({
 }) {
   const form = document.createElement("form");
   form.id = id;
-  form.classList = classes;
+  form.classList = classes || "";
 
   inputSettings.place = form;
   createManyInputs(inputSettings);
 
-  const buttonDiv = document.createElement("button");
-  buttonDiv.innerText = button.text;
-  buttonDiv.classList = button.classes;
-  buttonDiv.type = "submit";
   if (secondaryAlternative) {
     const secondaryButtonDiv = document.createElement("div");
     secondaryButtonDiv.innerText = secondaryAlternative.text;
@@ -164,9 +160,14 @@ export function createForm({
     event.preventDefault();
     action(form);
   });
-
-  form.appendChild(buttonDiv);
-
+  if (button) {
+    const buttonDiv = document.createElement("button");
+    buttonDiv.innerText = button.text;
+    buttonDiv.classList = button.classes;
+    buttonDiv.type = "submit";
+    form.appendChild(buttonDiv);
+  }
+  console.log("form", form);
   return form;
 }
 
@@ -721,6 +722,6 @@ export function toggleAdjuster({
     div.dataset.selected = "yes";
   });
   div.appendChild(yesButton);
-  div.dataset.selected = startValue;
+  div.dataset.selected = startValue == 1 || startValue == "yes" ? "yes" : "no";
   place.appendChild(div);
 }

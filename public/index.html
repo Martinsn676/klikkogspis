@@ -5,7 +5,7 @@
       href="https://fonts.googleapis.com/css2?family=Lemon&display=swap"
       rel="stylesheet"
     />
-    <link rel="manifest" href="./manifest.json" />
+    <link rel="manifest" href="./orderIcon.json" />
     <meta name="theme-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -15,7 +15,7 @@
     <link href="./css/styles.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
 
-    <script defer type="module" src="./js/pageNav.mjs"></script>
+    <script defer type="module" src="./js/pageNav.js"></script>
   </head>
   <body>
     <header>
@@ -45,6 +45,19 @@
           <div id="waiting-top-bar" class="top-bar-container"></div>
           <div id="waiting-items-container" class="main-container"></div>
           <div id="waiting-bottom-bar" class="bottom-bar flex-row align"></div>
+        </div>
+        <div id="admin-page">
+          <div id="admin-top-bar" class="top-bar-container"></div>
+          <div id="admin-items-container" class="main-container"></div>
+          <div id="admin-bottom-bar" class="bottom-bar flex-row align"></div>
+        </div>
+        <div id="admin-orders-page">
+          <div id="admin-orders-top-bar" class="top-bar-container"></div>
+          <div id="admin-orders-items-container" class="main-container"></div>
+          <div
+            id="admin-orders-bottom-bar"
+            class="bottom-bar flex-row align"
+          ></div>
         </div>
       </div>
       <div id="modal-container"></div>

@@ -325,8 +325,7 @@ export const mockProducts = [
     price: 0,
     fixed: true,
     options: [
-      { id: 1, title: "1 stk Vårrul", stock: 5, price: 35 },
-
+      { id: 1, title: "1 stk Vårrul", stock: 5, price: 35, category: "extra" },
       { id: 3, title: "Karrisaus", stock: 5, price: 20 },
       { id: 4, title: "Peppersaus", stock: 5, price: 20 },
       { id: 5, title: "Chilisaus", stock: 5, price: 20 },

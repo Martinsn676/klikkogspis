@@ -1,22 +1,47 @@
-.payment-card {
-  margin: 20px;
-  position: relative;
-  .card-title {
+#payment-page {
+  .payment-card {
+    margin: 20px;
+    position: relative;
+    .card-title {
+      font-family: "lemon";
+    }
+  }
+  .sub-title {
+    font-family: "lemon";
+    padding: 5px 20px;
+
+    font-size: 22px;
+  }
+  .payment-card-price,
+  #payment-total {
+    position: absolute;
+    right: 0;
     font-family: "lemon";
   }
-}
-.payment-card-price,
-#payment-total {
-  position: absolute;
-  right: 0;
-  font-family: "lemon";
-}
-#payment-total {
-  margin-right: 20px;
-}
-#payment-message {
-  font-family: "lemon";
-  font-size: 22px;
-  text-align: center;
-  padding-top: 20px;
+  #payment-total-div {
+    position: relative;
+    #payment-total {
+      margin-right: 20px;
+    }
+  }
+
+  #payment-message {
+    font-family: "lemon";
+    font-size: 22px;
+    text-align: center;
+    padding-top: 20px;
+  }
+  #userForm {
+    padding: 30px 40px;
+    margin: 0 auto;
+    position: relative;
+    .formDiv {
+      position: relative;
+      font-family: "lemon";
+      input {
+        width: calc(100% - 20px);
+        padding: 4px 10px;
+      }
+    }
+  }
 }

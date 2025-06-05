@@ -1,3 +1,4 @@
+import { makeCopy, tryParse } from "../utils/general.js";
 exports.handler = async (event) => {
   let response;
   const baseUrl = "https://kos.craftedbymartin.com";
@@ -32,7 +33,7 @@ exports.handler = async (event) => {
     //   };
     // }
     const fullUrl = baseUrl + productsUrl;
-    console.log("fullUrl", fullUrl);
+
     response = await fetch(fullUrl, {
       method: "GET",
       headers: {

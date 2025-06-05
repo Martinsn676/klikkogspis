@@ -1,4 +1,4 @@
-import { modal } from "./modalHandler.mjs";
+import { modal } from "./modalHandler.js";
 
 export const helpBlock = {
   add(message) {

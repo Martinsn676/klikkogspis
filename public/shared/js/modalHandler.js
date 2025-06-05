@@ -1,5 +1,5 @@
-import { lang } from "./lang.mjs";
-import { createButton, createForm } from "./lazyFunctions.mjs";
+import { lang } from "./lang.js";
+import { createButton, createForm } from "./lazyFunctions.js";
 
 export const modal = {
   init() {

@@ -1,0 +1,135 @@
+#admin-page {
+  margin: 10px;
+  position: relative;
+  #admin-items-container {
+    position: relative;
+    &[data-filtertype="19"] {
+      form {
+        display: none;
+        &[data-type="19"] {
+          display: block;
+        }
+      }
+    }
+    &[data-filtertype="17"] {
+      form {
+        display: none;
+        &[data-type="17"] {
+          display: block;
+        }
+      }
+    }
+    &[data-filtertype="18"] {
+      form {
+        display: none;
+        &[data-type="18"] {
+          display: block;
+        }
+      }
+    }
+    #filter-select {
+      margin-bottom: 20px;
+    }
+    form {
+      .icon-div {
+        position: absolute;
+        right: 10px;
+        top: 15px;
+        img {
+          height: 2rem;
+          display: none;
+        }
+      }
+      .submit-button {
+        display: none;
+      }
+      &[data-editing="yes"] {
+        .submit-button,
+        .icon-div img.save-icon {
+          display: block;
+        }
+      }
+      &[data-status="draft"] {
+        .icon-div img.unavailable-icon {
+          display: block;
+        }
+      }
+      &[data-status="private"] {
+        .icon-div img.hidden-icon {
+          display: block;
+        }
+      }
+      position: relative;
+      border: 0.5px solid grey;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      // background-color: rgba(72, 72, 72, 0.5);
+      &[data-type-view="17"] {
+        .only-normal,
+        div > .only-normal-inside {
+          display: none;
+        }
+      }
+      &[data-type-view="18"] {
+        .only-normal,
+        div > .only-normal-inside {
+          display: none;
+        }
+      }
+    }
+    .title {
+      cursor: pointer;
+      padding: 20px;
+      font-family: "lemon";
+    }
+    .option-title {
+      font-family: "lemon";
+      text-align: center;
+      padding: 5px;
+    }
+
+    .container {
+      padding: 20px;
+      padding-bottom: 50px;
+      input,
+      textarea,
+      select {
+        width: calc(100% - 1.5rem);
+      }
+      .formDiv {
+        font-family: "lemon";
+        padding: 10px 4px 2px 4px;
+        position: relative;
+      }
+      &.hidden-container {
+        animation: hideContainer 2s ease forwards;
+        height: 0;
+        overflow-y: hidden;
+        padding: 0 !important;
+        .right-button,
+        .left-button {
+          display: none;
+        }
+      }
+      .right-button {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        border-radius: 20px 0 20px 0;
+      }
+      .left-button {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        border-radius: 0 20px 0 20px;
+      }
+    }
+  }
+}
+@keyframes hideContainer {
+  0% {
+  }
+  100% {
+  }
+}

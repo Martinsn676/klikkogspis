@@ -35,7 +35,6 @@ exports.handler = async (event) => {
       baseUrl +
       `/wp-json/calendar/v1/tracking/?user_id=${userID}&month=${month}&year=${year}`;
 
-    console.log("url", url);
     response = await fetch(url, {
       method: "GET",
       headers: {

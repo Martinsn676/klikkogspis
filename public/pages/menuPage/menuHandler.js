@@ -1,7 +1,8 @@
-import { mainHandler } from "../../js/mainHandler.mjs";
-import { navigateTo } from "../../js/pageNav.mjs";
-import { lang } from "./../../shared/js/lang.mjs";
-import { createButtons, createP } from "./../../shared/js/lazyFunctions.mjs";
+import { mainHandler } from "../../js/mainHandler.js";
+import { navigateTo } from "../../js/pageNav.js";
+import { adminHandler } from "../adminPage/adminHandler.js";
+import { lang } from "../../shared/js/lang.js";
+import { createButtons, createP } from "../../shared/js/lazyFunctions.js";
 const address = "Sentrumsvegen 15, 5460 Husnes";
 const openingHours = [
   [lang({ no: "Mandag", en: "Monday" })],
@@ -105,6 +106,35 @@ export const menuHandler = {
         classes: "bootstrap-btn-neutral",
       },
     ];
+    const adminButtons = [
+      {
+        text: lang({
+          no: "Se andre restauranter",
+          en: "See other restaurants",
+        }),
+        // icon: "./icons/restaurantMenuIcon.png",
+        page: "restaurantsPage",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: () => console.log("restaurant page"),
+      },
+      {
+        text: lang({ no: "Admin", en: "Admin" }),
+        // icon: "./icons/infoIcon.png",
+        page: "admin",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: () => navigateTo("admin"),
+      },
+      {
+        text: lang({ no: "Admin bestillinger", en: "Admin orders" }),
+        // icon: "./icons/infoIcon.png",
+        page: "admin-orders",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: () => navigateTo("admin-orders"),
+      },
+    ];
     const orderID = new URLSearchParams(location.search).get("order");
     if (orderID) {
       buttons.splice(1, 0, {
@@ -113,11 +143,14 @@ export const menuHandler = {
         page: "waiting",
         change: this.mainContentContainer,
         classes: "bootstrap-btn-neutral",
-        action: () => navigateTo("waiting"),
+        action: () => {
+          adminHandler.init();
+          navigateTo("waiting");
+        },
       });
     }
     createButtons(this.mainContainer, buttons);
-
+    createButtons(this.mainContainer, adminButtons);
     this.mainContainer.appendChild(
       createP(
         lang({

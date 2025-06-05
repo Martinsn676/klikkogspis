@@ -16,11 +16,14 @@ body {
     height: var(--app-height);
     position: relative;
   }
-  #main-menu-page {
+  #main-menu-page,
+  #admin-page,
+  #admin-orders-page {
     display: none;
     position: relative;
     padding-bottom: 20px;
   }
+
   &[data-page="ordering"] {
     #ordering-page {
       display: block;
@@ -43,6 +46,16 @@ body {
   }
   &[data-page="waiting"] {
     #waiting-page {
+      display: block;
+    }
+  }
+  &[data-page="admin"] {
+    #admin-page {
+      display: block;
+    }
+  }
+  &[data-page="admin-orders"] {
+    #admin-orders-page {
       display: block;
     }
   }
@@ -71,7 +84,7 @@ body {
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 .top-bar-container {
-  width: 1005;
+  // width: 1005;
   position: relative;
   height: 12vh;
   display: flex;

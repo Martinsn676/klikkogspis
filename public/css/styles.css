@@ -873,7 +873,9 @@ body footer {
   height: var(--app-height);
   position: relative;
 }
-#main-content #main-menu-page {
+#main-content #main-menu-page,
+#main-content #admin-page,
+#main-content #admin-orders-page {
   display: none;
   position: relative;
   padding-bottom: 20px;
@@ -891,6 +893,12 @@ body footer {
   display: block;
 }
 #main-content[data-page=waiting] #waiting-page {
+  display: block;
+}
+#main-content[data-page=admin] #admin-page {
+  display: block;
+}
+#main-content[data-page=admin-orders] #admin-orders-page {
   display: block;
 }
 
@@ -921,7 +929,6 @@ body footer {
 }
 
 .top-bar-container {
-  width: 1005;
   position: relative;
   height: 12vh;
   display: flex;
@@ -1102,30 +1109,169 @@ body footer {
   width: 80%;
 }
 
-.payment-card {
+#payment-page .payment-card {
   margin: 20px;
   position: relative;
 }
-.payment-card .card-title {
+#payment-page .payment-card .card-title {
   font-family: "lemon";
 }
-
-.payment-card-price,
-#payment-total {
+#payment-page .sub-title {
+  font-family: "lemon";
+  padding: 5px 20px;
+  font-size: 22px;
+}
+#payment-page .payment-card-price,
+#payment-page #payment-total {
   position: absolute;
   right: 0;
   font-family: "lemon";
 }
-
-#payment-total {
+#payment-page #payment-total-div {
+  position: relative;
+}
+#payment-page #payment-total-div #payment-total {
   margin-right: 20px;
 }
-
-#payment-message {
+#payment-page #payment-message {
   font-family: "lemon";
   font-size: 22px;
   text-align: center;
   padding-top: 20px;
+}
+#payment-page #userForm {
+  padding: 30px 40px;
+  margin: 0 auto;
+  position: relative;
+}
+#payment-page #userForm .formDiv {
+  position: relative;
+  font-family: "lemon";
+}
+#payment-page #userForm .formDiv input {
+  width: calc(100% - 20px);
+  padding: 4px 10px;
+}
+
+#waiting-page .title {
+  font-family: "lemon";
+}
+
+#admin-page {
+  margin: 10px;
+  position: relative;
+}
+#admin-page #admin-items-container {
+  position: relative;
+}
+#admin-page #admin-items-container[data-filtertype="19"] form {
+  display: none;
+}
+#admin-page #admin-items-container[data-filtertype="19"] form[data-type="19"] {
+  display: block;
+}
+#admin-page #admin-items-container[data-filtertype="17"] form {
+  display: none;
+}
+#admin-page #admin-items-container[data-filtertype="17"] form[data-type="17"] {
+  display: block;
+}
+#admin-page #admin-items-container[data-filtertype="18"] form {
+  display: none;
+}
+#admin-page #admin-items-container[data-filtertype="18"] form[data-type="18"] {
+  display: block;
+}
+#admin-page #admin-items-container #filter-select {
+  margin-bottom: 20px;
+}
+#admin-page #admin-items-container form {
+  position: relative;
+  border: 0.5px solid grey;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+}
+#admin-page #admin-items-container form .icon-div {
+  position: absolute;
+  right: 10px;
+  top: 15px;
+}
+#admin-page #admin-items-container form .icon-div img {
+  height: 2rem;
+  display: none;
+}
+#admin-page #admin-items-container form .submit-button {
+  display: none;
+}
+#admin-page #admin-items-container form[data-editing=yes] .submit-button,
+#admin-page #admin-items-container form[data-editing=yes] .icon-div img.save-icon {
+  display: block;
+}
+#admin-page #admin-items-container form[data-status=draft] .icon-div img.unavailable-icon {
+  display: block;
+}
+#admin-page #admin-items-container form[data-status=private] .icon-div img.hidden-icon {
+  display: block;
+}
+#admin-page #admin-items-container form[data-type-view="17"] .only-normal,
+#admin-page #admin-items-container form[data-type-view="17"] div > .only-normal-inside {
+  display: none;
+}
+#admin-page #admin-items-container form[data-type-view="18"] .only-normal,
+#admin-page #admin-items-container form[data-type-view="18"] div > .only-normal-inside {
+  display: none;
+}
+#admin-page #admin-items-container .title {
+  cursor: pointer;
+  padding: 20px;
+  font-family: "lemon";
+}
+#admin-page #admin-items-container .option-title {
+  font-family: "lemon";
+  text-align: center;
+  padding: 5px;
+}
+#admin-page #admin-items-container .container {
+  padding: 20px;
+  padding-bottom: 50px;
+}
+#admin-page #admin-items-container .container input,
+#admin-page #admin-items-container .container textarea,
+#admin-page #admin-items-container .container select {
+  width: calc(100% - 1.5rem);
+}
+#admin-page #admin-items-container .container .formDiv {
+  font-family: "lemon";
+  padding: 10px 4px 2px 4px;
+  position: relative;
+}
+#admin-page #admin-items-container .container.hidden-container {
+  animation: hideContainer 2s ease forwards;
+  height: 0;
+  overflow-y: hidden;
+  padding: 0 !important;
+}
+#admin-page #admin-items-container .container.hidden-container .right-button,
+#admin-page #admin-items-container .container.hidden-container .left-button {
+  display: none;
+}
+#admin-page #admin-items-container .container .right-button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px 0 20px 0;
+}
+#admin-page #admin-items-container .container .left-button {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  border-radius: 0 20px 0 20px;
+}
+
+@keyframes hideContainer {}
+#admin-orders-page .order-card {
+  padding: 20px;
 }
 
 body {
@@ -1133,4 +1279,9 @@ body {
   background-color: #fff;
   height: var(--app-height);
   position: relative;
+}
+
+#test-back-button {
+  height: 70%;
+  width: 40%;
 }

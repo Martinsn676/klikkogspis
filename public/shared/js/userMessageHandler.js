@@ -1,4 +1,4 @@
-import { makeCopy } from "./lazyFunctions.mjs";
+import { makeCopy } from "./lazyFunctions.js";
 
 export const userMessageHandler = {
   timerBeforeNextMessage: 2000,
