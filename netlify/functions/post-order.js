@@ -103,7 +103,7 @@ exports.handler = async (event) => {
     if (!response.ok) {
       return res.status(500).json({ error: `Failed to post order` });
     }
-
+    const responseData = response.json();
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -113,7 +113,6 @@ exports.handler = async (event) => {
         status: 200,
         ok: true,
         data: responseData,
-        sendItems,
       }),
     };
   } catch (error) {

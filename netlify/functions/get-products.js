@@ -57,7 +57,6 @@ export async function handler(event) {
         status: 200,
         ok: true,
         content: returnJson,
-        raw: rawJson,
       }),
     };
   } catch (err) {

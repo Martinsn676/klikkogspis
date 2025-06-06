@@ -27,11 +27,11 @@ exports.handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify({
         type: "basic",
-        url,
         redirected: false,
         status: 200,
         ok: true,
         data,
+        utl: fullUrl,
       }),
     };
   } catch (error) {

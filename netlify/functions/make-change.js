@@ -20,17 +20,16 @@ export async function handler(event) {
       body: JSON.stringify(body),
     });
 
-    const responseData = await response.json();
+    // const responseData = await response.json();
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         type: "basic",
-        url: fullUrl,
+
         redirected: false,
         status: 200,
         ok: true,
-        data: responseData,
       }),
     };
   } catch (error) {
