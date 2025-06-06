@@ -24,19 +24,22 @@ export default async (req, res) => {
     if (!response.ok) {
       console.log("response", response);
     }
-
-    const responseData = await response.json();
-
-    res.status(200).json({
-      type: "basic",
-      url: fullUrl,
-      redirected: false,
-      status: 200,
-      ok: true,
-      data: responseData,
-    });
+    const data = await response.json();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        type: "basic",
+        url,
+        redirected: false,
+        status: 200,
+        ok: true,
+        data,
+      }),
+    };
   } catch (error) {
-    console.log("error", error.message);
-    res.status(500).json({ error: `Failed to get orders!` });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: `Failed to get orders!` }),
+    };
   }
 };

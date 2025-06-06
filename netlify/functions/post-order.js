@@ -105,19 +105,24 @@ export default async (req, res) => {
       return res.status(500).json({ error: `Failed to post order` });
     }
 
-    const responseData = await response.json();
-    res.status(200).json({
-      type: "basic",
-      url: fullUrl,
-      redirected: false,
-      status: 200,
-      ok: true,
-      data: responseData,
-      sendItems,
-    });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        type: "basic",
+        url: fullUrl,
+        redirected: false,
+        status: 200,
+        ok: true,
+        data: responseData,
+        sendItems,
+      }),
+    };
   } catch (error) {
-    console.log("error", error.message);
-    res.status(500).json({ error: `Failed to upload!` });
+    console.error("make-change error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Failed to upload!" }),
+    };
   }
 };
 
