@@ -1,10 +1,10 @@
-export default async (req, res) => {
+exports.handler = async (event) => {
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",
     ordersUrl: "/wp-json/custom-orders/v1/restaurant",
   };
 
-  const { restaurant_id = 33 } = req.body;
+  const { restaurant_id = 33 } = JSON.parse(event.body);
 
   try {
     const fullUrl = links.baseUrl + links.ordersUrl + "/" + restaurant_id;

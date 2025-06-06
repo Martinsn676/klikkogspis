@@ -1,10 +1,10 @@
-export default async (req, res) => {
+exports.handler = async (event) => {
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",
     ordersUrl: "/wp-json/custom-orders/v1/track?token=",
   };
 
-  const { tracking_token } = req.body;
+  const { tracking_token } = JSON.parse(event.body);
 
   if (!tracking_token) {
     return res.status(500).json({ error: `Missing token` });

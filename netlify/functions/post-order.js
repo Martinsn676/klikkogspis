@@ -1,4 +1,4 @@
-export default async (req, res) => {
+exports.handler = async (event) => {
   const apiKey = process.env.CONSUMER_KEY;
   const apiSecret = process.env.CONSUMER_SECRET;
 
@@ -8,8 +8,7 @@ export default async (req, res) => {
     productsUrl: "/wp-json/wc/v3/products?include=",
   };
 
-  const { cartContent, userData, restaurant_id } = req.body;
-
+  const { cartContent, userData, restaurant_id } = JSON.parse(event.body);
   const body = {
     restaurant_id,
     payment_intent_id: "pi_123456789",
