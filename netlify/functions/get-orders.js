@@ -35,6 +35,7 @@ export default async (req, res) => {
       }),
     };
   } catch (error) {
+    console.warn("error", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: `Failed to get orders!` }),
