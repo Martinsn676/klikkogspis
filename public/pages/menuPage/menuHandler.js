@@ -3,6 +3,8 @@ import { navigateTo } from "../../js/pageNav.js";
 import { adminHandler } from "../adminPage/adminHandler.js";
 import { lang } from "../../shared/js/lang.js";
 import { createButtons, createP } from "../../shared/js/lazyFunctions.js";
+import { lsList } from "../../shared/js/lists.js";
+import { loginHandler } from "../loginPage/loginHandler.js";
 const address = "Sentrumsvegen 15, 5460 Husnes";
 const openingHours = [
   [lang({ no: "Mandag", en: "Monday" })],
@@ -124,7 +126,14 @@ export const menuHandler = {
         page: "admin",
         change: this.mainContentContainer,
         classes: "bootstrap-btn-neutral",
-        action: () => navigateTo("admin"),
+        action: async () => {
+          const token = await lsList.get("token");
+          if (!token) {
+            loginHandler.open();
+          } else {
+            navigateTo("admin");
+          }
+        },
       },
       {
         text: lang({ no: "Admin bestillinger", en: "Admin orders" }),

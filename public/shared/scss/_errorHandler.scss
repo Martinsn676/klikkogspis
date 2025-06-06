@@ -1,0 +1,42 @@
+.message-container {
+  position: fixed;
+  transform: translateX(-50%);
+  left: 50%;
+  animation: goDown 2s ease forwards;
+  z-index: 1000;
+  .error-message,
+  .success-message {
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  .error-message {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  .success-message {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+}
+
+@keyframes goDown {
+  0% {
+    opacity: 0;
+    top: -20px;
+  }
+  10% {
+    opacity: 1;
+    top: 100px;
+  }
+  90% {
+    opacity: 1;
+    top: 100px;
+  }
+  100% {
+    opacity: 0;
+    top: 100px;
+  }
+}

@@ -1274,6 +1274,62 @@ body footer {
   padding: 20px;
 }
 
+#modal-container[data-page=login] .formDiv {
+  font-family: "lemon";
+  padding: 5px;
+  position: relative;
+}
+#modal-container[data-page=login] .formDiv input {
+  width: calc(100% - 20px);
+  padding: 4px 10px;
+}
+#modal-container[data-page=login] #forgot-password-button {
+  background-color: white;
+  color: black;
+}
+
+.message-container {
+  position: fixed;
+  transform: translateX(-50%);
+  left: 50%;
+  animation: goDown 2s ease forwards;
+  z-index: 1000;
+}
+.message-container .error-message,
+.message-container .success-message {
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+}
+.message-container .error-message {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+.message-container .success-message {
+  color: #fff;
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+@keyframes goDown {
+  0% {
+    opacity: 0;
+    top: -20px;
+  }
+  10% {
+    opacity: 1;
+    top: 100px;
+  }
+  90% {
+    opacity: 1;
+    top: 100px;
+  }
+  100% {
+    opacity: 0;
+    top: 100px;
+  }
+}
 body {
   margin: 0;
   background-color: #fff;
@@ -1284,4 +1340,30 @@ body {
 #test-back-button {
   height: 70%;
   width: 40%;
+}
+
+.button {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.button.neutral {
+  background-color: #ccc; /* Soft pastel red */
+  border: 1px solid #ccc; /* Slightly darker border */
+}
+.button.danger {
+  background-color: #f9c7c7; /* Soft pastel red */
+  border: 1px solid #e57373; /* Slightly darker border */
+  color: #a94442; /* Dark red text */
+}
+.button.positive {
+  background-color: #c8f7c5; /* Soft pastel green */
+  border: 1px solid #7ac47a; /* Slightly darker border */
+  color: #2d7a2d; /* Dark green text */
+}
+.button.light-danger {
+  background-color: #eca3a3; /* Soft pastel red */
+  border: 1px solid #ceaaaa; /* Slightly darker border */
+  color: #7a3e3d; /* Dark red text */
 }

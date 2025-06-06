@@ -7,16 +7,16 @@ exports.handler = async (event) => {
   const apiSecret = process.env.CONSUMER_SECRET;
   try {
     // Parse request body
-    const { storeName } = JSON.parse(event.body);
+    const { storeID } = JSON.parse(event.body);
 
     // Validate required fields
-    if (!storeName) {
+    if (!storeID) {
       return {
         statusCode: 400,
         body: JSON.stringify({
           status: 400,
           ok: false,
-          message: "Missing required fields: storeName",
+          message: "Missing required fields: storeID",
         }),
       };
     }
@@ -32,7 +32,7 @@ exports.handler = async (event) => {
     //     }),
     //   };
     // }
-    const fullUrl = baseUrl + productsUrl;
+    const fullUrl = baseUrl + productsUrl + "&restaurant_owner=" + storeID;
 
     response = await fetch(fullUrl, {
       method: "GET",

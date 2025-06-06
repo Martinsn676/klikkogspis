@@ -47,6 +47,7 @@ export const api = {
     } catch (err) {
       console.error(err);
       console.warn("No json", response);
+      return { message: "JSON error", code: 500 };
     }
   },
   async tryLocal(path, body = {}) {

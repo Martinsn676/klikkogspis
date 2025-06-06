@@ -41,8 +41,9 @@ export const modal = {
     document.body.classList.remove("showing-modal");
     console.log("close modal");
   },
-  restartModal() {
+  restartModal(page = "") {
     console.log("restart modal");
+    this.mainContainer.dataset.page = page;
     this.header.innerHTML = "";
     this.content.classList.remove("no-header");
     this.body.innerHTML = "";

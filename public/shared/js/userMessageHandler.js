@@ -17,7 +17,7 @@ export const userMessageHandler = {
   },
   displayFromArray() {
     const arrayMessage = this.messages[0];
-
+    console.log("arrayMessage", arrayMessage);
     if (arrayMessage) {
       if (arrayMessage[1]) {
         arrayMessage[0](arrayMessage[1]);
@@ -59,6 +59,7 @@ export const userMessageHandler = {
   },
 
   displayNegativeMesage(message) {
+    console.log("message", message);
     this.addMessageToArray([renderNegativeMesage, message]);
   },
 };

@@ -2,7 +2,7 @@
 @import "../public/shared/scss/lazy/lazy";
 @import "../public/shared/scss/modal/placement";
 @import "../public/shared/scss/helpBlock";
-@import "../public/shared/scss/lazy/laxyFuncitons";
+@import "../public/shared/scss/lazy/lazyFuncitons";
 @import "../public/pages/menuPage/styles";
 @import "../public/pages/pageStyles";
 @import "../public/pages/orderPage/styles";
@@ -11,6 +11,8 @@
 @import "../public/pages/waitingPage/styles";
 @import "../public/pages/adminPage/styles";
 @import "../public/pages/adminOrders/styles";
+@import "../public/pages/loginPage/styles";
+@import "../public/shared/scss/errorHandler";
 body {
   margin: 0;
   //   background-color: linear-gradient(180deg, #f2f2f2 20%, white 80%);
@@ -21,4 +23,31 @@ body {
 #test-back-button {
   height: 70%;
   width: 40%;
+}
+.button {
+  cursor: pointer;
+  // margin: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &.neutral {
+    background-color: #ccc; /* Soft pastel red */
+    border: 1px solid #ccc; /* Slightly darker border */
+  }
+  &.danger {
+    background-color: #f9c7c7; /* Soft pastel red */
+    border: 1px solid #e57373; /* Slightly darker border */
+    color: #a94442; /* Dark red text */
+  }
+
+  &.positive {
+    background-color: #c8f7c5; /* Soft pastel green */
+    border: 1px solid #7ac47a; /* Slightly darker border */
+    color: #2d7a2d; /* Dark green text */
+  }
+  &.light-danger {
+    background-color: #eca3a3; /* Soft pastel red */
+    border: 1px solid #ceaaaa; /* Slightly darker border */
+    color: #7a3e3d; /* Dark red text */
+  }
 }
