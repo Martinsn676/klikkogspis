@@ -10,7 +10,7 @@ import { lsList } from "../shared/js/lists.js";
 import { mockProducts } from "./mockProducts.js";
 import { navigateTo } from "./pageNav.js";
 export const mainHandler = {
-  versionNr: "0.5.0",
+  versionNr: "0.6.0",
   restaurantName: "China Restaurant Husnes",
   async init() {
     const response = await api.try("get-orders", {
@@ -27,9 +27,7 @@ export const mainHandler = {
     this.initAll();
   },
   async initAll() {
-    console.info("relaoding");
     menuHandler.init();
-
     orderHandler.init();
     adminHandler.init();
     await checkOutHandler.init();
