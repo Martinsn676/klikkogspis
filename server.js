@@ -434,8 +434,8 @@ app.post("/api/post-order", async (req, res) => {
     res.status(500).json({ error: `Failed to upload!` });
   }
 });
-app.post("/api/getToken", async (req, res) => {
-  console.log("getToken================");
+app.post("/api/get-token", async (req, res) => {
+  console.log("get-token================");
   const { username, password } = req.body;
   const getTokenUrl = baseUrl + `/wp-json/custom-jwt-auth/v1/token`;
   let tokenResponse;

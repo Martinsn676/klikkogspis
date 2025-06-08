@@ -82,7 +82,7 @@ export const loginHandler = {
           ).value;
           console.log("email", email);
           console.log("passord", passord);
-          const response = await api.try("getToken", {
+          const response = await api.try("get-token", {
             username: email,
             password: passord,
           });
