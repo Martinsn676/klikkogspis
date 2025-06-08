@@ -17,7 +17,7 @@ const openingHours = [
 ];
 
 export const menuHandler = {
-  init() {
+  async init() {
     console.log("===menuHandler===");
     this.mainContainer = document.getElementById("main-menu-page");
     this.mainContainer.innerHTML = "";
@@ -103,12 +103,12 @@ export const menuHandler = {
           mainHandler.lng = mainHandler.lng == "en" ? "no" : "en";
           history.pushState(null, "", newUrl); // Updates the URL without reloading the page
 
-          mainHandler.reload(true);
+          mainHandler.refresh(true);
         },
         classes: "bootstrap-btn-neutral",
       },
     ];
-    const adminButtons = [
+    const publicButtons = [
       {
         text: lang({
           no: "Se andre restauranter",
@@ -120,8 +120,31 @@ export const menuHandler = {
         classes: "bootstrap-btn-neutral",
         action: () => console.log("restaurant page"),
       },
-      {
-        text: lang({ no: "Admin", en: "Admin" }),
+    ];
+    const adminButtons = [];
+
+    const tokenFound = await lsList.get("token");
+    console.log("tokenFound", tokenFound);
+    if (tokenFound) {
+      adminButtons.push({
+        text: lang({ no: "Admin produkter", en: "Admin products" }),
+        // icon: "./icons/infoIcon.png",
+        page: "admin",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: () => navigateTo("admin"),
+      });
+      adminButtons.push({
+        text: lang({ no: "Admin orders", en: "Admin bestillinger" }),
+        // icon: "./icons/infoIcon.png",
+        page: "admin-orders",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: () => navigateTo("admin-orders"),
+      });
+    } else {
+      adminButtons.push({
+        text: lang({ no: "Restaurant eier?", en: "Restaurant owner?" }),
         // icon: "./icons/infoIcon.png",
         page: "admin",
         change: this.mainContentContainer,
@@ -130,20 +153,10 @@ export const menuHandler = {
           const token = await lsList.get("token");
           if (!token) {
             loginHandler.open();
-          } else {
-            navigateTo("admin");
           }
         },
-      },
-      {
-        text: lang({ no: "Admin bestillinger", en: "Admin orders" }),
-        // icon: "./icons/infoIcon.png",
-        page: "admin-orders",
-        change: this.mainContentContainer,
-        classes: "bootstrap-btn-neutral",
-        action: () => navigateTo("admin-orders"),
-      },
-    ];
+      });
+    }
     const orderID = new URLSearchParams(location.search).get("order");
     if (orderID) {
       buttons.splice(1, 0, {
@@ -158,7 +171,24 @@ export const menuHandler = {
         },
       });
     }
+    const divider = document.createElement("div");
+    divider.classList = "menu-divider";
+    divider.innerText = lang({ no: "Annet", en: "Other" });
     createButtons(this.mainContainer, buttons);
+    this.mainContainer.appendChild(divider);
+    createButtons(this.mainContainer, publicButtons);
+    const divider2 = document.createElement("div");
+    divider2.classList = "menu-divider";
+    divider2.innerText = tokenFound
+      ? lang({
+          no: "Administrasjon",
+          en: "Administration",
+        })
+      : lang({
+          no: "Resturanteier?",
+          en: "Restaurant owner?",
+        });
+    this.mainContainer.appendChild(divider2);
     createButtons(this.mainContainer, adminButtons);
     this.mainContainer.appendChild(
       createP(

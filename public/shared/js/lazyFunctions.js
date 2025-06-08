@@ -167,7 +167,7 @@ export function createForm({
     buttonDiv.type = "submit";
     form.appendChild(buttonDiv);
   }
-  console.log("form", form);
+
   return form;
 }
 
@@ -183,6 +183,7 @@ export function createButton(data) {
     action2,
     action3,
     icon,
+    disabled,
   } = data;
 
   const button = document.createElement("button");
@@ -194,7 +195,7 @@ export function createButton(data) {
   } else {
     button.innerHTML = text || "Click";
   }
-
+  if (disabled) button.disabled = true;
   if (text)
     button.id = id || text?.toLowerCase().replace(/\s+/g, "-") + "-button";
   if (onClick) {
@@ -270,6 +271,7 @@ export function createInput(options) {
     minLength = "",
     button = "",
     onLabelClick = "",
+    inputClasses = "",
   } = options;
   const formDiv = document.createElement("div");
   let valid = true;
@@ -334,6 +336,7 @@ export function createInput(options) {
       }
     });
   }
+
   if (only) {
     input.addEventListener("keypress", (event) => {
       // if (only == "text") {
@@ -532,7 +535,7 @@ function allowOnlyLetters(event) {
 }
 
 // Allow only numbers + space, tab, enter
-function allowOnlyNumbers(event) {
+export function allowOnlyNumbers(event) {
   const char = event.key;
   if (
     !/^[0-9]$/.test(char) &&

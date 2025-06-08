@@ -78,7 +78,10 @@ exports.handler = async (event) => {
     });
   } catch (err) {
     console.log("err", err);
-    return res.status(500).json({ error: `Failed to fetch products` });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: `Failed to fetch products` }),
+    };
   }
 
   body.items = sendItems;
@@ -101,7 +104,10 @@ exports.handler = async (event) => {
     });
 
     if (!response.ok) {
-      return res.status(500).json({ error: `Failed to post order` });
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: `Failed to post order` }),
+      };
     }
     const responseData = response.json();
     return {

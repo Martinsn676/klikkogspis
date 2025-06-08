@@ -24,7 +24,8 @@ export const api = {
       await lsList.clearAll();
       await ssList.clearAll();
       // userLogin();
-      throw new Error("Forbidden");
+      // throw new Error("Forbidden");
+      return { message: "You can't do this!", code: 403 };
     }
     let json;
     try {

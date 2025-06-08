@@ -1,6 +1,9 @@
 export function lang(message, fallback, log) {
   const lng = new URLSearchParams(location.search).get("lng");
-
+  if (!message) {
+    console.warn("missing message", console.trace());
+    return "";
+  }
   if (!message.no || !message.en) {
     if (log) {
       console.warn(

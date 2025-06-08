@@ -10,9 +10,8 @@ export const template = {
     <div class="top-part flex-row">
         <div class="image-container">
         <img src="${
-          item.images && item.images[0]
-            ? item.images[0].src
-            : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+          item.images[0] ||
+          "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
         }" alt="item-iamge">
         </div>
         <div class="allergieses-container">
@@ -76,9 +75,8 @@ export const template = {
     <div class="top-part flex-row">
  <div class="image-container">
                     <img src="${
-                      item.images[0] && item.images[0].src
-                        ? item.images[0].src
-                        : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                      item.images[0] ||
+                      "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                     }">
                 </div>
   

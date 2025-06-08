@@ -64,28 +64,45 @@ exports.handler = async (event) => {
       };
     }
     let json;
-    const keepThese = ["images", "name", "description", "regular_price", "id"];
+    const keepThese = [
+      "images",
+      "name",
+      "description",
+      "regular_price",
+      "id",
+      "categories",
+      "stock_quantity",
+      "status",
+    ];
     const keepTheseMeta = [
       "title_translations",
       "description_translations",
       "allergies",
       "foodoptions",
       "fixeditem",
-      "itemNumber",
+      "itemnumber",
     ];
     json = await response.json();
     const rawJson = makeCopy(json);
     const returnJson = [];
     json.forEach((element) => {
-      const object = { meta: {} };
+      const object = { meta_data: [], meta: {} };
 
       keepThese.forEach((i) => (object[i] = element[i]));
       const meta = {};
-      element.meta_data.forEach(({ key, value }) => (meta[key] = value));
-      keepTheseMeta.forEach((i) => (object.meta[i] = tryParse(meta[i])));
+      // element.meta_data.forEach(({ key, value,id }) => (meta[key] = value));
+      keepTheseMeta.forEach((i) => {
+        const meta = element.meta_data.find((meta) => {
+          return meta.key == i;
+        });
+        if (meta) {
+          meta.value = tryParse(meta.value);
+          object.meta_data.push(meta);
+          object.meta[meta.key] = meta.value;
+        }
+      });
       returnJson.push(object);
     });
-
     return {
       statusCode: 200,
       body: JSON.stringify({

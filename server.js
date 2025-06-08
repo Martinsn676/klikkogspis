@@ -1,5 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
+import formidable from "formidable";
+import fs from "fs";
+import FormData from "form-data";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -7,7 +10,7 @@ const PORT = process.env.PORT || 3002;
 const apiKey = process.env.CONSUMER_KEY;
 const apiSecret = process.env.CONSUMER_SECRET;
 const postalKey = process.env.POSTAL_KYE;
-
+const baseUrl = "https://kos.craftedbymartin.com";
 // Middleware to enable CORS
 // Middleware to enable CORS
 app.use((req, res, next) => {
@@ -39,11 +42,12 @@ app.use(express.json());
 // Endpoint to make the API call to WooCommerce
 app.post("/api/getProducts", async (req, res) => {
   const baseUrl = "https://kos.craftedbymartin.com";
-  const productsUrl = "/wp-json/wc/v3/products?per_page=100";
-  const { storeID } = req.body;
-
-  const fullUrl = baseUrl + productsUrl + "&restaurant_owner=" + storeID;
-
+  const productsUrl =
+    "/wp-json/wc/v3/custom-products?per_page=100&restaurant_owner=";
+  const { storeID, token } = req.body;
+  const userID = await verifyUserID(token);
+  const fullUrl = baseUrl + productsUrl + storeID;
+  console.log("fullUrl", fullUrl);
   try {
     const response = await fetch(fullUrl, {
       method: "GET",
@@ -65,6 +69,7 @@ app.post("/api/getProducts", async (req, res) => {
       "stock_quantity",
       "status",
     ];
+
     const keepTheseMeta = [
       "title_translations",
       "description_translations",
@@ -74,6 +79,7 @@ app.post("/api/getProducts", async (req, res) => {
       "itemnumber",
     ];
     json = await response.json();
+
     const rawJson = makeCopy(json);
     const returnJson = [];
     json.forEach((element) => {
@@ -92,13 +98,15 @@ app.post("/api/getProducts", async (req, res) => {
           object.meta[meta.key] = meta.value;
         }
       });
-      returnJson.push(object);
+      if (object.status == "publish" || userID) {
+        returnJson.push(object);
+      }
     });
 
     res.status(200).json({
       status: 200,
       ok: true,
-      content: returnJson,
+      content: json,
       raw: rawJson,
     });
   } catch (err) {
@@ -139,8 +147,9 @@ app.post("/api/make-change", async (req, res) => {
     // }
 
     const fullUrl = body.id
-      ? links.baseUrl + links.productsUrl + "/" + body.id
-      : links.baseUrl + links.productsUrl;
+      ? baseUrl + links.productsUrl + "/" + body.id
+      : baseUrl + links.productsUrl;
+
     // Fetch data from the WooCommerce API
     const response = await fetch(fullUrl, {
       method: action,
@@ -175,8 +184,29 @@ app.post("/api/get-orders", async (req, res) => {
     ordersUrl: "/wp-json/custom-orders/v1/restaurant",
   };
 
-  const { restaurant_id = 33 } = req.body;
-
+  const { restaurant_id, token } = req.body;
+  console.log("token========", token);
+  const userID = await verifyUserID(token);
+  console.log("userID", userID);
+  const access = { id2: [33] };
+  let allowed = false;
+  console.log("access[userID", access["id" + userID]);
+  if (access["id" + userID]) {
+    if (
+      access["id" + userID].find((e) => {
+        console.log(e, restaurant_id);
+        return e == restaurant_id;
+      })
+    ) {
+      console.log("===allowed");
+      allowed = true;
+    }
+  }
+  console.log("allowed", allowed);
+  if (!allowed) {
+    res.status(403).json({ error: `Not allowed!` });
+    return;
+  }
   // Parse exportBody back to JSON object
   try {
     // Determine the base URL for the WooCommerce API based on the provided endUrl
@@ -184,7 +214,7 @@ app.post("/api/get-orders", async (req, res) => {
     //   throw new Error("You are not allowed to do this");
     // }
 
-    const fullUrl = links.baseUrl + links.ordersUrl + "/" + restaurant_id;
+    const fullUrl = baseUrl + links.ordersUrl + "/" + restaurant_id;
     // Fetch data from the WooCommerce API
     const response = await fetch(fullUrl, {
       method: "GET",
@@ -232,7 +262,7 @@ app.post("/api/public-get-order", async (req, res) => {
     //   throw new Error("You are not allowed to do this");
     // }
 
-    const fullUrl = links.baseUrl + links.ordersUrl + tracking_token;
+    const fullUrl = baseUrl + links.ordersUrl + tracking_token;
     // Fetch data from the WooCommerce API
     const response = await fetch(fullUrl, {
       method: "GET",
@@ -290,7 +320,7 @@ app.post("/api/post-order", async (req, res) => {
       productsIDS += "," + e.id;
     }
   });
-  const fillProductsUrl = links.baseUrl + links.productsUrl + productsIDS;
+  const fillProductsUrl = baseUrl + links.productsUrl + productsIDS;
   let finalTotal = 0;
   const sendItems = [];
   try {
@@ -332,7 +362,7 @@ app.post("/api/post-order", async (req, res) => {
               value = "yes";
             }
           }
-          console.log("details.type", details.type, value);
+
           meta.push({
             key: "option",
             value: {
@@ -372,7 +402,7 @@ app.post("/api/post-order", async (req, res) => {
     //   throw new Error("You are not allowed to do this");
     // }
 
-    const fullUrl = links.baseUrl + links.ordersUrl;
+    const fullUrl = baseUrl + links.ordersUrl;
     // Fetch data from the WooCommerce API
 
     const response = await fetch(fullUrl, {
@@ -404,7 +434,186 @@ app.post("/api/post-order", async (req, res) => {
     res.status(500).json({ error: `Failed to upload!` });
   }
 });
+app.post("/api/getToken", async (req, res) => {
+  console.log("getToken================");
+  const { username, password } = req.body;
+  const getTokenUrl = baseUrl + `/wp-json/custom-jwt-auth/v1/token`;
+  let tokenResponse;
 
+  try {
+    tokenResponse = await fetch(getTokenUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+  } catch (error) {
+    console.warn(error);
+  } finally {
+  }
+
+  if (tokenResponse.status == 429) {
+    res.status(429).json({
+      statusCode: 429,
+      content: { message: "For mange forsøk, vent noen sekunder" },
+    });
+    return;
+  }
+  if (tokenResponse.status == 503) {
+    res.status(503).json({
+      statusCode: 503,
+      content: {
+        message: "For mange forsøk, prøv igjen senere",
+      },
+    });
+    return;
+  }
+  let json;
+  try {
+    json = await tokenResponse.json();
+  } catch (err) {
+    console.log("err", err);
+    json = err;
+  }
+  res.status(200).json({
+    statusCode: 200,
+    content: json,
+    message: tokenResponse,
+  });
+});
+
+app.post("/api/upload-image", async (req, res) => {
+  console.log("🛬 /api/uploadImage POST endpoint triggered");
+
+  try {
+    const { fields, files } = await new Promise((resolve, reject) => {
+      const form = formidable({ multiples: false });
+
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          console.error("❌ Form parse error:", err);
+          reject(err);
+        } else {
+          console.log("✅ Form parsed successfully");
+          console.log("📦 Fields:", fields);
+          console.log("📎 Files:", files);
+          resolve({ fields, files });
+        }
+      });
+    });
+
+    const token = fields.token;
+    const file = Array.isArray(files.file) ? files.file[0] : files.file;
+
+    if (!token || !file) {
+      throw new Error("Missing token or file");
+    }
+
+    console.log("🔐 Verifying token...");
+    const userID = await verifyUserID(token);
+    if (!userID) throw new Error("Invalid user token");
+    console.log("✅ Token verified, user ID:", userID);
+
+    const filePath = file.filepath;
+    const fileName = file.originalFilename;
+    const fileType = file.mimetype;
+    const fileSize = fs.statSync(filePath).size;
+
+    console.log("🧵 Preparing file stream for:", fileName);
+    console.log("📁 file path:", filePath);
+    console.log("📎 mimetype:", fileType);
+    console.log("📏 file size:", fileSize);
+
+    const formData = new FormData();
+    formData.append("file", fs.createReadStream(filePath), {
+      filename: fileName,
+      contentType: fileType,
+      knownLength: fileSize,
+    });
+
+    const requestOptions = {
+      method: "POST",
+      host: "kos.craftedbymartin.com",
+      path: "/wp-json/wp/v2/media",
+      protocol: "https:",
+      headers: {
+        Authorization: "Bearer " + token,
+        ...formData.getHeaders(),
+      },
+    };
+
+    console.log("📤 Uploading file to WordPress...");
+    formData.submit(requestOptions, (err, wpRes) => {
+      if (err) {
+        console.error("❌ Upload error:", err);
+        return res.status(500).json({ error: "Failed to upload file" });
+      }
+
+      let body = "";
+      wpRes.on("data", (chunk) => (body += chunk));
+      wpRes.on("end", () => {
+        try {
+          const json = JSON.parse(body);
+          if (wpRes.statusCode >= 400) {
+            console.error("❌ WP Error:", json);
+            return res.status(wpRes.statusCode).json(json);
+          }
+          console.log("✅ WP upload success:", json);
+          res.status(200).json({ statusCode: 200, content: json });
+        } catch (e) {
+          console.error("❌ Failed to parse WP response:", body);
+          res.status(500).json({ error: "Failed to parse response" });
+        }
+      });
+    });
+  } catch (err) {
+    console.error("❌ Upload error:", err);
+    res.status(500).json({ error: err.message || "Upload failed" });
+  }
+});
+
+async function verifyUserID(token) {
+  if (!token) {
+    return false;
+  }
+  const validateUrl = baseUrl + `/wp-json/custom-jwt-auth/v1/validate`;
+
+  let tokenResponse;
+  try {
+    tokenResponse = await fetch(validateUrl, {
+      method: "POST",
+      headers: {
+        // Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    });
+  } catch (error) {
+    console.warn(error);
+  } finally {
+  }
+
+  if (!token || tokenResponse.status == 403) {
+    return false;
+  } else {
+    const parts =
+      typeof token == "string" ? token.split(".") : token[0].split(".");
+    if (parts.length !== 3) {
+      throw new Error("Token structure incorrect");
+    }
+    try {
+      const payloadBase64 = parts[1];
+      const payloadJson = atob(payloadBase64);
+      const payload = JSON.parse(payloadJson);
+      const userID = payload.data.user.id;
+
+      return userID;
+    } catch (err) {
+      return false;
+    }
+  }
+}
 app.listen(PORT, () => {
   console.log(`Local server is running on port ${PORT}`);
 });

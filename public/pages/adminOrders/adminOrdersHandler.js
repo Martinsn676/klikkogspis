@@ -8,6 +8,7 @@ export const adminOrdersHandler = {
       "admin-orders-items-container"
     );
     this.bottomBar = document.getElementById("admin-orders-bottom-bar");
+    this.topBar.innerHTML = "";
     const backButton = document.createElement("button");
     backButton.innerText = "Back";
     backButton.id = "test-back-button";

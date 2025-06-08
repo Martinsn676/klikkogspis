@@ -1,8 +1,14 @@
 import { mainHandler } from "../../js/mainHandler.js";
 import { navigateTo } from "../../js/pageNav.js";
 import { universal } from "../../js/variables.js";
+import { api } from "../../shared/js/api.js";
 import { lang } from "../../shared/js/lang.js";
-import { createInput, makeCopy } from "../../shared/js/lazyFunctions.js";
+import {
+  createInput,
+  createManyInputs,
+  makeCopy,
+} from "../../shared/js/lazyFunctions.js";
+import { lsList } from "../../shared/js/lists.js";
 import { template } from "../templates/itemCards.js";
 import { exportHandler } from "./exportHandler.js";
 
@@ -11,6 +17,7 @@ export const adminHandler = {
     this.topBar = document.getElementById("admin-top-bar");
     this.mainContainer = document.getElementById("admin-items-container");
     this.bottomBar = document.getElementById("admin-bottom-bar");
+    this.topBar.innerHTML = "";
     const backButton = document.createElement("button");
     backButton.innerText = "Back";
 
@@ -23,6 +30,7 @@ export const adminHandler = {
   build() {
     this.mainContainer.innerHTML = "";
     this.itemsContainer = document.createElement("div");
+    this.itemsContainer.id = "items-container";
     const types = [
       [universal.catNormalID, lang({ no: "Vanlig", en: "Normal" })],
       [universal.catDrinksID, lang({ no: "Drikke", en: "Drink" })],
@@ -46,9 +54,9 @@ export const adminHandler = {
     function updatePreview(place, item) {
       place.innerText = `${
         item.meta.itemnumber ? `Nr ${item.meta.itemnumber} ` : ""
-      }${item.meta.title_translations.no || item.name}, ${
-        item.regular_price
-      } kr`;
+      }${item.meta.title_translations.no || item.name}${
+        item.regular_price ? `, ${item.regular_price} kr` : ""
+      }`;
     }
     const filterSelect = document.createElement("select");
     filterSelect.classList = "bootstrap-select";
@@ -66,8 +74,11 @@ export const adminHandler = {
       this.itemsContainer.dataset.filtertype = e.target.value;
     });
     this.itemsContainer.appendChild(filterSelect);
-    mainHandler.products.forEach((item) => createAdminItem(item));
-    function createAdminItem(item) {
+    console.log("    mainHandler.products", mainHandler.products);
+    mainHandler.products.forEach((item) =>
+      adminHandler.itemsContainer.appendChild(createAdminItem(item))
+    );
+    function createAdminItem(item, startOpen) {
       const orgItem = makeCopy(item);
 
       if (!testIDS || testIDS.find((e) => e == item.id)) {
@@ -99,78 +110,131 @@ export const adminHandler = {
 
         const container = document.createElement("div");
         container.classList = "container hidden-container";
-        title.addEventListener("click", () =>
-          container.classList.toggle("hidden-container")
-        );
+        title.addEventListener("click", () => {
+          container.classList.toggle("hidden-container");
+          if (!container.classList.contains("hidden-container")) {
+            const yOffset = -40; // Negative means scroll a bit *above* the element
+            const y =
+              itemDiv.getBoundingClientRect().top +
+              window.pageYOffset +
+              yOffset;
+
+            window.scrollTo({
+              top: y,
+              behavior: "smooth",
+            });
+          }
+        });
+        if (startOpen) {
+          container.classList.remove("hidden-container");
+        }
         const standardInputs = document.createElement("div");
-        standardInputs.innerHTML = `
-        ${insertInput({
-          label: lang({
-            no: "Navn NO",
-            en: "Name NO",
-          }),
-          value: item.meta.title_translations.no || item.name || "",
-          name: "meta-title_translations-no",
-        })}
-        ${insertInput({
-          label: lang({
-            no: "Navn EN",
-            en: "Name EN",
-          }),
-          value: item.meta.title_translations.en,
-          name: "meta-title_translations-en",
-        })}
-        ${insertInput({
-          label: lang({
-            no: "Beskrivelse NO",
-            en: "Description NO",
-          }),
-          value:
-            item.meta.description_translations.no ||
-            (item.description && item.description.innerText) ||
-            "",
-          name: "meta-description_translations-no",
-          divClasses: "only-normal",
-          textarea: true,
-        })}
-        ${insertInput({
-          label: lang({
-            no: "Beskrivelse EN",
-            en: "Description EN",
-          }),
-          value: item.meta.description_translations.en,
-          name: "meta-description_translations-en",
-          divClasses: "only-normal",
-          textarea: true,
-        })}
+        createManyInputs({
+          place: standardInputs,
+          inputs: [
+            {
+              label: lang({
+                no: "Navn NO",
+                en: "Name NO",
+              }),
+              value: item.meta.title_translations.no || "",
+              name: "meta-title_translations-no",
+            },
+            {
+              label: lang({
+                no: "Navn EN",
+                en: "Name EN",
+              }),
+              value: item.meta.title_translations.en,
+              name: "meta-title_translations-en",
+            },
+            {
+              label: lang({
+                no: "Beskrivelse NO",
+                en: "Description NO",
+              }),
+              value:
+                item.meta.description_translations.no ||
+                (item.description && item.description.innerText) ||
+                "",
+              name: "meta-description_translations-no",
+              divClass: "only-normal",
+              textarea: true,
+            },
+            {
+              label: lang({
+                no: "Beskrivelse EN",
+                en: "Description EN",
+              }),
+              value: item.meta.description_translations.en,
+              name: "meta-description_translations-en",
+              divClass: "only-normal",
+              textarea: true,
+            },
 
-        ${insertInput({
-          label: lang({ no: "Pris", en: "Price" }),
-          value: item.regular_price || 0,
-          name: "regular_price",
+            {
+              label: lang({ no: "Pris", en: "Price" }),
+              value: item.regular_price || 0,
+              name: "regular_price",
 
-          inputClasses: "bootstrap-input-number",
-        })}
-        ${insertInput({
-          label: lang({ no: "Nummer", en: "Number" }),
-          value: item.meta.itemnumber,
-          name: "meta-itemnumber",
-          divClasses: "only-normal",
-        })}
-        ${insertInput({
-          label: lang({ no: "Antall på lager", en: "Amount in stock" }),
-          value:
-            !item.stock_quantity || item.stock_quantity == "null"
-              ? ""
-              : item.stock_quantity,
-          name: "stock_quantity",
-          placeHolder: "Ubegrenset",
-          inputClasses: "bootstrap-input-number",
-        })}
-        <div class="formDiv only-normal">
-          <label name="imageUrl">${lang({ no: "Bilde", en: "Image" })}</label>
-          <input name="imageUrl" type="file" accept="image/*" capture="environment">
-        </div>`;
+              inputClasses: "bootstrap-input-number",
+              only: "number",
+            },
+            {
+              label: lang({ no: "Nummer", en: "Number" }),
+              value: item.meta.itemnumber,
+              name: "meta-itemnumber",
+              divClass: "only-normal",
+            },
+            {
+              label: lang({ no: "Antall på lager", en: "Amount in stock" }),
+              value:
+                !item.stock_quantity || item.stock_quantity == "null"
+                  ? ""
+                  : item.stock_quantity,
+              name: "stock_quantity",
+              placeHolder: "Ubegrenset",
+              inputClasses: "bootstrap-input-number",
+              only: "number",
+            },
+          ],
+        });
+
+        const fileInput = document.createElement("div");
+        fileInput.classList = "formDiv";
+        fileInput.innerHTML = `
+        <label name="imageUrl">${lang({ no: "Bilde", en: "Image" })}</label>
+        <input name="imageUrl" type="file" accept="image/*" capture="environment">
+`;
+        standardInputs.appendChild(fileInput);
+        fileInput.addEventListener("change", async (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
+
+          const token = await lsList.get("token");
+
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("name", file.name); // Optional
+          formData.append("token", token);
+          adminHandler.saving = true;
+          const response = await fetch(
+            "http://localhost:3002/api/upload-image",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          const result = await response.json();
+          adminHandler.saving = false;
+          console.log("response", result);
+          item.images = [{ id: result.content.id }];
+        });
+        // <div class="formDiv only-normal">
+        //   <label name="imageUrl">${lang({ no: "Bilde", en: "Image" })}</label>
+        //   <input name="imageUrl" type="file" accept="image/*" capture="environment">
+        // </div>`;
         if (item.meta.foodoptions) {
           const alternativesContainer = document.createElement("div");
           alternativesContainer.classList =
@@ -190,7 +254,7 @@ export const adminHandler = {
           addOption.classList =
             "bootstrap-btn button bootstrap-btn-primary right-button only-normal";
           addOption.innerText = lang({
-            no: "Legg til alternative",
+            no: "Legg til alternativ",
             en: "Add an alternative",
           });
           addOption.addEventListener("click", (event) => {
@@ -259,7 +323,6 @@ export const adminHandler = {
         container.appendChild(submitButton);
         itemDiv.appendChild(container);
 
-        adminHandler.itemsContainer.appendChild(itemDiv);
         const itemLength = makeCopy(JSON.stringify(item));
         itemDiv.addEventListener("keyup", (event) => handleChange(event));
         itemDiv.addEventListener("change", (event) => handleChange(event));
@@ -338,7 +401,7 @@ export const adminHandler = {
           }
           updatePreview(title, item);
         }
-        adminHandler.itemsContainer.appendChild(itemDiv);
+        return itemDiv;
       }
     }
     const addNewItemButton = document.createElement("button");
@@ -348,65 +411,24 @@ export const adminHandler = {
       en: "Add new product",
     });
     addNewItemButton.addEventListener("click", () => {
-      createAdminItem({ meta: {}, meta_data: [], categories: [{ id: 19 }] });
+      const newForm = createAdminItem(
+        {
+          meta: { title_translations: {} },
+          meta_data: [],
+          categories: [{ id: 19 }],
+          name: lang({ no: "Nytt produkt", en: "New product" }),
+        },
+        true
+      );
+      newForm.dataset.editing = "yes";
+      adminHandler.itemsContainer.appendChild(newForm);
     });
 
-    this.itemsContainer.appendChild(addNewItemButton);
     this.mainContainer.appendChild(this.itemsContainer);
+    this.mainContainer.appendChild(addNewItemButton);
   },
 };
-function insertInput(data) {
-  const {
-    label = "",
-    value = "",
-    name,
-    divClasses = "",
-    inputClasses = "",
-    textarea = false,
-    placeHolder = "",
-  } = data;
 
-  const formDiv = document.createElement("div");
-  formDiv.className = `formDiv ${divClasses}`;
-  formDiv.setAttribute("name", name);
-
-  const labelEl = document.createElement("label");
-  labelEl.setAttribute("for", name);
-  labelEl.textContent = label;
-
-  let inputEl;
-  if (textarea) {
-    inputEl = document.createElement("textarea");
-    inputEl.textContent = value;
-  } else {
-    inputEl = document.createElement("input");
-    inputEl.setAttribute("value", value);
-  }
-
-  inputEl.name = name;
-  inputEl.placeholder = placeHolder;
-  inputEl.className = `bootstrap-input ${inputClasses}`;
-
-  formDiv.append(labelEl, inputEl);
-  return formDiv.outerHTML; // if you're still inserting as HTML
-}
-function insertTextarea(
-  label,
-  value = "",
-  name,
-  classes = "",
-  inputClasses = ""
-) {
-  const formDiv = document.createElement("div");
-
-  formDiv.classList = classes;
-  formDiv.classList.add("formDiv");
-  formDiv.name = name;
-  formDiv.innerHTML = `
-    <label name="${name}">${label}</label>
-    <textarea class="bootstrap-input ${inputClasses}" name="${name}">${value}</textarea>`;
-  return formDiv.outerHTML;
-}
 function createOptionHTML(e, itemID) {
   let optionsHTML = "";
   const typeOptions = [

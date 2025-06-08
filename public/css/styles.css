@@ -856,6 +856,14 @@ body.showHelp .help-block {
   padding: 20px;
   font-family: "lemon";
 }
+#main-menu-page .menu-divider {
+  font-family: "lemon";
+  text-align: center;
+  margin: 15px 5vw;
+  padding-bottom: 5px;
+  width: 90vw;
+  border-bottom: 2px solid black;
+}
 
 body main,
 body header,
@@ -924,7 +932,7 @@ body footer {
   background-color: white;
   border-radius: 10px;
   border: 1.5px solid #ccc;
-  box-shadow: 5px 10px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
@@ -1161,108 +1169,108 @@ body footer {
   margin: 10px;
   position: relative;
 }
-#admin-page #admin-items-container {
+#admin-page #items-container {
   position: relative;
 }
-#admin-page #admin-items-container[data-filtertype="19"] form {
+#admin-page #items-container[data-filtertype="19"] form {
   display: none;
 }
-#admin-page #admin-items-container[data-filtertype="19"] form[data-type="19"] {
+#admin-page #items-container[data-filtertype="19"] form[data-type="19"] {
   display: block;
 }
-#admin-page #admin-items-container[data-filtertype="17"] form {
+#admin-page #items-container[data-filtertype="17"] form {
   display: none;
 }
-#admin-page #admin-items-container[data-filtertype="17"] form[data-type="17"] {
+#admin-page #items-container[data-filtertype="17"] form[data-type="17"] {
   display: block;
 }
-#admin-page #admin-items-container[data-filtertype="18"] form {
+#admin-page #items-container[data-filtertype="18"] form {
   display: none;
 }
-#admin-page #admin-items-container[data-filtertype="18"] form[data-type="18"] {
+#admin-page #items-container[data-filtertype="18"] form[data-type="18"] {
   display: block;
 }
-#admin-page #admin-items-container #filter-select {
+#admin-page #items-container #filter-select {
   margin-bottom: 20px;
 }
-#admin-page #admin-items-container form {
+#admin-page #items-container form {
   position: relative;
   border: 0.5px solid grey;
   border-radius: 20px;
   margin-bottom: 10px;
   padding: 4px 8px;
 }
-#admin-page #admin-items-container form .icon-div {
+#admin-page #items-container form .icon-div {
   position: absolute;
   right: 10px;
   top: 15px;
 }
-#admin-page #admin-items-container form .icon-div img {
+#admin-page #items-container form .icon-div img {
   height: 2rem;
   display: none;
 }
-#admin-page #admin-items-container form .submit-button {
+#admin-page #items-container form .submit-button {
   display: none;
 }
-#admin-page #admin-items-container form[data-editing=yes] .submit-button,
-#admin-page #admin-items-container form[data-editing=yes] .icon-div img.save-icon {
+#admin-page #items-container form[data-editing=yes] .submit-button,
+#admin-page #items-container form[data-editing=yes] .icon-div img.save-icon {
   display: block;
 }
-#admin-page #admin-items-container form[data-status=draft] .icon-div img.unavailable-icon {
+#admin-page #items-container form[data-status=draft] .icon-div img.unavailable-icon {
   display: block;
 }
-#admin-page #admin-items-container form[data-status=private] .icon-div img.hidden-icon {
+#admin-page #items-container form[data-status=private] .icon-div img.hidden-icon {
   display: block;
 }
-#admin-page #admin-items-container form[data-type-view="17"] .only-normal,
-#admin-page #admin-items-container form[data-type-view="17"] div > .only-normal-inside {
+#admin-page #items-container form[data-type-view="17"] .only-normal,
+#admin-page #items-container form[data-type-view="17"] div > .only-normal-inside {
   display: none;
 }
-#admin-page #admin-items-container form[data-type-view="18"] .only-normal,
-#admin-page #admin-items-container form[data-type-view="18"] div > .only-normal-inside {
+#admin-page #items-container form[data-type-view="18"] .only-normal,
+#admin-page #items-container form[data-type-view="18"] div > .only-normal-inside {
   display: none;
 }
-#admin-page #admin-items-container .title {
+#admin-page #items-container .title {
   cursor: pointer;
   padding: 20px;
   font-family: "lemon";
 }
-#admin-page #admin-items-container .option-title {
+#admin-page #items-container .option-title {
   font-family: "lemon";
   text-align: center;
   padding: 5px;
 }
-#admin-page #admin-items-container .container {
+#admin-page #items-container .container {
   padding: 20px;
   padding-bottom: 50px;
 }
-#admin-page #admin-items-container .container input,
-#admin-page #admin-items-container .container textarea,
-#admin-page #admin-items-container .container select {
+#admin-page #items-container .container input,
+#admin-page #items-container .container textarea,
+#admin-page #items-container .container select {
   width: calc(100% - 1.5rem);
 }
-#admin-page #admin-items-container .container .formDiv {
+#admin-page #items-container .container .formDiv {
   font-family: "lemon";
   padding: 10px 4px 2px 4px;
   position: relative;
 }
-#admin-page #admin-items-container .container.hidden-container {
+#admin-page #items-container .container.hidden-container {
   animation: hideContainer 2s ease forwards;
   height: 0;
   overflow-y: hidden;
   padding: 0 !important;
 }
-#admin-page #admin-items-container .container.hidden-container .right-button,
-#admin-page #admin-items-container .container.hidden-container .left-button {
+#admin-page #items-container .container.hidden-container .right-button,
+#admin-page #items-container .container.hidden-container .left-button {
   display: none;
 }
-#admin-page #admin-items-container .container .right-button {
+#admin-page #items-container .container .right-button {
   position: absolute;
   right: 0;
   bottom: 0;
   border-radius: 20px 0 20px 0;
 }
-#admin-page #admin-items-container .container .left-button {
+#admin-page #items-container .container .left-button {
   position: absolute;
   left: 0;
   bottom: 0;

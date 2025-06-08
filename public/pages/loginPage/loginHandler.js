@@ -1,9 +1,11 @@
+import { navigateTo } from "../../js/pageNav.js";
 import { api } from "../../shared/js/api.js";
 import { lang } from "../../shared/js/lang.js";
 import { createButton, createForm } from "../../shared/js/lazyFunctions.js";
-import { ssList } from "../../shared/js/lists.js";
+import { lsList, ssList } from "../../shared/js/lists.js";
 import { modal } from "../../shared/js/modalHandler.js";
 import { userMessageHandler } from "../../shared/js/userMessageHandler.js";
+import { menuHandler } from "../menuPage/menuHandler.js";
 
 export const loginHandler = {
   async open() {
@@ -24,6 +26,7 @@ export const loginHandler = {
           {
             label: lang({ no: "Passord", en: "Password" }),
             type: "password",
+            name: "password",
             value: await ssList.get("last_name"),
           },
         ],
@@ -44,9 +47,9 @@ export const loginHandler = {
                 "Vennligst skriv eposten"
               );
             } else {
-              const tokenResponse = (await api.try("resetPassword", {
+              const tokenResponse = await api.try("resetPassword", {
                 username: emailInput.value,
-              })) || { message: "Not fucntional" };
+              });
               console.log("tokenResponse", tokenResponse);
               if (tokenResponse.code) {
                 userMessageHandler.displayNegativeMesage(tokenResponse.message);
@@ -71,8 +74,26 @@ export const loginHandler = {
       },
       {
         name: lang({ no: "Logg inn", en: "Log in" }),
-        function: () => {
+        function: async () => {
           console.log("logging in");
+          const email = modal.body.querySelector('input[name="email"]').value;
+          const passord = modal.body.querySelector(
+            'input[name="password"]'
+          ).value;
+          console.log("email", email);
+          console.log("passord", passord);
+          const response = await api.try("getToken", {
+            username: email,
+            password: passord,
+          });
+          console.log("response", response);
+          if (response.content.code == "authentication_error") {
+          } else if (response.statusCode == 200 && response.content.token) {
+            await lsList.save("token", response.content.token);
+            menuHandler.init();
+            navigateTo("menu");
+            modal.closeModal();
+          }
         },
         classes: "bootstrap-btn-success button",
       },

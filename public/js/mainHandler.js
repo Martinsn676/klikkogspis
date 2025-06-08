@@ -13,22 +13,29 @@ export const mainHandler = {
   versionNr: "0.5.0",
   restaurantName: "China Restaurant Husnes",
   async init() {
-    const response = await api.try("get-orders", { storeID: "china" });
-    console.log("response", response);
-    this.orders = response.data;
-    adminOrdersHandler.init();
-
-    this.reload();
-  },
-  async reload() {
-    console.info("relaoding");
+    const response = await api.try("get-orders", {
+      restaurant_id: 33,
+      token: await lsList.get("token"),
+    });
+    console.error("response", response);
+    if (response.ok) {
+      this.orders = response.data;
+      adminOrdersHandler.init();
+    }
     menuHandler.init();
     await this.loadProducts();
+    this.initAll();
+  },
+  async initAll() {
+    console.info("relaoding");
+    menuHandler.init();
+
     orderHandler.init();
     adminHandler.init();
     await checkOutHandler.init();
     orderHandler.init();
-    paymentHandler.init();
+    await paymentHandler.init();
+    adminOrdersHandler.init();
     this.refresh();
   },
   async refresh(full) {
@@ -37,15 +44,19 @@ export const mainHandler = {
       (cartItem) => cartItem.count !== 0 || cartItem.fixed
     );
 
-    orderHandler.updateCount();
-    checkOutHandler.updateTotal();
-    paymentHandler.build();
     if (full) {
-      checkOutHandler.build();
+      this.initAll();
+    } else {
+      orderHandler.updateCount();
+      checkOutHandler.updateTotal();
+      paymentHandler.build();
     }
   },
   async loadProducts() {
-    const response = await api.try("getProducts", { storeID: "china" });
+    const response = await api.try("getProducts", {
+      storeID: "30",
+      token: await lsList.get("token"),
+    });
     console.log(response.content.find((e) => e.id == 92));
 
     let allProducts = response.content;
@@ -73,6 +84,12 @@ export const mainHandler = {
     this.foods = [];
     this.mainItems = [];
     allProducts.forEach((e) => {
+      if (!e.meta.description_translations) {
+        e.meta.description_translations = {};
+      }
+      if (!e.meta.title_translations) {
+        e.meta.title_translations = {};
+      }
       if (e.categories.find((cat) => cat.name == "drinks")) {
         this.drinks.push(e);
       } else if (e.categories.find((cat) => cat.name == "foods")) {

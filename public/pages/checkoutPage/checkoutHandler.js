@@ -131,13 +131,14 @@ export const checkOutHandler = {
 
     this.content.forEach((cartItem, index) => {
       if (!cartItem.fixed) {
+        console.log("cartItem.id", cartItem.id);
         const item = mainHandler.products.find((e) => e.id == cartItem.id);
         if (!item) {
           console.warn("couldnt find", cartItem.id);
         }
 
         if (!item.fixed) {
-          cartItem.number = item.number;
+          cartItem.number = item.meta.itemnumber;
           newSort.push(cartItem);
         }
       }

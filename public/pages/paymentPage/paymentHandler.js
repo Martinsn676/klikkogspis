@@ -58,9 +58,8 @@ export const paymentHandler = {
       ssList.save(target.name, target.value);
     });
 
-    await this.buildBottomBar();
+    this.buildBottomBar();
     this.buildTopBar();
-    this.build();
   },
   build() {
     this.itemsContainer.innerHTML = "";
@@ -124,9 +123,14 @@ export const paymentHandler = {
         no: "Du har ingenting i bestillingen din",
         en: "You have nothing in your order",
       })}</div>`;
-      document.getElementById("send-order-button").disabled = true;
+      const finishButton = document.getElementById("send-order-button");
+
+      finishButton.disabled = true;
       paymentHandler.itemsContainer.appendChild(noItemsDiv);
     } else {
+      const finishButton = document.getElementById("send-order-button");
+
+      finishButton.disabled = false;
       const totalDiv = document.createElement("div");
       totalDiv.id = "payment-total-div";
       totalDiv.innerHTML = `<div id="payment-total">${this.totalCost} kr</div>`;
@@ -145,29 +149,7 @@ export const paymentHandler = {
       createButton({
         text: lang({ no: "Send ordre", en: "Send order" }),
         id: "send-order-button",
-        action: async () => {
-          if (!paymentHandler.submittingOrder) {
-            paymentHandler.submittingOrder = true;
-
-            const restaurant_id = 33;
-            const formData = getFormData(this.userForm);
-            console.log("formData", formData);
-            console.log("checkOutHandler.content", checkOutHandler.content);
-            const response = await api.try("post-order", {
-              cartContent: checkOutHandler.content,
-              userData: formData,
-              restaurant_id,
-            });
-            console.log("response", response);
-            paymentHandler.submittingOrder = false;
-
-            waitingHandler.init();
-            await ssList.save("tracking_token", response.data.tracking_token);
-            navigateTo("waiting", false, {
-              order: response.data.tracking_token,
-            });
-          }
-        },
+        disabled: true,
       })
     );
   },

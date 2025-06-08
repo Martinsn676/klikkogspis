@@ -41,6 +41,7 @@ export const orderHandler = {
             }
           }
         }
+
         itemCard.innerHTML = template.orderCard(item);
         const orderButton = document.createElement("button");
         orderButton.innerText = lang({ no: "Legg til", en: "Add" });
