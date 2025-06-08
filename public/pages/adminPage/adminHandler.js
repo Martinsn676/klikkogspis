@@ -245,8 +245,9 @@ export const adminHandler = {
           })}`;
           item.meta.foodoptions.forEach((e, index) => {
             e.id = index;
-
-            alternativesContainer.innerHTML += createOptionHTML(e, item.id);
+            const inputField = document.createElement("div");
+            inputField.innerHTML = createOptionHTML(e, item.id);
+            alternativesContainer.appendChild(inputField);
           });
 
           standardInputs.appendChild(alternativesContainer);
@@ -264,10 +265,9 @@ export const adminHandler = {
               type: "number",
             };
             item.meta.foodoptions.push(newObject);
-            alternativesContainer.innerHTML += createOptionHTML(
-              newObject,
-              item.id
-            );
+            const inputField = document.createElement("div");
+            inputField.innerHTML = createOptionHTML(newObject, item.id);
+            alternativesContainer.appendChild(inputField);
           });
           standardInputs.appendChild(addOption);
         }
@@ -393,12 +393,14 @@ export const adminHandler = {
           }
 
           const newItemLength = makeCopy(JSON.stringify(item));
-
+          console.log("newItemLength", newItemLength);
+          console.log("itemLength.length", itemLength.length);
           if (newItemLength.length == itemLength.length) {
             itemDiv.dataset.editing = "no";
           } else {
             itemDiv.dataset.editing = "yes";
           }
+          itemDiv.dataset.editing = "yes";
           updatePreview(title, item);
         }
         return itemDiv;

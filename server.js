@@ -187,8 +187,11 @@ app.post("/api/get-orders", async (req, res) => {
   const { restaurant_id, token } = req.body;
   console.log("token========", token);
   const userID = await verifyUserID(token);
+  if (!userID) {
+    res.status(403).json({ error: `You cant see this!` });
+  }
   console.log("userID", userID);
-  const access = { id2: [33] };
+  const access = { id2: [30] };
   let allowed = false;
   console.log("access[userID", access["id" + userID]);
   if (access["id" + userID]) {
@@ -256,13 +259,13 @@ app.post("/api/public-get-order", async (req, res) => {
     res.status(500).json({ error: `Missing token` });
   }
   // Parse exportBody back to JSON object
+  const fullUrl = baseUrl + links.ordersUrl + tracking_token;
   try {
     // Determine the base URL for the WooCommerce API based on the provided endUrl
     // if (!password || password != "AbvaE344rfv") {
     //   throw new Error("You are not allowed to do this");
     // }
 
-    const fullUrl = baseUrl + links.ordersUrl + tracking_token;
     // Fetch data from the WooCommerce API
     const response = await fetch(fullUrl, {
       method: "GET",
@@ -425,8 +428,8 @@ app.post("/api/post-order", async (req, res) => {
       redirected: false,
       status: 200,
       ok: true,
-      data: responseData, // Return the parsed JSON data
-      sendItems,
+      // data: responseData, // Return the parsed JSON data
+      // sendItems,
     });
   } catch (error) {
     console.log("error", error.message);

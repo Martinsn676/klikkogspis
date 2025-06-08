@@ -41,7 +41,7 @@ export const api = {
         );
         console.groupEnd();
       } else {
-        console.error(json);
+        console.error(path, json);
       }
 
       return json;

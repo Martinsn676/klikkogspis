@@ -1,3 +1,4 @@
+import { mainHandler } from "../../js/mainHandler.js";
 import { navigateTo } from "../../js/pageNav.js";
 import { api } from "../../shared/js/api.js";
 import { lang } from "../../shared/js/lang.js";
@@ -90,7 +91,7 @@ export const loginHandler = {
           if (response.content.code == "authentication_error") {
           } else if (response.statusCode == 200 && response.content.token) {
             await lsList.save("token", response.content.token);
-            menuHandler.init();
+            mainHandler.initAll();
             navigateTo("menu");
             modal.closeModal();
           }

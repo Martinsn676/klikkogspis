@@ -9,6 +9,7 @@ import {
 } from "../../shared/js/lazyFunctions.js";
 import { lsList } from "../../shared/js/lists.js";
 import { orderHandler } from "../orderPage/orderHandler.js";
+import { paymentHandler } from "../paymentPage/paymentHandler.js";
 import { template } from "../templates/itemCards.js";
 
 export const checkOutHandler = {
@@ -163,13 +164,25 @@ export const checkOutHandler = {
       }
     });
 
-    this.createCheckoutOnlyCategory("foodextra", mainHandler.foods);
-    this.createCheckoutOnlyCategory("drinkextra", mainHandler.drinks);
+    this.createCheckoutOnlyCategory(
+      "foodextra",
+      mainHandler.foods,
+      lang({ no: "Tilbehør", en: "Accessories" })
+    );
+    this.createCheckoutOnlyCategory(
+      "drinkextra",
+      mainHandler.drinks,
+      lang({ no: "Drikker", en: "Drinks" })
+    );
   },
-  createCheckoutOnlyCategory(nameID, items) {
+  createCheckoutOnlyCategory(nameID, items, titleName) {
     const itemCard = document.createElement("div");
     itemCard.classList = "flex-column item-card";
     itemCard.id = nameID;
+    const title = document.createElement("div");
+    title.classList = "category-title";
+    title.innerText = titleName;
+    itemCard.appendChild(title);
     const optionContainer = document.createElement("div");
     optionContainer.classList = "flex-column options-container";
     items.forEach((option) => {
@@ -185,10 +198,8 @@ export const checkOutHandler = {
       numberAdjuster({
         place: optionsDiv.querySelector(".option-adder"),
         startValue: cartItem ? cartItem.count : 0,
-        maxValue: option.stock,
-        endAction: async () => {
-          mainHandler.refresh();
-        },
+        maxValue: option.stock_quantity,
+
         minusAction: () => {
           let cartItem = this.content.find((e) => e.id == option.id);
           if (!cartItem) {
@@ -261,7 +272,9 @@ export const checkOutHandler = {
               cartItem.options["id" + option.id] = 1;
             },
             endAction: async () => {
-              mainHandler.refresh();
+              // mainHandler.refresh();
+              checkOutHandler.updateTotal();
+              paymentHandler.build();
             },
           });
         } else {
@@ -308,7 +321,7 @@ export const checkOutHandler = {
               if (cartItem.count <= 0) {
                 itemCard.classList.add("d-none");
               }
-
+              mainHandler.refresh();
               this.updateTotal();
             },
           })

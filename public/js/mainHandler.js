@@ -13,27 +13,23 @@ export const mainHandler = {
   versionNr: "0.6.0",
   restaurantName: "China Restaurant Husnes",
   async init() {
-    const response = await api.try("get-orders", {
-      restaurant_id: 33,
-      token: await lsList.get("token"),
-    });
-    console.error("response", response);
-    if (response.ok) {
-      this.orders = response.data;
-      adminOrdersHandler.init();
-    }
     menuHandler.init();
+    await paymentHandler.init();
     await this.loadProducts();
     this.initAll();
   },
   async initAll() {
     menuHandler.init();
     orderHandler.init();
-    adminHandler.init();
+
     await checkOutHandler.init();
     orderHandler.init();
-    await paymentHandler.init();
-    adminOrdersHandler.init();
+    const token = await lsList.get("token");
+    if (token) {
+      adminHandler.init();
+      adminOrdersHandler.init();
+    }
+
     this.refresh();
   },
   async refresh(full) {
@@ -47,13 +43,15 @@ export const mainHandler = {
     } else {
       orderHandler.updateCount();
       checkOutHandler.updateTotal();
+      // checkOutHandler.build();
       paymentHandler.build();
     }
   },
   async loadProducts() {
+    console.log("mainHandler.restaurantID", mainHandler.restaurant_id);
     const response = await api.try("getProducts", {
-      storeID: "30",
-      token: await lsList.get("token"),
+      storeID: mainHandler.restaurant_id,
+      token: [await lsList.get("token")],
     });
     console.log(response.content.find((e) => e.id == 92));
 

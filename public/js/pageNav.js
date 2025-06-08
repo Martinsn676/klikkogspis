@@ -96,6 +96,22 @@ window.addEventListener("popstate", (event) => {
     navigateTo(pageName, false, null, true);
   }
 });
+function getRestaurantName(url) {
+  const { hostname } = new URL(url);
+  const parts = hostname.split(".");
+  if (parts.length < 3) return null; // Not a subdomain
+  return parts[0]; // The subdomain (restaurant name)
+}
+
+const url = "https://chinarestauranthusnes.klikkogspis.no/?lng=en&page=menu";
+const restaurantName = getRestaurantName(url);
+
+console.log(restaurantName); // 👉 "chinarestauranthusnes"
+
+const restaurantIDS = {
+  chinarestauranthusnes: 30,
+};
+mainHandler.restaurant_id = restaurantIDS[restaurantName];
 userMessageHandler.init();
 modal.init();
 mainHandler.init();

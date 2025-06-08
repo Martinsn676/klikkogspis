@@ -272,6 +272,7 @@ export function createInput(options) {
     button = "",
     onLabelClick = "",
     inputClasses = "",
+    checkValdidEmail = "",
   } = options;
   const formDiv = document.createElement("div");
   let valid = true;
@@ -362,14 +363,21 @@ export function createInput(options) {
     labelDiv.classList.add("clickable");
   }
   let buttonDiv;
+  buttonDiv = createButton(button);
   if (button) {
-    buttonDiv = createButton(button);
   }
   if (minLength && input.value.length < minLength) {
     valid = false;
     buttonDiv.classList.add("disabled");
   }
-  if (onKeyUp || minLength) {
+  if (checkValdidEmail && !isValidEmail(input.value)) {
+    valid = false;
+    buttonDiv.classList.add("disabled");
+  }
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+  if (onKeyUp || minLength || checkValdidEmail) {
     input.addEventListener("keyup", (event) => {
       valid = true;
       if (minLength) {
@@ -388,9 +396,16 @@ export function createInput(options) {
           buttonDiv.classList.add("disabled");
         }
       }
+      if (checkValdidEmail && !isValidEmail(input.value)) {
+        valid = false;
+      }
       if (onKeyUp) onKeyUp(event);
+      if (!valid) {
+        buttonDiv.classList.add("disabled");
+      }
       input.dataset.valid = valid;
     });
+    input.dataset.valid = valid;
   }
   if (enter) {
     input.addEventListener("keyup", (event) => {
@@ -415,7 +430,7 @@ export function createInput(options) {
     formDiv.appendChild(messageDiv);
   }
   input.dataset.valid = valid;
-  if (buttonDiv) formDiv.appendChild(buttonDiv);
+  if (button) formDiv.appendChild(buttonDiv);
   return formDiv;
 }
 /**
@@ -658,6 +673,7 @@ export function numberAdjuster({
     const oldValue = Number(display.innerText);
     if (oldValue > 0) {
       display.innerText = oldValue - 1;
+
       generalClick();
       minusAction();
       if (endAction) endAction();
@@ -686,6 +702,7 @@ export function numberAdjuster({
   function generalClick() {
     minusButton.classList.remove("capped");
     plussButton.classList.remove("capped");
+    div.dataset.value = display.innerText;
     const newValue = Number(display.innerText);
     if (newValue == 0) {
       minusButton.classList.add("capped");
@@ -713,6 +730,7 @@ export function toggleAdjuster({
     noAction();
     if (endAction) endAction();
     div.dataset.selected = "no";
+    console.log(" div.dataset.selected", div.dataset.selected);
   });
   div.appendChild(noButton);
 
@@ -723,6 +741,7 @@ export function toggleAdjuster({
     yesAction();
     if (endAction) endAction();
     div.dataset.selected = "yes";
+    console.log(" div.dataset.selected", div.dataset.selected);
   });
   div.appendChild(yesButton);
   div.dataset.selected = startValue == 1 || startValue == "yes" ? "yes" : "no";

@@ -1,5 +1,7 @@
 import { mainHandler } from "../../js/mainHandler.js";
 import { navigateTo } from "../../js/pageNav.js";
+import { api } from "../../shared/js/api.js";
+import { lsList } from "../../shared/js/lists.js";
 
 export const adminOrdersHandler = {
   init() {
@@ -14,24 +16,39 @@ export const adminOrdersHandler = {
     backButton.id = "test-back-button";
     backButton.addEventListener("click", () => navigateTo("menu"));
     this.topBar.appendChild(backButton);
-    this.build();
+    this.getOrders();
+  },
+  async getOrders() {
+    const token = await lsList.get("token");
+    const response = await api.try("get-orders", {
+      restaurant_id: mainHandler.restaurant_id,
+      token,
+    });
+    if (response.ok) {
+      this.orders = response.data;
+
+      this.build();
+    }
   },
   build() {
     this.itemsContainer.innerHTML = "";
     const container = document.createElement("div");
     container.classLisst = "flex-column";
-
-    mainHandler.orders.forEach((order) => {
+    console.warn(this.orders);
+    this.orders.forEach((order) => {
       const card = document.createElement("div");
       card.classList = "flex-column order-card";
       card.id = `order-${order.order_id}`;
 
-      let items = "";
-      order.items.forEach((e) => (items += `<div>${e.name}</div>`));
+      let orderItemsContainer = document.createElement("div");
+      orderItemsContainer.classList = "orderItemsContainer";
+      order.items.forEach(
+        (e) => (orderItemsContainer.innerHTML += `<div>${e.name}</div>`)
+      );
 
       card.innerHTML = `
-      <div class="flex-row align">${order.order_id} ${order.customer.first_name} ${order.customer.last_name}</div>
-      ${items}
+      <div class="flex-row align">#${order.order_id} ${order.customer.first_name} ${order.customer.last_name}</div>
+      ${orderItemsContainer.outerHTML}
       <div class="countdown" id="countdown-${order.order_id}">Loading...</div>
     `;
 
@@ -46,7 +63,7 @@ export const adminOrdersHandler = {
     function updateTime() {
       const now = new Date();
 
-      mainHandler.orders.forEach((order) => {
+      adminOrdersHandler.orders.forEach((order) => {
         const pickupTime = new Date(order.ready_for_pickup_at);
         const diffMs = pickupTime - now;
         const diffMinutes = Math.floor(diffMs / 60000);

@@ -786,6 +786,9 @@ body.showHelp .help-block {
   width: 30%;
   text-align: center;
 }
+.custom-adder-container .custom-adder[data-value="0"] .option-count {
+  visibility: hidden;
+}
 .custom-adder-container .custom-adder button {
   background-color: #0056b3;
   color: white;
@@ -794,6 +797,7 @@ body.showHelp .help-block {
   width: 35%;
 }
 .custom-adder-container .custom-adder button.capped {
+  visibility: hidden;
   background-color: #ccc !important;
   border-color: #ddd !important;
 }
@@ -971,7 +975,7 @@ body footer {
 #ordering-page #ordering-items-container .item-card .card-description {
   padding-top: 20px;
 }
-#ordering-page #ordering-items-container .item-card .allergy-icon {
+#ordering-page #ordering-items-container .item-card .allergies-container .allergy-icon {
   height: 30px;
 }
 #ordering-page #ordering-items-container .item-card .card-price {
@@ -1082,8 +1086,11 @@ body footer {
   right: 0;
   border-radius: 0 10px 0 10px;
 }
+#checkout-page #checkout-items-container .item-card .category-title {
+  font-family: "lemon";
+}
 #checkout-page #checkout-items-container .item-card .options-container {
-  padding-top: 30px;
+  padding-top: 10px;
 }
 #checkout-page #checkout-items-container .item-card .options-container .option {
   position: relative;
@@ -1159,6 +1166,11 @@ body footer {
 #payment-page #userForm .formDiv input {
   width: calc(100% - 20px);
   padding: 4px 10px;
+}
+#payment-page #userForm .formDiv input[type=checkbox] {
+  width: 20%;
+  height: 20px;
+  padding: 10px 10px;
 }
 
 #waiting-page .title {
@@ -1280,6 +1292,9 @@ body footer {
 @keyframes hideContainer {}
 #admin-orders-page .order-card {
   padding: 20px;
+}
+#admin-orders-page .order-card .orderItemsContainer {
+  padding-left: 10px;
 }
 
 #modal-container[data-page=login] .formDiv {

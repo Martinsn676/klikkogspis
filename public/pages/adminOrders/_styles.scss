@@ -1,5 +1,8 @@
 #admin-orders-page {
   .order-card {
     padding: 20px;
+    .orderItemsContainer {
+      padding-left: 10px;
+    }
   }
 }

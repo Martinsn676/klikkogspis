@@ -5,10 +5,11 @@ import { lang } from "../../shared/js/lang.js";
 import {
   createButton,
   createForm,
+  createInput,
   getFormData,
   tryParse,
 } from "../../shared/js/lazyFunctions.js";
-import { ssList } from "../../shared/js/lists.js";
+import { lsList, ssList } from "../../shared/js/lists.js";
 import { checkOutHandler } from "../checkoutPage/checkoutHandler.js";
 import { orderHandler } from "../orderPage/orderHandler.js";
 import { template } from "../templates/itemCards.js";
@@ -22,6 +23,7 @@ export const paymentHandler = {
     this.bottomBar = document.getElementById("payment-bottom-bar");
     this.itemsContainer = document.createElement("div");
     this.mainContainer.appendChild(this.itemsContainer);
+    this.remember = (await lsList.get("first_name")) ? true : false;
     this.userForm = createForm({
       id: "userForm",
       inputSettings: {
@@ -29,24 +31,43 @@ export const paymentHandler = {
           {
             label: lang({ no: "Fornavn", en: "First name" }),
             name: "first_name",
-            value: await ssList.get("first_name"),
+            minLength: 2,
+            value:
+              (await lsList.get("first_name")) ||
+              (await ssList.get("first_name")),
           },
           {
             label: lang({ no: "Etternavn", en: "Last name" }),
             name: "last_name",
-            value: await ssList.get("last_name"),
+            minLength: 2,
+            value:
+              (await lsList.get("last_name")) ||
+              (await ssList.get("last_name")),
           },
           {
             label: lang({ no: "Tlf", en: "Phone" }),
             name: "phone",
             type: "number",
-            value: await ssList.get("phone"),
+            minLength: 8,
+            only: "number",
+            value: (await lsList.get("phone")) || (await ssList.get("phone")),
           },
           {
             label: lang({ no: "Email", en: "E-mail" }),
             name: "email",
             type: "email",
-            value: await ssList.get("email"),
+            value: (await lsList.get("email")) || (await ssList.get("email")),
+            checkValdidEmail: true,
+          },
+          {
+            label: lang({ no: "Husk meg?", en: "Remember me?" }),
+            type: "checkbox",
+            divClass: "flex-row align p-3",
+            checked: this.remember,
+            onChange: (event) => {
+              console.log("event", event);
+              paymentHandler.remember = event.target.checked;
+            },
           },
         ],
         classes: "bootstrap-input",
@@ -55,11 +76,46 @@ export const paymentHandler = {
     this.mainContainer.appendChild(this.userForm);
 
     this.userForm.addEventListener("change", ({ target }) => {
-      ssList.save(target.name, target.value);
+      this.checkIfReady();
+
+      if (target.name) {
+        console.log(
+          "target.name, target.value",
+          target.name,
+          target.value,
+          paymentHandler.remember
+        );
+        if (paymentHandler.remember) {
+          lsList.save(target.name, target.value);
+        } else {
+          ssList.save(target.name, target.value);
+        }
+      }
     });
 
     this.buildBottomBar();
     this.buildTopBar();
+  },
+  checkIfReady() {
+    const finishButton = document.getElementById("send-order-button");
+    if (this.totalCost && this.totalCost > 0) {
+      let allValid = true;
+      this.userForm.querySelectorAll("input").forEach((e) => {
+        console.log(e);
+
+        if (e.type != "checkbox" && e.dataset.valid == "false") {
+          allValid = false;
+        }
+      });
+      console.log(this.userForm);
+      if (allValid) {
+        finishButton.disabled = false;
+      } else {
+        finishButton.disabled = true;
+      }
+    } else {
+      finishButton.disabled = true;
+    }
   },
   build() {
     this.itemsContainer.innerHTML = "";
@@ -123,14 +179,10 @@ export const paymentHandler = {
         no: "Du har ingenting i bestillingen din",
         en: "You have nothing in your order",
       })}</div>`;
-      const finishButton = document.getElementById("send-order-button");
-
-      finishButton.disabled = true;
+      this.checkIfReady();
       paymentHandler.itemsContainer.appendChild(noItemsDiv);
     } else {
-      const finishButton = document.getElementById("send-order-button");
-
-      finishButton.disabled = false;
+      this.checkIfReady();
       const totalDiv = document.createElement("div");
       totalDiv.id = "payment-total-div";
       totalDiv.innerHTML = `<div id="payment-total">${this.totalCost} kr</div>`;
@@ -150,6 +202,29 @@ export const paymentHandler = {
         text: lang({ no: "Send ordre", en: "Send order" }),
         id: "send-order-button",
         disabled: true,
+        action: async () => {
+          if (!paymentHandler.submittingOrder) {
+            paymentHandler.submittingOrder = true;
+
+            const restaurant_id = mainHandler.restaurant_id;
+            const formData = getFormData(this.userForm);
+            console.log("formData", formData);
+            console.log("checkOutHandler.content", checkOutHandler.content);
+            const response = await api.try("post-order", {
+              cartContent: checkOutHandler.content,
+              userData: formData,
+              restaurant_id,
+            });
+            console.log("response", response);
+            paymentHandler.submittingOrder = false;
+
+            waitingHandler.init();
+            await ssList.save("tracking_token", response.data.tracking_token);
+            navigateTo("waiting", false, {
+              order: response.data.tracking_token,
+            });
+          }
+        },
       })
     );
   },

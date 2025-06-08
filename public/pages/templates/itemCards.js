@@ -2,7 +2,7 @@ import { lang } from "../../shared/js/lang.js";
 import { paymentHandler } from "../paymentPage/paymentHandler.js";
 
 export const template = {
-  orderCard(item) {
+  orderCard(item, allergiesDiv) {
     return `
     <div class="card-title">${
       item.meta.itemnumber ? `Nr ${item.meta.itemnumber} ` : ""
@@ -14,9 +14,9 @@ export const template = {
           "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
         }" alt="item-iamge">
         </div>
-        <div class="allergieses-container">
-        ${item.allergiesDiv}
-        </div>
+      
+        ${allergiesDiv.outerHTML}
+    
     </div>
     <div class="middle-part flex-row">
         <div class="card-description">${lang(

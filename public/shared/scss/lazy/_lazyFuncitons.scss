@@ -9,6 +9,11 @@
       width: 30%;
       text-align: center;
     }
+    &[data-value="0"] {
+      .option-count {
+        visibility: hidden;
+      }
+    }
     button {
       background-color: #0056b3;
       color: white;
@@ -16,6 +21,7 @@
       border-radius: 10px;
       width: 35%;
       &.capped {
+        visibility: hidden;
         background-color: #ccc !important;
         border-color: #ddd !important;
       }

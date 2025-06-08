@@ -13,9 +13,12 @@
       .card-description {
         padding-top: 20px;
       }
-      .allergy-icon {
-        height: 30px;
+      .allergies-container {
+        .allergy-icon {
+          height: 30px;
+        }
       }
+
       .card-price {
         font-family: "lemon";
         padding: 10px;

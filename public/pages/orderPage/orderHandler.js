@@ -24,36 +24,64 @@ export const orderHandler = {
     this.products.forEach((item) => {
       const { id, title, meta, description, price, allergies, image, fixed } =
         item;
+      const allergiesDiv = document.createElement("div");
+      allergiesDiv.classList = "allergies-container";
       if (!fixed) {
         const itemCard = document.createElement("div");
         itemCard.classList = "flex-column item-card";
         itemCard.id = "order-item-" + id;
-        item.allergiesDiv = "";
 
-        for (const allergy in allergies) {
-          if (allergies[allergy] == true) {
-            if (allergy == "eggs") {
-              item.allergiesDiv += `<img class="allergy-icon" src="./icons/eggsAllergy.png">`;
-            } else if (allergy == "gluten") {
-              item.allergiesDiv += `<img class="allergy-icon" src="./icons/glutenAllergy.png">`;
-            } else if (allergy == "nuts") {
-              item.allergiesDiv += `<img class="allergy-icon" src="./icons/peanutAllergy.png">`;
+        const allergiesDetalis = {
+          eggs: {
+            icon: "./icons/eggsAllergy.png",
+            text: lang({ no: "Inneholder egg", en: "Contains eggs" }),
+          },
+          gluten: {
+            icon: "./icons/glutenAllergy.png",
+            text: lang({
+              no: "Inneholder gluten",
+              en: "Contains gluten",
+            }),
+          },
+          nuts: {
+            icon: "./icons/peanutAllergy.png",
+            text: lang({ no: "Inneholder nøtter", en: "Contains nuts" }),
+          },
+        };
+        if (meta.allergies) {
+          for (const allergy in meta.allergies) {
+            if (meta.allergies[allergy] == true) {
+              if (allergiesDetalis[allergy]) {
+                const { icon, text } = allergiesDetalis[allergy];
+                const allergyDiv = document.createElement("div");
+                allergyDiv.classList = "flex-row align";
+                allergyDiv.innerHTML = ` <img class="allergy-icon" src="${icon}">
+                <span>${text}</span>`;
+                allergiesDiv.appendChild(allergyDiv);
+              } else {
+                console.warn("Couldn't fnd allegry:", allergy, "for", item);
+              }
             }
           }
         }
 
-        itemCard.innerHTML = template.orderCard(item);
+        itemCard.innerHTML = template.orderCard(item, allergiesDiv);
         const orderButton = document.createElement("button");
         orderButton.innerText = lang({ no: "Legg til", en: "Add" });
         orderButton.classList =
           "button bootstrap-btn bootstrap-btn-primary order-button";
         orderButton.addEventListener("click", async (event) => {
-          checkOutHandler.content.unshift({
-            id,
-            count: 1,
-            options: {},
+          console.log(item);
+          const newItem = { id, count: 1 };
+          newItem.options = {};
+          item.meta.foodoptions.forEach((e) => {
+            if (e.type == "toggle" && e.toggle == "yes") {
+              newItem.options["id" + e.id] = 1;
+            }
           });
-          mainHandler.refresh(true);
+          console.log("checkOutHandler.content", checkOutHandler.content);
+          checkOutHandler.content.unshift(newItem);
+          mainHandler.refresh();
           event.target.innerText = lang({ no: "Lagt til!", en: "Added!" });
 
           orderHandler.orderIcon.classList.remove("bump");

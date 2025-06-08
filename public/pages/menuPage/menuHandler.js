@@ -92,6 +92,8 @@ export const menuHandler = {
 
         action: () => window.open("tel:90418429", "_new"),
       },
+    ];
+    const publicButtons = [
       {
         text: mainHandler.lng == "en" ? "Norsk" : "English",
 
@@ -107,8 +109,6 @@ export const menuHandler = {
         },
         classes: "bootstrap-btn-neutral",
       },
-    ];
-    const publicButtons = [
       {
         text: lang({
           no: "Se andre restauranter",
@@ -121,7 +121,7 @@ export const menuHandler = {
         action: () => console.log("restaurant page"),
       },
     ];
-    const adminButtons = [];
+    let adminButtons = [];
 
     const tokenFound = await lsList.get("token");
     console.log("tokenFound", tokenFound);
@@ -142,11 +142,22 @@ export const menuHandler = {
         classes: "bootstrap-btn-neutral",
         action: () => navigateTo("admin-orders"),
       });
+      adminButtons.push({
+        text: lang({ no: "Logg ut", en: "Log out" }),
+        // icon: "./icons/infoIcon.png",
+        page: "menu",
+        change: this.mainContentContainer,
+        classes: "bootstrap-btn-neutral",
+        action: async () => {
+          await lsList.remove("token");
+          mainHandler.refresh(true);
+        },
+      });
     } else {
       adminButtons.push({
-        text: lang({ no: "Restaurant eier?", en: "Restaurant owner?" }),
+        text: lang({ no: "Logg inn", en: "Log in" }),
         // icon: "./icons/infoIcon.png",
-        page: "admin",
+        page: "menu",
         change: this.mainContentContainer,
         classes: "bootstrap-btn-neutral",
         action: async () => {
