@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
-import { authHeaders, makeCopy, tryParse } from "./utils/common.js";
+
+import { authHeaders, makeCopy, tryParse } from "../utils/general";
 
 export async function handler(event) {
   const baseUrl = "https://kos.craftedbymartin.com";
