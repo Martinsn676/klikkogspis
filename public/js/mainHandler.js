@@ -49,7 +49,7 @@ export const mainHandler = {
   },
   async loadProducts() {
     console.log("mainHandler.restaurantID", mainHandler.restaurant_id);
-    const response = await api.try("getProducts", {
+    const response = await api.try("get-products", {
       storeID: mainHandler.restaurant_id,
       token: [await lsList.get("token")],
     });
