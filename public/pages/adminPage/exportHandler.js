@@ -1,3 +1,4 @@
+import { mainHandler } from "../../js/mainHandler.js";
 import { api } from "../../shared/js/api.js";
 import { getFormData, makeCopy } from "../../shared/js/lazyFunctions.js";
 
@@ -29,11 +30,15 @@ export async function exportHandler(event, item, orgItem, action) {
   item.name = item.meta.title_translations.no;
   item.description = item.meta.description_translations.no;
   console.log("item", item);
-  if (typeof item.images[0] == "string") {
+  if (item.images && typeof item.images[0] == "string") {
     delete item.images;
   }
 
-  const response = await api.try("make-change", { body: item, action });
+  const response = await api.try("make-change", {
+    body: item,
+    action,
+    restaurant_id: mainHandler.restaurant_id,
+  });
   console.log("response", response);
   console.log("json", await response.json);
   return response;

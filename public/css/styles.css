@@ -1214,7 +1214,6 @@ body footer {
   border: 0.5px solid grey;
   border-radius: 20px;
   margin-bottom: 10px;
-  padding: 4px 8px;
 }
 #admin-page #items-container form .icon-div {
   position: absolute;
@@ -1259,11 +1258,20 @@ body footer {
 #admin-page #items-container .container {
   padding: 20px;
   padding-bottom: 50px;
+  position: relative;
+}
+#admin-page #items-container .container .image-container {
+  position: relative;
+  width: 100%;
+  margin: 10px 0;
+}
+#admin-page #items-container .container .image-container img {
+  width: 100%;
 }
 #admin-page #items-container .container input,
-#admin-page #items-container .container textarea,
-#admin-page #items-container .container select {
-  width: calc(100% - 1.5rem);
+#admin-page #items-container .container textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
 }
 #admin-page #items-container .container .formDiv {
   font-family: "lemon";

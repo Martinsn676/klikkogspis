@@ -6,7 +6,7 @@ import FormData from "form-data";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
-
+const access = { id2: [30] };
 const apiKey = process.env.CONSUMER_KEY;
 const apiSecret = process.env.CONSUMER_SECRET;
 const postalKey = process.env.POSTAL_KYE;
@@ -123,20 +123,26 @@ app.post("/api/make-change", async (req, res) => {
     categoriesUrl: "/wp-json/wc/v3/products/categories",
     ordersUrl: "/wp-json/wc/v3/orders",
   };
-  let apiUrl;
-  const { body, action } = req.body;
 
+  const { body, action, restaurant_id, token } = req.body;
+  console.log("restaurant_id, token", restaurant_id, token);
+  const userID = await verifyUserID(token);
+  console.log("userID", userID);
+  if (!accessAllowed(userID, restaurant_id)) {
+    res.status(403).json({ error: `Not allowed!` });
+    return;
+  }
   // Parse exportBody back to JSON object
   try {
     // Determine the base URL for the WooCommerce API based on the provided endUrl
     // if (!password || password != "AbvaE344rfv") {
     //   throw new Error("You are not allowed to do this");
     // }
-
+    body.restaurant_owner = [restaurant_id]; // or [123] if using term ID
     const fullUrl = body.id
       ? baseUrl + links.productsUrl + "/" + body.id
       : baseUrl + links.productsUrl;
-
+    console.log("fullUrl", fullUrl);
     // Fetch data from the WooCommerce API
     const response = await fetch(fullUrl, {
       method: action,
@@ -150,6 +156,23 @@ app.post("/api/make-change", async (req, res) => {
     });
 
     const responseData = await response.json(); // Parse the JSON data
+    // console.log(`${baseUrl}/wp-json/wc/v3/products/${responseData.id}`);
+    // const attachResposne = await fetch(
+    //   `${baseUrl}/wp-json/wc/v3/products/${responseData.id}`,
+    //   {
+    //     method: "PUT",
+    //     headers: {
+    //       Authorization:
+    //         "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       restaurant_owner: [restaurant_id], // Slug
+    //     }),
+    //   }
+    // );
+
+    // console.log("attachResposne", attachResposne);
     res.status(200).json({
       type: "basic",
       url: fullUrl,
@@ -157,6 +180,7 @@ app.post("/api/make-change", async (req, res) => {
       status: 200,
       ok: true,
       data: responseData, // Return the parsed JSON data
+      // attachResposne: await attachResposne.json(),
     });
   } catch (error) {
     console.log(error);
@@ -172,28 +196,14 @@ app.post("/api/get-orders", async (req, res) => {
   };
 
   const { restaurant_id, token } = req.body;
-  console.log("token========", token);
+
   const userID = await verifyUserID(token);
   if (!userID) {
     res.status(403).json({ error: `You cant see this!` });
   }
   console.log("userID", userID);
-  const access = { id2: [30] };
-  let allowed = false;
-  console.log("access[userID", access["id" + userID]);
-  if (access["id" + userID]) {
-    if (
-      access["id" + userID].find((e) => {
-        console.log(e, restaurant_id);
-        return e == restaurant_id;
-      })
-    ) {
-      console.log("===allowed");
-      allowed = true;
-    }
-  }
-  console.log("allowed", allowed);
-  if (!allowed) {
+
+  if (!accessAllowed(userID, restaurant_id)) {
     res.status(403).json({ error: `Not allowed!` });
     return;
   }
@@ -562,13 +572,29 @@ app.post("/api/upload-image", async (req, res) => {
     res.status(500).json({ error: err.message || "Upload failed" });
   }
 });
+function accessAllowed(userID, restaurant_id) {
+  let allowed = false;
 
+  if (access["id" + userID]) {
+    if (
+      access["id" + userID].find((e) => {
+        return e == restaurant_id;
+      })
+    ) {
+      allowed = true;
+    }
+  }
+  return allowed;
+}
 async function verifyUserID(token) {
   if (!token) {
     return false;
   }
+  let passedToken = token;
   const validateUrl = baseUrl + `/wp-json/custom-jwt-auth/v1/validate`;
-
+  if (typeof token == "string") {
+    passedToken = [token];
+  }
   let tokenResponse;
   try {
     tokenResponse = await fetch(validateUrl, {
@@ -577,7 +603,7 @@ async function verifyUserID(token) {
         // Authorization: "Bearer " + token,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ passedToken }),
     });
   } catch (error) {
     console.warn(error);

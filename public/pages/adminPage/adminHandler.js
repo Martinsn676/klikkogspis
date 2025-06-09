@@ -58,6 +58,7 @@ export const adminHandler = {
         item.regular_price ? `, ${item.regular_price} kr` : ""
       }`;
     }
+
     const filterSelect = document.createElement("select");
     filterSelect.classList = "bootstrap-select";
     filterSelect.id = "filter-select";
@@ -74,7 +75,7 @@ export const adminHandler = {
       this.itemsContainer.dataset.filtertype = e.target.value;
     });
     this.itemsContainer.appendChild(filterSelect);
-    console.log("    mainHandler.products", mainHandler.products);
+
     mainHandler.products.forEach((item) =>
       adminHandler.itemsContainer.appendChild(createAdminItem(item))
     );
@@ -88,6 +89,15 @@ export const adminHandler = {
         if (testIDS) {
           console.info(item);
         }
+        const imageContainer = document.createElement("div");
+        imageContainer.classList = "image-container only-normal";
+        const productImage = document.createElement("img");
+
+        productImage.src =
+          item.images && item.images[0]
+            ? item.images[0]
+            : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg";
+
         const itemDiv = document.createElement("form");
         const title = document.createElement("div");
         title.classList = "title";
@@ -129,8 +139,17 @@ export const adminHandler = {
           container.classList.remove("hidden-container");
         }
         const standardInputs = document.createElement("div");
+
+        const fileInput = document.createElement("div");
+        fileInput.classList = "formDiv only-normal";
+        fileInput.innerHTML = `
+        <label name="imageUrl">${lang({ no: "Bilde", en: "Image" })}</label>
+        <input name="imageUrl" type="file" accept="image/*" capture="environment">
+`;
+        standardInputs.appendChild(fileInput);
         createManyInputs({
           place: standardInputs,
+          classes: "bootstrap-input",
           inputs: [
             {
               label: lang({
@@ -160,6 +179,7 @@ export const adminHandler = {
               name: "meta-description_translations-no",
               divClass: "only-normal",
               textarea: true,
+              type: "textarea",
             },
             {
               label: lang({
@@ -170,6 +190,7 @@ export const adminHandler = {
               name: "meta-description_translations-en",
               divClass: "only-normal",
               textarea: true,
+              type: "textarea",
             },
 
             {
@@ -200,13 +221,6 @@ export const adminHandler = {
           ],
         });
 
-        const fileInput = document.createElement("div");
-        fileInput.classList = "formDiv";
-        fileInput.innerHTML = `
-        <label name="imageUrl">${lang({ no: "Bilde", en: "Image" })}</label>
-        <input name="imageUrl" type="file" accept="image/*" capture="environment">
-`;
-        standardInputs.appendChild(fileInput);
         fileInput.addEventListener("change", async (event) => {
           const file = event.target.files[0];
           if (!file) return;
@@ -229,6 +243,8 @@ export const adminHandler = {
           const result = await response.json();
           adminHandler.saving = false;
           console.log("response", result);
+
+          productImage.src = result.content.source_url;
           item.images = [{ id: result.content.id }];
         });
         // <div class="formDiv only-normal">
@@ -301,6 +317,9 @@ export const adminHandler = {
           }
         });
         container.appendChild(typeSelector);
+
+        imageContainer.appendChild(productImage);
+
         const statusSelector = document.createElement("select");
         statusSelector.classList = "bootstrap-select mt-2";
         statusSelector.name = "status";
@@ -318,6 +337,7 @@ export const adminHandler = {
           item.status = event.target.value;
         });
         container.appendChild(statusSelector);
+        container.appendChild(imageContainer);
         container.appendChild(standardInputs);
 
         container.appendChild(submitButton);
@@ -393,8 +413,7 @@ export const adminHandler = {
           }
 
           const newItemLength = makeCopy(JSON.stringify(item));
-          console.log("newItemLength", newItemLength);
-          console.log("itemLength.length", itemLength.length);
+
           if (newItemLength.length == itemLength.length) {
             itemDiv.dataset.editing = "no";
           } else {

@@ -28,20 +28,23 @@ exports.handler = async (event) => {
     }
 
     if (tokenResponse.status == 429) {
-      res.status(429).json({
+      return {
         statusCode: 429,
-        content: { message: "For mange forsøk, vent noen sekunder" },
-      });
-      return;
+        body: JSON.stringify({
+          statusCode: 429,
+          content: { message: "For mange forsøk, vent noen sekunder" },
+        }),
+      };
     }
+
     if (tokenResponse.status == 503) {
-      res.status(503).json({
+      return {
         statusCode: 503,
-        content: {
-          message: "For mange forsøk, prøv igjen senere",
-        },
-      });
-      return;
+        body: JSON.stringify({
+          statusCode: 503,
+          content: { message: "For mange forsøk, prøv igjen senere" },
+        }),
+      };
     }
     let json;
     try {

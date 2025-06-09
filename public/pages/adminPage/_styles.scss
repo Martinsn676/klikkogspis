@@ -63,7 +63,7 @@
       border: 0.5px solid grey;
       border-radius: 20px;
       margin-bottom: 10px;
-      padding: 4px 8px;
+      // padding: 4px 8px;
       // background-color: rgba(72, 72, 72, 0.5);
       &[data-type-view="17"] {
         .only-normal,
@@ -92,10 +92,20 @@
     .container {
       padding: 20px;
       padding-bottom: 50px;
+      position: relative;
+      .image-container {
+        position: relative;
+        width: 100%;
+        margin: 10px 0;
+        img {
+          width: 100%;
+        }
+      }
       input,
-      textarea,
-      select {
-        width: calc(100% - 1.5rem);
+      textarea {
+        width: calc(100% - 20px);
+        padding: 10px;
+        // width: 100%;
       }
       .formDiv {
         font-family: "lemon";
