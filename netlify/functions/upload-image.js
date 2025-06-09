@@ -1,7 +1,6 @@
-const fs = require("fs");
-const https = require("https");
-const FormData = require("form-data");
-const formidable = require("formidable");
+import formidable from "formidable";
+import fs from "fs";
+import FormData from "form-data";
 const { verifyUserID } = require("../utils/general");
 
 exports.handler = async (event, context) => {
