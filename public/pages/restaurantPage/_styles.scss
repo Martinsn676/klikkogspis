@@ -3,6 +3,9 @@
     padding: 20px;
     margin: 20px;
     position: relative;
+    a {
+      color: black;
+    }
     .image-container {
       width: 100%;
       img {
@@ -12,9 +15,7 @@
     h4 {
       margin: 5px 0;
     }
-    .right-side {
-      font-size: 12px;
-    }
+
     .description {
       font-size: 12px;
       position: relative;
@@ -34,6 +35,8 @@
       &[data-closed="true"] {
         max-height: 7rem;
         overflow-y: hidden;
+      }
+      &.needs-blur {
         .blur {
           display: block;
         }

@@ -1320,6 +1320,9 @@ body footer {
   margin: 20px;
   position: relative;
 }
+#main-restaurants-page .container a {
+  color: black;
+}
 #main-restaurants-page .container .image-container {
   width: 100%;
 }
@@ -1328,9 +1331,6 @@ body footer {
 }
 #main-restaurants-page .container h4 {
   margin: 5px 0;
-}
-#main-restaurants-page .container .right-side {
-  font-size: 12px;
 }
 #main-restaurants-page .container .description {
   font-size: 12px;
@@ -1349,7 +1349,7 @@ body footer {
   max-height: 7rem;
   overflow-y: hidden;
 }
-#main-restaurants-page .container .description[data-closed=true] .blur {
+#main-restaurants-page .container .description.needs-blur .blur {
   display: block;
 }
 
