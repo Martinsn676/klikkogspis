@@ -1,7 +1,7 @@
 import formidable from "formidable";
 import fs from "fs";
 import FormData from "form-data";
-const { verifyUserID } = require("../utils/general");
+import { verifyUserID } from "../utils/general";
 
 exports.handler = async (event, context) => {
   console.log("🛬 /api/uploadImage Netlify Function triggered");
