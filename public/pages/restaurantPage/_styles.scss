@@ -1,0 +1,43 @@
+#main-restaurants-page {
+  .container {
+    padding: 20px;
+    margin: 20px;
+    position: relative;
+    .image-container {
+      width: 100%;
+      img {
+        max-width: 100%;
+      }
+    }
+    h4 {
+      margin: 5px 0;
+    }
+    .right-side {
+      font-size: 12px;
+    }
+    .description {
+      font-size: 12px;
+      position: relative;
+      cursor: pointer;
+      .blur {
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 1)
+        );
+        display: none;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 40px;
+      }
+      &[data-closed="true"] {
+        max-height: 7rem;
+        overflow-y: hidden;
+        .blur {
+          display: block;
+        }
+      }
+    }
+  }
+}

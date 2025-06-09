@@ -35,9 +35,7 @@ export const menuHandler = {
         <div>
       <div class="text-center">Mandag-Tirdag: Stengt</div>
       <div class="text-center">Onsdag-Søndag: 14:00-22:00</div>
-    </div>
-
-    `;
+    </div>`;
     const date = new Date();
     const dayNumber = date.getDay() - 1;
     const splitValue = dayNumber == 0 ? 7 : dayNumber;
@@ -115,10 +113,10 @@ export const menuHandler = {
           en: "See other restaurants",
         }),
         // icon: "./icons/restaurantMenuIcon.png",
-        page: "restaurantsPage",
+        page: "restaurants",
         change: this.mainContentContainer,
         classes: "bootstrap-btn-neutral",
-        action: () => console.log("restaurant page"),
+        action: () => navigateTo("restaurants"),
       },
     ];
     let adminButtons = [];

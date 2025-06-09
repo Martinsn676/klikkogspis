@@ -18,7 +18,8 @@ body {
   }
   #main-menu-page,
   #admin-page,
-  #admin-orders-page {
+  #admin-orders-page,
+  #main-restaurants-page {
     display: none;
     position: relative;
     padding-bottom: 20px;
@@ -56,6 +57,11 @@ body {
   }
   &[data-page="admin-orders"] {
     #admin-orders-page {
+      display: block;
+    }
+  }
+  &[data-page="restaurants"] {
+    #main-restaurants-page {
       display: block;
     }
   }

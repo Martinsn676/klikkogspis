@@ -887,7 +887,8 @@ body footer {
 }
 #main-content #main-menu-page,
 #main-content #admin-page,
-#main-content #admin-orders-page {
+#main-content #admin-orders-page,
+#main-content #main-restaurants-page {
   display: none;
   position: relative;
   padding-bottom: 20px;
@@ -911,6 +912,9 @@ body footer {
   display: block;
 }
 #main-content[data-page=admin-orders] #admin-orders-page {
+  display: block;
+}
+#main-content[data-page=restaurants] #main-restaurants-page {
   display: block;
 }
 
@@ -1309,6 +1313,44 @@ body footer {
 #modal-container[data-page=login] #forgot-password-button {
   background-color: white;
   color: black;
+}
+
+#main-restaurants-page .container {
+  padding: 20px;
+  margin: 20px;
+  position: relative;
+}
+#main-restaurants-page .container .image-container {
+  width: 100%;
+}
+#main-restaurants-page .container .image-container img {
+  max-width: 100%;
+}
+#main-restaurants-page .container h4 {
+  margin: 5px 0;
+}
+#main-restaurants-page .container .right-side {
+  font-size: 12px;
+}
+#main-restaurants-page .container .description {
+  font-size: 12px;
+  position: relative;
+  cursor: pointer;
+}
+#main-restaurants-page .container .description .blur {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgb(255, 255, 255));
+  display: none;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+}
+#main-restaurants-page .container .description[data-closed=true] {
+  max-height: 7rem;
+  overflow-y: hidden;
+}
+#main-restaurants-page .container .description[data-closed=true] .blur {
+  display: block;
 }
 
 .message-container {

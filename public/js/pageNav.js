@@ -1,4 +1,5 @@
 import { adminHandler } from "../pages/adminPage/adminHandler.js";
+import { restaurantPageHandler } from "../pages/restaurantPage/restaurantPageHandler.js";
 import { waitingHandler } from "../pages/waitingPage/waitingHandler.js";
 import { lang } from "../shared/js/lang.js";
 import { makeCopy } from "../shared/js/lazyFunctions.js";
@@ -21,6 +22,7 @@ export function navigateTo(
     "ordering",
     "admin",
     "admin-orders",
+    "restaurants",
   ];
   if (!validPages.find((e) => e == pageName)) {
     pageName = "menu";
@@ -79,7 +81,9 @@ export function navigateTo(
   if (pageName == "waiting" && oldInformation["order"]) {
     waitingHandler.init();
   }
-
+  if (pageName == "restaurants") {
+    restaurantPageHandler.init();
+  }
   if (reload) window.location.reload();
 }
 const pageName = new URLSearchParams(location.search).get("page");
@@ -103,11 +107,14 @@ function getRestaurantName(url) {
   return parts[0]; // The subdomain (restaurant name)
 }
 
-const url = "https://chinarestauranthusnes.klikkogspis.no/?lng=en&page=menu";
-const restaurantName = getRestaurantName(url);
+const url = window.location.origin;
+console.log("url", url);
+let restaurantName = getRestaurantName(url);
 
 console.log(restaurantName); // 👉 "chinarestauranthusnes"
-
+if (restaurantName == 127) {
+  restaurantName = "chinarestauranthusnes";
+}
 const restaurantIDS = {
   chinarestauranthusnes: 30,
 };

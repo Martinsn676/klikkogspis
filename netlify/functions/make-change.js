@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { authHeaders } from "./utils/common.js";
+import { authHeaders } from "../utils/general.js";
 
 export async function handler(event) {
   const links = {
