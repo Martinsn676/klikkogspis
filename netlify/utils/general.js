@@ -1,6 +1,6 @@
 export const apiKey = process.env.CONSUMER_KEY;
 export const apiSecret = process.env.CONSUMER_SECRET;
-
+const baseUrl = "https://kos.craftedbymartin.com";
 export const authHeaders = {
   Authorization:
     "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
