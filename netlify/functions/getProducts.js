@@ -1,13 +1,14 @@
-import { makeCopy, tryParse } from "../utils/general.js";
+import { makeCopy, tryParse, verifyUserID } from "../utils/general.js";
 exports.handler = async (event) => {
   let response;
   const baseUrl = "https://kos.craftedbymartin.com";
-  const productsUrl = "/wp-json/wc/v3/products?per_page=100";
+  const productsUrl =
+    "/wp-json/wc/v3/custom-products?per_page=100&restaurant_owner=";
   const apiKey = process.env.CONSUMER_KEY;
   const apiSecret = process.env.CONSUMER_SECRET;
+  const userID = await verifyUserID(token);
   try {
     // Parse request body
-    const { storeID } = JSON.parse(event.body);
 
     // Validate required fields
     if (!storeID) {
@@ -32,7 +33,7 @@ exports.handler = async (event) => {
     //     }),
     //   };
     // }
-    const fullUrl = baseUrl + productsUrl + "&restaurant_owner=" + storeID;
+    const fullUrl = baseUrl + productsUrl + storeID;
 
     response = await fetch(fullUrl, {
       method: "GET",
@@ -64,45 +65,35 @@ exports.handler = async (event) => {
       };
     }
     let json;
-    const keepThese = [
-      "images",
-      "name",
-      "description",
-      "regular_price",
-      "id",
-      "categories",
-      "stock_quantity",
-      "status",
-    ];
-    const keepTheseMeta = [
-      "title_translations",
-      "description_translations",
-      "allergies",
-      "foodoptions",
-      "fixeditem",
-      "itemnumber",
-    ];
+    // const keepThese = [
+    //   "images",
+    //   "name",
+    //   "description",
+    //   "regular_price",
+    //   "id",
+    //   "categories",
+    //   "stock_quantity",
+    //   "status",
+    // ];
+    // const keepTheseMeta = [
+    //   "title_translations",
+    //   "description_translations",
+    //   "allergies",
+    //   "foodoptions",
+    //   "fixeditem",
+    //   "itemnumber",
+    // ];
     json = await response.json();
-    const rawJson = makeCopy(json);
+
     const returnJson = [];
     json.forEach((element) => {
-      const object = { meta_data: [], meta: {} };
+      const object = element;
 
-      keepThese.forEach((i) => (object[i] = element[i]));
-      const meta = {};
-      // element.meta_data.forEach(({ key, value,id }) => (meta[key] = value));
-      keepTheseMeta.forEach((i) => {
-        const meta = element.meta_data.find((meta) => {
-          return meta.key == i;
-        });
-        if (meta) {
-          meta.value = tryParse(meta.value);
-          object.meta_data.push(meta);
-          object.meta[meta.key] = meta.value;
-        }
-      });
-      returnJson.push(object);
+      if (object.status == "publish" || userID) {
+        returnJson.push(object);
+      }
     });
+
     return {
       statusCode: 200,
       body: JSON.stringify({

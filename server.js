@@ -59,45 +59,32 @@ app.post("/api/getProducts", async (req, res) => {
       },
     });
     let json;
-    const keepThese = [
-      "images",
-      "name",
-      "description",
-      "regular_price",
-      "id",
-      "categories",
-      "stock_quantity",
-      "status",
-    ];
+    // const keepThese = [
+    //   "images",
+    //   "name",
+    //   "description",
+    //   "regular_price",
+    //   "id",
+    //   "categories",
+    //   "stock_quantity",
+    //   "status",
+    // ];
 
-    const keepTheseMeta = [
-      "title_translations",
-      "description_translations",
-      "allergies",
-      "foodoptions",
-      "fixeditem",
-      "itemnumber",
-    ];
+    // const keepTheseMeta = [
+    //   "title_translations",
+    //   "description_translations",
+    //   "allergies",
+    //   "foodoptions",
+    //   "fixeditem",
+    //   "itemnumber",
+    // ];
     json = await response.json();
 
     const rawJson = makeCopy(json);
     const returnJson = [];
     json.forEach((element) => {
-      const object = { meta_data: [], meta: {} };
+      const object = element;
 
-      keepThese.forEach((i) => (object[i] = element[i]));
-      const meta = {};
-      // element.meta_data.forEach(({ key, value,id }) => (meta[key] = value));
-      keepTheseMeta.forEach((i) => {
-        const meta = element.meta_data.find((meta) => {
-          return meta.key == i;
-        });
-        if (meta) {
-          meta.value = tryParse(meta.value);
-          object.meta_data.push(meta);
-          object.meta[meta.key] = meta.value;
-        }
-      });
       if (object.status == "publish" || userID) {
         returnJson.push(object);
       }
