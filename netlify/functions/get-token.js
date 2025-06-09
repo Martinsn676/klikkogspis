@@ -10,7 +10,7 @@ exports.handler = async (event) => {
 
   try {
     // Parse request body
-    const { username, password } = req.body;
+    const { username, password } = JSON.parse(event.body);
     const getTokenUrl = baseUrl + `/wp-json/custom-jwt-auth/v1/token`;
     let tokenResponse;
 
