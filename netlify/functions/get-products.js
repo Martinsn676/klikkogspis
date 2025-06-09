@@ -6,12 +6,11 @@ import {
 } from "../utils/general";
 
 export async function handler(event) {
-  const baseUrl = "https://kos.craftedbymartin.com";
-  const productsUrl =
-    "/wp-json/wc/v3/custom-products?per_page=100&restaurant_owner=";
   const { storeID, token } = JSON.parse(event.body);
   const userID = await verifyUserID(token);
-  const fullUrl = baseUrl + productsUrl + storeID;
+  const fullUrl =
+    "https://kos.craftedbymartin.com/wp-json/wc/v3/custom-products?per_page=100&restaurant_owner=" +
+    storeID;
   try {
     const response = await fetch(fullUrl, {
       method: "GET",
