@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 // Endpoint to make the API call to WooCommerce
-app.post("/api/getProducts", async (req, res) => {
+app.post("/api/get-products", async (req, res) => {
   const baseUrl = "https://kos.craftedbymartin.com";
   const productsUrl =
     "/wp-json/wc/v3/custom-products?per_page=100&restaurant_owner=";
