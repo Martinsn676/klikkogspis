@@ -5,16 +5,7 @@ import { lang } from "../../shared/js/lang.js";
 import { createButtons, createP } from "../../shared/js/lazyFunctions.js";
 import { lsList } from "../../shared/js/lists.js";
 import { loginHandler } from "../loginPage/loginHandler.js";
-const address = "Sentrumsvegen 15, 5460 Husnes";
-const openingHours = [
-  [lang({ no: "Mandag", en: "Monday" })],
-  [lang({ no: "Tirsdag", en: "Tuesday" })],
-  [lang({ no: "Onsdag", en: "Wednesday" }), 14, 22],
-  [lang({ no: "Torsdag", en: "Thursday" }), 14, 22],
-  [lang({ no: "Fredag", en: "Friday" }), 14, 22],
-  [lang({ no: "Lørdag", en: "Saturday" }), 14, 22],
-  [lang({ no: "Søndag", en: "Sunday" }), 14, 22],
-];
+import { restaurantPageHandler } from "../restaurantPage/restaurantPageHandler.js";
 
 export const menuHandler = {
   async init() {
@@ -24,10 +15,16 @@ export const menuHandler = {
     this.mainContainer.classList = "flex-column align";
     const menuText = document.createElement("div");
     menuText.id = "menu-text";
+    const restaurantDetaisl = restaurantPageHandler.restaurants.find(
+      (e) => e.id == mainHandler.restaurant_id
+    );
+
+    const { name, image, description, address, openingHours } =
+      restaurantDetaisl;
 
     this.mainContainer.innerHTML = `
     <div>
-      <img id="main-image" src="./icons/mainImage.png">
+      <img id="main-image" src="${image}">
     </div>
     <div>
       <div class="text-center">${address}</div>
