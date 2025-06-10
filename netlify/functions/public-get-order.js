@@ -12,7 +12,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: `missing tracking_token!` }),
     };
   }
-
+  console.log("tracking_token", tracking_token);
   try {
     const fullUrl = links.baseUrl + links.ordersUrl + tracking_token;
 
@@ -36,6 +36,7 @@ exports.handler = async (event) => {
         redirected: false,
         status: 200,
         ok: true,
+        fullUrl,
         data,
       }),
     };
