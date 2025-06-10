@@ -1,10 +1,10 @@
-import formidable from "formidable";
-import fs from "fs";
-import FormData from "form-data";
-import https from "https";
-import { verifyUserID } from "../utils/general";
+const fs = require("fs");
+const https = require("https");
+const FormData = require("form-data");
+const { IncomingForm } = require("formidable");
+const { verifyUserID } = require("../utils/general");
 
-export const handler = async (event, context) => {
+exports.handler = async (event) => {
   console.log("🛬 /api/uploadImage Netlify Function triggered");
 
   if (event.httpMethod !== "POST") {
@@ -15,28 +15,32 @@ export const handler = async (event, context) => {
   }
 
   try {
-    const contentType =
-      event.headers["content-type"] || event.headers["Content-Type"];
-    const isBase64 = event.isBase64Encoded;
-    const form = formidable({ multiples: false });
-
     const { fields, files } = await new Promise((resolve, reject) => {
+      const form = new IncomingForm({ multiples: false });
+
+      // Netlify passes body as base64 string when binary content
+      const buffer = Buffer.from(
+        event.body,
+        event.isBase64Encoded ? "base64" : "utf8"
+      );
+
       form.parse(
         {
-          headers: { "content-type": contentType },
+          headers: event.headers,
           method: event.httpMethod,
-          url: event.rawUrl || "",
-          body: isBase64 ? Buffer.from(event.body, "base64") : event.body,
+          url: event.rawUrl || "/",
+          body: buffer,
         },
         (err, fields, files) => {
           if (err) {
             console.error("❌ Form parse error:", err);
-            return reject(err);
+            reject(err);
+          } else {
+            console.log("✅ Form parsed successfully");
+            console.log("📦 Fields:", fields);
+            console.log("📎 Files:", files);
+            resolve({ fields, files });
           }
-          console.log("✅ Form parsed successfully");
-          console.log("📦 Fields:", fields);
-          console.log("📎 Files:", files);
-          resolve({ fields, files });
         }
       );
     });
@@ -48,7 +52,6 @@ export const handler = async (event, context) => {
       throw new Error("Missing token or file");
     }
 
-    console.log("🔐 Verifying token...");
     const userID = await verifyUserID(token);
     if (!userID) throw new Error("Invalid user token");
     console.log("✅ Token verified, user ID:", userID);
@@ -58,7 +61,6 @@ export const handler = async (event, context) => {
     const fileType = file.mimetype;
     const fileSize = fs.statSync(filePath).size;
 
-    console.log("🧵 Preparing file stream for:", fileName);
     const formData = new FormData();
     formData.append("file", fs.createReadStream(filePath), {
       filename: fileName,
@@ -78,6 +80,7 @@ export const handler = async (event, context) => {
     };
 
     console.log("📤 Uploading file to WordPress...");
+
     const uploadResult = await new Promise((resolve, reject) => {
       const req = https.request(requestOptions, (wpRes) => {
         let body = "";
