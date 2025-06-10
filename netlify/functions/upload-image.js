@@ -1,12 +1,13 @@
-import { IncomingForm } from "formidable";
 import fs from "fs";
 import https from "https";
+import path from "path";
+import { tmpdir } from "os";
+import Busboy from "busboy";
 import FormData from "form-data";
 import { verifyUserID } from "../utils/general.js";
 
-// Prevent Netlify from parsing body
 export const config = {
-  bodyParser: false,
+  bodyParser: false, // REQUIRED for Busboy to work
 };
 
 export async function handler(event) {
@@ -20,37 +21,58 @@ export async function handler(event) {
   }
 
   try {
-    const { fields, files } = await new Promise((resolve, reject) => {
-      const form = new IncomingForm({ multiples: false });
-      form.uploadDir = "/tmp"; // Required for Netlify
-      form.keepExtensions = true;
+    const fields = {};
+    let filePath = "";
+    let fileName = "";
+    let fileType = "";
+    let token = "";
 
-      form.parse(event, (err, fields, files) => {
-        if (err) {
-          console.error("❌ Form parse error:", err);
-          return reject(err);
-        }
-        console.log("✅ Form parsed successfully");
-        console.log("📦 Fields:", fields);
-        console.log("📎 Files:", files);
-        resolve({ fields, files });
+    await new Promise((resolve, reject) => {
+      const busboy = Busboy({
+        headers: event.headers,
       });
+
+      busboy.on("field", (fieldname, val) => {
+        fields[fieldname] = val;
+        if (fieldname === "token") token = val;
+      });
+
+      busboy.on("file", (fieldname, file, info) => {
+        const { filename, mimeType } = info;
+        fileName = filename;
+        fileType = mimeType;
+
+        const tmpPath = path.join(tmpdir(), filename);
+        filePath = tmpPath;
+        const writeStream = fs.createWriteStream(tmpPath);
+        file.pipe(writeStream);
+
+        writeStream.on("close", () => {
+          console.log("✅ File saved to:", tmpPath);
+        });
+      });
+
+      busboy.on("finish", () => {
+        console.log("✅ Parsing done");
+        resolve();
+      });
+
+      busboy.on("error", (err) => {
+        console.error("❌ Busboy error:", err);
+        reject(err);
+      });
+
+      busboy.end(Buffer.from(event.body, "base64"));
     });
 
-    const token = fields.token;
-    const file = Array.isArray(files.file) ? files.file[0] : files.file;
-
-    if (!token || !file) throw new Error("Missing token or file");
+    if (!token || !filePath) {
+      throw new Error("Missing token or file");
+    }
 
     const userID = await verifyUserID(token);
     if (!userID) throw new Error("Invalid user token");
-    console.log("✅ Token verified for user ID:", userID);
 
-    const filePath = file.filepath;
-    const fileName = file.originalFilename;
-    const fileType = file.mimetype;
     const fileSize = fs.statSync(filePath).size;
-
     const formData = new FormData();
     formData.append("file", fs.createReadStream(filePath), {
       filename: fileName,
@@ -58,47 +80,45 @@ export async function handler(event) {
       knownLength: fileSize,
     });
 
-    console.log("📤 Uploading to WordPress...");
+    const requestOptions = {
+      method: "POST",
+      host: "kos.craftedbymartin.com",
+      path: "/wp-json/wp/v2/media",
+      protocol: "https:",
+      headers: {
+        Authorization: "Bearer " + token,
+        ...formData.getHeaders(),
+      },
+    };
 
     const uploadResult = await new Promise((resolve, reject) => {
-      const req = https.request(
-        {
-          hostname: "kos.craftedbymartin.com",
-          path: "/wp-json/wp/v2/media",
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token,
-            ...formData.getHeaders(),
-          },
-        },
-        (wpRes) => {
-          let body = "";
-          wpRes.on("data", (chunk) => (body += chunk));
-          wpRes.on("end", () => {
-            try {
-              const json = JSON.parse(body);
-              if (wpRes.statusCode >= 400) {
-                console.error("❌ WP error:", json);
-                return reject({
-                  statusCode: wpRes.statusCode,
-                  body: JSON.stringify(json),
-                });
-              }
-              console.log("✅ Upload success:", json);
-              resolve({
-                statusCode: 200,
+      const req = https.request(requestOptions, (wpRes) => {
+        let body = "";
+        wpRes.on("data", (chunk) => (body += chunk));
+        wpRes.on("end", () => {
+          try {
+            const json = JSON.parse(body);
+            if (wpRes.statusCode >= 400) {
+              console.error("❌ WP Error:", json);
+              return reject({
+                statusCode: wpRes.statusCode,
                 body: JSON.stringify(json),
               });
-            } catch (e) {
-              console.error("❌ Failed to parse WP response:", body);
-              reject({
-                statusCode: 500,
-                body: JSON.stringify({ error: "Invalid JSON from WordPress" }),
-              });
             }
-          });
-        }
-      );
+            console.log("✅ WP upload success:", json);
+            resolve({
+              statusCode: 200,
+              body: JSON.stringify({ statusCode: 200, content: json }),
+            });
+          } catch (e) {
+            console.error("❌ WP JSON parse error:", body);
+            reject({
+              statusCode: 500,
+              body: JSON.stringify({ error: "Failed to parse WP response" }),
+            });
+          }
+        });
+      });
 
       req.on("error", (e) => {
         console.error("❌ Upload error:", e);
@@ -113,7 +133,7 @@ export async function handler(event) {
 
     return uploadResult;
   } catch (err) {
-    console.error("❌ Upload handler error:", err);
+    console.error("❌ Upload error:", err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: err.message || "Upload failed" }),
