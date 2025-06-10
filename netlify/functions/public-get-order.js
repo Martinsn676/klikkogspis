@@ -1,7 +1,7 @@
 exports.handler = async (event) => {
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",
-    ordersUrl: "/wp-json/custom-orders/v1/track?token=",
+    ordersUrl: "/wp-json/custom-orders/v1/track?key=",
   };
 
   const { tracking_token } = JSON.parse(event.body);
