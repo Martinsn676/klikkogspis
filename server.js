@@ -408,8 +408,8 @@ app.post("/api/post-order", async (req, res) => {
     const response = await fetch(fullUrl, {
       method: "POST",
       headers: {
-        // Authorization:
-        //   "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
+        Authorization:
+          "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
         "Content-Type": "application/json",
         "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
       },
@@ -425,7 +425,7 @@ app.post("/api/post-order", async (req, res) => {
       redirected: false,
       status: 200,
       ok: true,
-      // data: responseData, // Return the parsed JSON data
+      data: responseData, // Return the parsed JSON data
       // sendItems,
     });
   } catch (error) {
