@@ -15,11 +15,12 @@
 @import "../public/pages/restaurantPage/styles";
 @import "../public/shared/scss/errorHandler";
 body {
-  margin: 0;
+  margin: 0 auto;
   //   background-color: linear-gradient(180deg, #f2f2f2 20%, white 80%);
   background-color: #fff;
   height: var(--app-height);
   position: relative;
+  max-width: 450px;
 }
 #test-back-button {
   height: 70%;

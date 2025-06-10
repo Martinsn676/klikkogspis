@@ -863,9 +863,9 @@ body.showHelp .help-block {
 #main-menu-page .menu-divider {
   font-family: "lemon";
   text-align: center;
-  margin: 15px 5vw;
+  margin: 15px 5%;
   padding-bottom: 5px;
-  width: 90vw;
+  width: 90%;
   border-bottom: 2px solid black;
 }
 
@@ -933,7 +933,7 @@ body footer {
 
 .main-container {
   height: 80%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .item-card {
@@ -1361,6 +1361,9 @@ body footer {
   max-height: 7rem;
   overflow-y: hidden;
 }
+#main-restaurants-page .container .description[data-closed=false] .blur {
+  display: none !important;
+}
 #main-restaurants-page .container .description.needs-blur .blur {
   display: block;
 }
@@ -1408,10 +1411,11 @@ body footer {
   }
 }
 body {
-  margin: 0;
+  margin: 0 auto;
   background-color: #fff;
   height: var(--app-height);
   position: relative;
+  max-width: 450px;
 }
 
 #test-back-button {

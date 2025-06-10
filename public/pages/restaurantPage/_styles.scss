@@ -36,6 +36,11 @@
         max-height: 7rem;
         overflow-y: hidden;
       }
+      &[data-closed="false"] {
+        .blur {
+          display: none !important;
+        }
+      }
       &.needs-blur {
         .blur {
           display: block;

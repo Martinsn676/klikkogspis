@@ -97,6 +97,8 @@ exports.handler = async (event) => {
     const response = await fetch(fullUrl, {
       method: "POST",
       headers: {
+        Authorization:
+          "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
         "Content-Type": "application/json",
         "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
       },

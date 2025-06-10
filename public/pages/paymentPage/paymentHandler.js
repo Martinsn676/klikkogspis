@@ -207,7 +207,17 @@ export const paymentHandler = {
             });
 
             paymentHandler.submittingOrder = false;
+            this.userForm.querySelectorAll("input").forEach((input) => {
+              this.checkIfReady();
 
+              if (input.name) {
+                if (paymentHandler.remember) {
+                  lsList.save(input.name, input.value);
+                } else {
+                  ssList.save(input.name, tarinputet.value);
+                }
+              }
+            });
             waitingHandler.init();
             await ssList.save("tracking_token", response.data.tracking_token);
             navigateTo("waiting", false, {

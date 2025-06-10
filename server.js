@@ -247,7 +247,7 @@ app.post("/api/get-orders", async (req, res) => {
 app.post("/api/public-get-order", async (req, res) => {
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",
-    ordersUrl: "/wp-json/custom-orders/v1/track?token=",
+    ordersUrl: "/wp-json/custom-orders/v1/track?key=",
   };
 
   const { tracking_token } = req.body;
