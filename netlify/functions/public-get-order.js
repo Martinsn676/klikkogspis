@@ -7,7 +7,10 @@ exports.handler = async (event) => {
   const { tracking_token } = JSON.parse(event.body);
 
   if (!tracking_token) {
-    return res.status(500).json({ error: `Missing token` });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: `missing tracking_token!` }),
+    };
   }
 
   try {
