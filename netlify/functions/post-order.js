@@ -109,9 +109,9 @@ exports.handler = async (event) => {
         body: JSON.stringify({ error: `Failed to post order` }),
       };
     }
-    console.log("response", response);
-    const responseData = response.json();
-    console.log("responseData", responseData);
+
+    const responseData = await response.json();
+
     return {
       statusCode: 200,
       body: JSON.stringify({
