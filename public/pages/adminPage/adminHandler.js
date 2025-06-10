@@ -232,8 +232,11 @@ export const adminHandler = {
           formData.append("name", file.name); // Optional
           formData.append("token", token);
           adminHandler.saving = true;
-          const response = await api.try("upload-image", { formData });
-
+          // const response = await api.try("upload-image", { formData });
+          const response = await fetch("/.netlify/functions/upload-image", {
+            method: "POST",
+            body: formData, // ← This sets content-type to multipart/form-data automatically
+          });
           const result = await response.json();
           adminHandler.saving = false;
           console.log("response", result);
