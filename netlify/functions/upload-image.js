@@ -1,10 +1,10 @@
-const fs = require("fs");
-const https = require("https");
-const FormData = require("form-data");
-const { IncomingForm } = require("formidable");
-const { verifyUserID } = require("../utils/general");
+import fs from "fs";
+import https from "https";
+import FormData from "form-data";
+import { IncomingForm } from "formidable";
+import { verifyUserID } from "../utils/general.js";
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   console.log("🛬 /api/uploadImage Netlify Function triggered");
 
   if (event.httpMethod !== "POST") {
@@ -18,7 +18,6 @@ exports.handler = async (event) => {
     const { fields, files } = await new Promise((resolve, reject) => {
       const form = new IncomingForm({ multiples: false });
 
-      // Netlify passes body as base64 string when binary content
       const buffer = Buffer.from(
         event.body,
         event.isBase64Encoded ? "base64" : "utf8"
@@ -38,7 +37,7 @@ exports.handler = async (event) => {
           } else {
             console.log("✅ Form parsed successfully");
             console.log("📦 Fields:", fields);
-            console.log("📎 Files:", files);
+            console.log("📌 Files:", files);
             resolve({ fields, files });
           }
         }
