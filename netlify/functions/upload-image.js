@@ -87,6 +87,7 @@ export async function handler(event) {
       protocol: "https:",
       headers: {
         Authorization: "Bearer " + token,
+        "User-Agent": "NetlifyUploader/1.0",
         ...formData.getHeaders(),
       },
     };
