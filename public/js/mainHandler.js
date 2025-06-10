@@ -16,14 +16,14 @@ export const mainHandler = {
     menuHandler.init();
     await paymentHandler.init();
     await this.loadProducts();
+    orderHandler.init();
     this.initAll();
   },
   async initAll() {
     menuHandler.init();
-    orderHandler.init();
 
     await checkOutHandler.init();
-    orderHandler.init();
+
     const token = await lsList.get("token");
     if (token) {
       adminHandler.init();
