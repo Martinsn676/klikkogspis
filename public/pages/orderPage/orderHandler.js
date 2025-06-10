@@ -82,16 +82,7 @@ export const orderHandler = {
           console.log("checkOutHandler.content", checkOutHandler.content);
           checkOutHandler.content.unshift(newItem);
           mainHandler.refresh();
-          const rawJson = makeCopy(json);
-          const returnJson = [];
-          json.forEach((element) => {
-            const object = element;
-
-            if (object.status == "publish" || userID) {
-              returnJson.push(object);
-            }
-          });
-
+          checkOutHandler.build();
           event.target.innerText = lang({ no: "Lagt til!", en: "Added!" });
 
           orderHandler.orderIcon.classList.remove("bump");

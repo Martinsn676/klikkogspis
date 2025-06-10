@@ -1,9 +1,10 @@
 import formidable from "formidable";
 import fs from "fs";
 import FormData from "form-data";
+import https from "https";
 import { verifyUserID } from "../utils/general";
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   console.log("🛬 /api/uploadImage Netlify Function triggered");
 
   if (event.httpMethod !== "POST") {
@@ -14,26 +15,28 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { fields, files } = await new Promise((resolve, reject) => {
-      const form = formidable({ multiples: false });
+    const contentType =
+      event.headers["content-type"] || event.headers["Content-Type"];
+    const isBase64 = event.isBase64Encoded;
+    const form = formidable({ multiples: false });
 
+    const { fields, files } = await new Promise((resolve, reject) => {
       form.parse(
         {
-          headers: event.headers,
+          headers: { "content-type": contentType },
           method: event.httpMethod,
-          url: event.rawUrl,
-          body: event.body,
+          url: event.rawUrl || "",
+          body: isBase64 ? Buffer.from(event.body, "base64") : event.body,
         },
         (err, fields, files) => {
           if (err) {
             console.error("❌ Form parse error:", err);
-            reject(err);
-          } else {
-            console.log("✅ Form parsed successfully");
-            console.log("📦 Fields:", fields);
-            console.log("📎 Files:", files);
-            resolve({ fields, files });
+            return reject(err);
           }
+          console.log("✅ Form parsed successfully");
+          console.log("📦 Fields:", fields);
+          console.log("📎 Files:", files);
+          resolve({ fields, files });
         }
       );
     });
@@ -56,10 +59,6 @@ exports.handler = async (event, context) => {
     const fileSize = fs.statSync(filePath).size;
 
     console.log("🧵 Preparing file stream for:", fileName);
-    console.log("📁 file path:", filePath);
-    console.log("📎 mimetype:", fileType);
-    console.log("📏 file size:", fileSize);
-
     const formData = new FormData();
     formData.append("file", fs.createReadStream(filePath), {
       filename: fileName,
@@ -79,7 +78,6 @@ exports.handler = async (event, context) => {
     };
 
     console.log("📤 Uploading file to WordPress...");
-
     const uploadResult = await new Promise((resolve, reject) => {
       const req = https.request(requestOptions, (wpRes) => {
         let body = "";

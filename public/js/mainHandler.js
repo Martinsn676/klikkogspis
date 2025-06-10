@@ -86,6 +86,12 @@ export const mainHandler = {
       if (!e.meta.title_translations) {
         e.meta.title_translations = {};
       }
+      if (!e.meta.foodoptions) {
+        e.meta.foodoptions = [];
+      }
+      if (!e.meta.title_translations) {
+        e.meta.title_translations = {};
+      }
       if (e.categories.find((cat) => cat.name == "drinks")) {
         this.drinks.push(e);
       } else if (e.categories.find((cat) => cat.name == "foods")) {

@@ -65,7 +65,6 @@ export const paymentHandler = {
             divClass: "flex-row align p-3",
             checked: this.remember,
             onChange: (event) => {
-              console.log("event", event);
               paymentHandler.remember = event.target.checked;
             },
           },
@@ -79,12 +78,6 @@ export const paymentHandler = {
       this.checkIfReady();
 
       if (target.name) {
-        console.log(
-          "target.name, target.value",
-          target.name,
-          target.value,
-          paymentHandler.remember
-        );
         if (paymentHandler.remember) {
           lsList.save(target.name, target.value);
         } else {
@@ -101,13 +94,11 @@ export const paymentHandler = {
     if (this.totalCost && this.totalCost > 0) {
       let allValid = true;
       this.userForm.querySelectorAll("input").forEach((e) => {
-        console.log(e);
-
         if (e.type != "checkbox" && e.dataset.valid == "false") {
           allValid = false;
         }
       });
-      console.log(this.userForm);
+
       if (allValid) {
         finishButton.disabled = false;
       } else {
@@ -208,14 +199,13 @@ export const paymentHandler = {
 
             const restaurant_id = mainHandler.restaurant_id;
             const formData = getFormData(this.userForm);
-            console.log("formData", formData);
-            console.log("checkOutHandler.content", checkOutHandler.content);
+
             const response = await api.try("post-order", {
               cartContent: checkOutHandler.content,
               userData: formData,
               restaurant_id,
             });
-            console.log("response", response);
+
             paymentHandler.submittingOrder = false;
 
             waitingHandler.init();

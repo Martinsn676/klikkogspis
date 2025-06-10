@@ -1268,6 +1268,10 @@ body footer {
 #admin-page #items-container .container .image-container img {
   width: 100%;
 }
+#admin-page #items-container .container .option-container {
+  border-bottom: 0.5px solid grey;
+  margin-bottom: 5px;
+}
 #admin-page #items-container .container input,
 #admin-page #items-container .container textarea {
   width: calc(100% - 20px);
