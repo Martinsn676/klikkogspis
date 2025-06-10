@@ -214,15 +214,17 @@ export const paymentHandler = {
                 if (paymentHandler.remember) {
                   lsList.save(input.name, input.value);
                 } else {
-                  ssList.save(input.name, tarinputet.value);
+                  ssList.save(input.name, input.value);
                 }
               }
             });
             waitingHandler.init();
-            await ssList.save("tracking_token", response.data.tracking_token);
-            navigateTo("waiting", false, {
-              order: response.data.tracking_token,
-            });
+            if (response.data.tracking_token) {
+              await ssList.save("tracking_token", response.data.tracking_token);
+              navigateTo("waiting", false, {
+                order: response.data.tracking_token,
+              });
+            }
           }
         },
       })

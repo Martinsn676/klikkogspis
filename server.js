@@ -295,7 +295,7 @@ app.post("/api/public-get-order", async (req, res) => {
 app.post("/api/post-order", async (req, res) => {
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",
-    ordersUrl: "/wp-json/custom-orders/v1/create",
+    ordersUrl: "/wp-json/wc/custom-orders/v1/create",
     productsUrl: "/wp-json/wc/v3/products?include=",
   };
 

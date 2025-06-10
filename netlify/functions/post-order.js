@@ -4,7 +4,7 @@ exports.handler = async (event) => {
 
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",
-    ordersUrl: "/wp-json/custom-orders/v1/create",
+    ordersUrl: "/wp-json/wc/custom-orders/v1/create",
     productsUrl: "/wp-json/wc/v3/products?include=",
   };
 
