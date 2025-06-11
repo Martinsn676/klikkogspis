@@ -24,9 +24,10 @@ export const waitingHandler = {
     }
   },
   async build() {
+    this.itemsContainer.innerHTML = "";
     await this.getOrder();
     this.buildTopBar();
-    this.itemsContainer.innerHTML = "";
+
     this.orderDetails.items.forEach((e) => {
       const options = e.meta.find((meta) => meta.key == "option");
       let optionsText = "";

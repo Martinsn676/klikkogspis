@@ -34,11 +34,19 @@
         position: relative;
         padding: 10px;
       }
+
       .card-display {
         min-height: 60px;
+        .orderItemsContainer {
+          padding-top: 10px;
+        }
         cursor: pointer;
         .item-container {
-          padding: 2px;
+          padding: 3px;
+          .title {
+            font-family: "lemon";
+            font-size: 12px;
+          }
           .option-text {
             padding-left: 10px;
           }

@@ -1337,8 +1337,15 @@ body footer {
   min-height: 60px;
   cursor: pointer;
 }
+#admin-orders-page #items-container .order-card .card-display .orderItemsContainer {
+  padding-top: 10px;
+}
 #admin-orders-page #items-container .order-card .card-display .item-container {
-  padding: 2px;
+  padding: 3px;
+}
+#admin-orders-page #items-container .order-card .card-display .item-container .title {
+  font-family: "lemon";
+  font-size: 12px;
 }
 #admin-orders-page #items-container .order-card .card-display .item-container .option-text {
   padding-left: 10px;

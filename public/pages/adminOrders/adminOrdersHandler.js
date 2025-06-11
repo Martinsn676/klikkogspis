@@ -8,9 +8,9 @@ import {
   tryParse,
 } from "../../shared/js/lazyFunctions.js";
 import { lsList } from "../../shared/js/lists.js";
-
+const finishedIcon = `<img src="./icons/checkmark.svg">`;
 export const adminOrdersHandler = {
-  init() {
+  async init() {
     this.topBar = document.getElementById("admin-orders-top-bar");
     this.mainContainer = document.getElementById(
       "admin-orders-items-container"
@@ -22,12 +22,13 @@ export const adminOrdersHandler = {
     this.itemsContainer = document.createElement("div");
     this.itemsContainer.id = "items-container";
     selectFilter.innerHTML = `
-<option value=""></option>
-<option value="processing">${lang({
+<option value="">All</option>
+<option value="processing" selected>${lang({
       no: "Uferdige",
       en: "Unfinished",
     })}</option>
 <option value="completed">${lang({ no: "Ferdige", en: "Finished" })}</option>`;
+    this.itemsContainer.dataset.filter = "processing";
     selectFilter.addEventListener("change", (event) => {
       this.itemsContainer.dataset.filter = event.target.value;
     });
@@ -41,7 +42,8 @@ export const adminOrdersHandler = {
     backButton.id = "test-back-button";
     backButton.addEventListener("click", () => navigateTo("menu"));
     this.topBar.appendChild(backButton);
-    this.getOrders();
+    this.orders = await this.getOrders();
+    this.build();
   },
   async getOrders() {
     const token = await lsList.get("token");
@@ -50,12 +52,10 @@ export const adminOrdersHandler = {
       token,
     });
     if (response.ok) {
-      this.orders = response.data;
-      this.build();
+      return response.data;
     }
   },
   build() {
-    const finishedIcon = `<img src="./icons/checkmark.svg">`;
     this.itemsContainer.innerHTML = "";
     if (this.orderCountdownInterval) {
       clearInterval(this.orderCountdownInterval);
@@ -78,21 +78,26 @@ export const adminOrdersHandler = {
       let orderItemsContainer = document.createElement("div");
       orderItemsContainer.classList = "orderItemsContainer";
       console.log("order", order);
-      order.items.forEach((e) => {
+      order.items.forEach((item) => {
         let optionHTML = "";
-        if (e.meta) {
-          e.meta.forEach((option) => {
+        if (item.meta) {
+          item.meta.forEach((option) => {
             const parsedValue = tryParse(option.value);
-            optionHTML += `<span class="option-text">${
-              e.qty > 1 ? `${e.qty} x ` : ""
-            }${lang(parsedValue[0], "", true)}</span>`;
+            if (parsedValue.value != "no" && Number(option.value) != 0) {
+              console.log("parsedValue", parsedValue);
+              parsedValue.forEach((e) => {
+                optionHTML += `<span class="option-text">${
+                  e.value > 1 ? `${e.value} x ` : ""
+                }${lang(e)}</span>`;
+              });
+            }
           });
         }
         orderItemsContainer.innerHTML += `
         <div class="flex-column item-container"><div class="title">${
-          e.qty > 1 ? `${e.qty} x ` : ""
-        }${e.name}</div>
-            <div class="options">${optionHTML}</div>
+          item.qty > 1 ? `${item.qty} x ` : ""
+        }${item.name}</div>
+            <div class="options flex-column">${optionHTML}</div>
         </div>`;
       });
 
@@ -155,7 +160,7 @@ export const adminOrdersHandler = {
             console.log("click");
             order.countdownAdjustment.innerText =
               order.minutesLeft > 0 ? order.minutesLeft * -1 : "";
-            order.minutesLeft = false;
+            order.minutesLeft = "ready";
 
             updateTimeFor(order);
             order.countdown.innerHTML = finishedIcon;
@@ -201,6 +206,8 @@ export const adminOrdersHandler = {
                 date.getMinutes() + Number(order.countdownAdjustment.innerText)
               );
               order.ready_for_pickup_at = date.toISOString().slice(0, 19);
+            } else if (order.minutesLeft == "ready") {
+              order.ready_for_pickup_at = "ready";
             }
             const body = {
               meta_data: [
@@ -251,7 +258,11 @@ export const adminOrdersHandler = {
       // updateTime();
       order.countdown = countdown;
       order.countdownAdjustment = countdownAdjustment;
+      order.card = card;
       if (order.ready_for_pickup_at == "ready") {
+        order.minutesLeft = "ready";
+        order.orgMinutesLeft = order.minutesLeft;
+        updateTimeFor(order);
       } else {
         const pickupTime = new Date(order.ready_for_pickup_at);
 
@@ -259,7 +270,7 @@ export const adminOrdersHandler = {
         order.minutesLeft = Math.ceil(diffMs / 60000);
 
         order.orgMinutesLeft = order.minutesLeft;
-        order.card = card;
+
         countdown.innerText = order.minutesLeft;
         updateTimeFor(order);
       }
@@ -267,7 +278,10 @@ export const adminOrdersHandler = {
 
     this.itemsContainer.appendChild(container);
     function updateTimeFor(order) {
-      if (order.minutesLeft != "ready" || order.minutesLeft == 0) {
+      console.log("order.minutesLeft", order.minutesLeft);
+      if (order.minutesLeft == "ready" || order.status == "completed") {
+        order.countdown.innerHTML = finishedIcon;
+      } else {
         if (order.minutesLeft < 0) {
           order.countdown.classList.add("count-down-negative");
         } else {
@@ -275,8 +289,6 @@ export const adminOrdersHandler = {
         }
 
         order.countdown.innerText = order.minutesLeft;
-      } else {
-        order.countdown.innerHTML = `<img src="./icons/checkmark.svg">`;
       }
 
       if (order.orgMinutesLeft != order.minutesLeft) {
@@ -284,7 +296,7 @@ export const adminOrdersHandler = {
       } else {
         order.card.classList.remove("display-menu-edited");
       }
-
+      console.log("order.orgMinutesLeft", order.orgMinutesLeft);
       if (order.orgMinutesLeft == "ready") {
         order.card.classList.add("finished");
       } else {
@@ -292,13 +304,15 @@ export const adminOrdersHandler = {
       }
     }
     this.orderCountdownInterval = setInterval(() => {
-      adminOrdersHandler.orders.forEach((order) => {
-        if (order.minutesLeft !== false) {
-          order.minutesLeft--;
-          order.orgMinutesLeft--;
-          updateTimeFor(order);
-        }
-      });
+      this.orders = this.getOrders();
+      this.build();
+      //   adminOrdersHandler.orders.forEach((order) => {
+      //     if (order.minutesLeft !== false) {
+      //       order.minutesLeft--;
+      //       order.orgMinutesLeft--;
+      //       updateTimeFor(order);
+      //     }
+      //   });
     }, 60000);
   },
 };
