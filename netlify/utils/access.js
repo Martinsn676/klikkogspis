@@ -1,5 +1,4 @@
-const access = { id2: [30, 31] };
-
+export const access = { id2: [30, 31], id3: [30, 31] };
 export function accessAllowed(userID, restaurant_id) {
   let allowed = false;
 

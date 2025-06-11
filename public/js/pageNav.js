@@ -119,7 +119,7 @@ const restaurantIDS = {
   chinarestauranthusnes: 30,
   demo: 31,
 };
-mainHandler.restaurant_id = restaurantIDS[restaurantName];
-userMessageHandler.init();
-modal.init();
+// mainHandler.restaurant_id = restaurantIDS[restaurantName];
+// userMessageHandler.init();
+// modal.init();
 mainHandler.init();

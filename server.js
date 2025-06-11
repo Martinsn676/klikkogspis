@@ -3,10 +3,11 @@ import dotenv from "dotenv";
 import formidable from "formidable";
 import fs from "fs";
 import FormData from "form-data";
+import { access } from "./netlify/utils/access.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
-const access = { id2: [30] };
+
 const apiKey = process.env.CONSUMER_KEY;
 const apiSecret = process.env.CONSUMER_SECRET;
 const postalKey = process.env.POSTAL_KYE;
