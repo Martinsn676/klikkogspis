@@ -27,7 +27,9 @@ export const waitingHandler = {
     this.itemsContainer.innerHTML = "";
     await this.getOrder();
     this.buildTopBar();
-
+    if (this.orderCountdownInterval) {
+      clearInterval(this.orderCountdownInterval);
+    }
     this.orderDetails.items.forEach((e) => {
       const options = e.meta.find((meta) => meta.key == "option");
       let optionsText = "";
