@@ -207,6 +207,12 @@ export function createButton(data) {
   if (action) {
     button.addEventListener("click", (event) => {
       event.preventDefault();
+      if (button.disabled) return; // Prevent double-fire
+
+      button.disabled = true; // Temporarily disable
+      setTimeout(() => {
+        button.disabled = false; // Enable again after delay
+      }, 50); // 0.5 second debounce
 
       if (action) action(data);
       if (action2) action2(data);

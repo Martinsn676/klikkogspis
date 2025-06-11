@@ -27,20 +27,20 @@ exports.handler = async (event) => {
     if (!response.ok) {
       console.log("response", response);
     }
-    const data = await response.json();
+    const responseData = await response.json(); // Parse the JSON data
     return {
       statusCode: 200,
       body: JSON.stringify({
         type: "basic",
-        url,
+        url: fullUrl,
         redirected: false,
         status: 200,
         ok: true,
-        fullUrl,
-        data,
+        data: responseData, // Return the parsed JSON data
       }),
     };
   } catch (error) {
+    console.log("error", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: `Failed to get orders!` }),

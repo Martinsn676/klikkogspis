@@ -1,6 +1,8 @@
 import { mainHandler } from "../../js/mainHandler.js";
 import { navigateTo } from "../../js/pageNav.js";
 import { api } from "../../shared/js/api.js";
+import { lang } from "../../shared/js/lang.js";
+import { createButtons, makeCopy } from "../../shared/js/lazyFunctions.js";
 import { lsList } from "../../shared/js/lists.js";
 
 export const adminOrdersHandler = {
@@ -32,9 +34,19 @@ export const adminOrdersHandler = {
   },
   build() {
     this.itemsContainer.innerHTML = "";
+    if (this.orderCountdownInterval) {
+      clearInterval(this.orderCountdownInterval);
+    }
+    this.orders.forEach((order) => {
+      order.pickupTime = new Date(order.ready_for_pickup_at);
+    });
+    this.orders = this.orders.sort((a, b) => {
+      return a.pickupTime < b.pickupTime;
+    });
     const container = document.createElement("div");
     container.classLisst = "flex-column";
-    console.warn(this.orders);
+
+    const now = new Date();
     this.orders.forEach((order) => {
       const card = document.createElement("div");
       card.classList = "flex-column order-card";
@@ -47,45 +59,182 @@ export const adminOrdersHandler = {
       );
 
       card.innerHTML = `
+    <div class="card-display">
       <div class="flex-row align">#${order.order_id} ${order.customer.first_name} ${order.customer.last_name}</div>
       ${orderItemsContainer.outerHTML}
-      <div class="countdown" id="countdown-${order.order_id}">Loading...</div>
-    `;
+      <div class="countdown flex-column align" id="countdown-${order.order_id}">Loading...</div>
+      <div class="countdown-adjustment flex-column align" id="countdown-adjustment-${order.order_id}"></div>
 
+    </div>
+    <div class="card-menu flex-row align"></div>
+    <div class="card-menu-confirm flex-row align"></div>
+    <div class="card-menu-finished flex-row align"></div>`;
+      card.querySelector(".card-display").addEventListener("click", () => {
+        if (order.minutesLeft != false) {
+          order.minutesLeft = order.orgMinutesLeft;
+          order.card.classList.remove("display-menu-edited");
+          order.countdownAdjustment.innerText = "";
+          updateTimeFor(order);
+        }
+        card.classList.toggle("display-menu");
+      });
+
+      createButtons(card.querySelector(".card-menu"), [
+        {
+          text: lang({
+            no: "-1",
+            en: "-1",
+          }),
+          action: () => {
+            console.log("click");
+            order.minutesLeft--;
+            order.countdownAdjustment.innerText--;
+
+            updateTimeFor(order);
+          },
+          classes: "bootstrap-btn-success",
+        },
+        {
+          text: lang({
+            no: "+1",
+            en: "+1",
+          }),
+          action: () => {
+            console.log("click");
+            order.minutesLeft++;
+            order.countdownAdjustment.innerText++;
+            updateTimeFor(order);
+          },
+          classes: "bootstrap-btn-danger",
+        },
+
+        {
+          text: lang({
+            no: "Klar!",
+            en: "Ready!",
+          }),
+          action: () => {
+            console.log("click");
+            order.countdownAdjustment.innerText =
+              order.minutesLeft > 0 ? order.minutesLeft * -1 : "";
+            order.minutesLeft = false;
+
+            updateTimeFor(order);
+            order.countdown.innerHTML = `<img src="./icons/checkmark.svg">`;
+          },
+          classes: "bootstrap-btn-success",
+        },
+        {
+          text: lang({
+            no: "Ring",
+            en: "Call",
+          }),
+          action: () => window.open("tel:" + order.customer.phone, "_new"),
+          classes: "bootstrap-btn-primary",
+        },
+      ]);
+      createButtons(card.querySelector(".card-menu-confirm"), [
+        {
+          text: lang({
+            no: "Avbryt",
+            en: "Cancel",
+          }),
+          action: () => {
+            if (order.minutesLeft != false) {
+              order.minutesLeft = order.orgMinutesLeft;
+              order.card.classList.remove("display-menu-edited");
+              order.countdownAdjustment.innerText = "";
+              countdown.innerText = order.minutesLeft;
+            }
+          },
+          classes: "bootstrap-btn-danger",
+        },
+        {
+          text: lang({
+            no: "Lagre",
+            en: "Save",
+          }),
+          action: () => {
+            if (Number(order.countdownAdjustment.innerText)) {
+              const date = new Date(
+                order.ready_for_pickup_at.replace("T", " ") + "Z"
+              );
+              date.setMinutes(
+                date.getMinutes() + Number(order.countdownAdjustment.innerText)
+              );
+              order.ready_for_pickup_at = date.toISOString().slice(0, 19);
+
+              this.build();
+            }
+          },
+          classes: "bootstrap-btn-success",
+        },
+      ]);
+      createButtons(card.querySelector(".card-menu-finished"), [
+        {
+          text: lang({
+            no: "Hentet",
+            en: "Picked up",
+          }),
+          action: () => {
+            card.classList.add("d-none");
+          },
+          classes: "bootstrap-btn-success finish-order-button",
+        },
+      ]);
       container.appendChild(card);
+      const countdownAdjustment = card.querySelector(
+        `#countdown-adjustment-${order.order_id}`
+      );
+      const countdown = card.querySelector(`#countdown-${order.order_id}`);
+      // updateTime();
+      order.countdown = countdown;
+      order.countdownAdjustment = countdownAdjustment;
+      const pickupTime = new Date(order.ready_for_pickup_at);
+      const diffMs = pickupTime - now;
+      const diffMinutes = Math.ceil(diffMs / 60000);
+
+      order.minutesLeft = diffMinutes;
+      order.orgMinutesLeft = order.minutesLeft;
+      order.card = card;
+      countdown.innerText = order.minutesLeft;
+      updateTimeFor(order);
     });
 
     this.itemsContainer.appendChild(container);
-    updateTime();
-    setInterval(() => {
-      updateTime();
-    }, 60000); // Change to 60000 for production
-    function updateTime() {
-      const now = new Date();
-
-      adminOrdersHandler.orders.forEach((order) => {
-        const pickupTime = new Date(order.ready_for_pickup_at);
-        const diffMs = pickupTime - now;
-        const diffMinutes = Math.floor(diffMs / 60000);
-        const hours = Math.floor(diffMinutes / 60);
-        const minutes = diffMinutes % 60;
-
-        const countdownEl = document.getElementById(
-          `countdown-${order.order_id}`
-        );
-
-        if (!countdownEl) return;
-
-        if (diffMs <= 0) {
-          countdownEl.innerHTML = `<div class="count-down-negative">Ordre over tiden: ${Math.abs(
-            hours
-          )}h ${Math.abs(minutes)}m</div>`;
+    function updateTimeFor(order) {
+      if (order.minutesLeft != false || order.minutesLeft == 0) {
+        if (order.minutesLeft < 0) {
+          order.countdown.classList.add("count-down-negative");
         } else {
-          countdownEl.innerHTML = `Ready in: ${
-            hours ? `${hours}h ` : ""
-          }${minutes}m`;
+          order.countdown.classList.remove("count-down-negative");
+        }
+
+        order.countdown.innerText = order.minutesLeft;
+      } else {
+        order.countdown.innerHTML = `<img src="./icons/checkmark.svg">`;
+      }
+
+      if (order.orgMinutesLeft != order.minutesLeft) {
+        order.card.classList.add("display-menu-edited");
+      } else {
+        order.card.classList.remove("display-menu-edited");
+      }
+      console.log("order.orgMinutesLeft", order.orgMinutesLeft);
+      if (order.orgMinutesLeft == false) {
+        order.card.classList.add("finished");
+      } else {
+        order.card.classList.remove("finished");
+      }
+    }
+    this.orderCountdownInterval = setInterval(() => {
+      adminOrdersHandler.orders.forEach((order) => {
+        if (order.minutesLeft !== false) {
+          order.minutesLeft--;
+          order.orgMinutesLeft--;
+          updateTimeFor(order);
         }
       });
-    }
+    }, 60000);
   },
 };
