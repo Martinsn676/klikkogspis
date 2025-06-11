@@ -317,12 +317,16 @@ export const checkOutHandler = {
             text: lang({ no: "Fjern", en: "Remove" }),
             classes: "checkout-remove-button",
             action: () => {
+              console.log("cartItem", cartItem);
               cartItem.count -= 1;
-              if (cartItem.count <= 0) {
-                itemCard.classList.add("d-none");
-              }
+
               mainHandler.refresh();
               this.updateTotal();
+              setTimeout(() => {
+                if (cartItem.count <= 0) {
+                  itemCard.classList.add("d-none");
+                }
+              }, 50);
             },
           })
         );

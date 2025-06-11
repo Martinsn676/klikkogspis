@@ -67,11 +67,17 @@ export const orderHandler = {
 
         itemCard.innerHTML = template.orderCard(item, allergiesDiv);
         const orderButton = document.createElement("button");
-        orderButton.innerText = lang({ no: "Legg til", en: "Add" });
+
         orderButton.classList =
           "button bootstrap-btn bootstrap-btn-primary order-button";
+        if (checkOutHandler.content.find((e) => e.id == item.id)) {
+          orderButton.innerText = lang({ no: "Lagt til!", en: "Added!" });
+          orderButton.classList.remove("bootstrap-btn-primary");
+          orderButton.classList.add("bootstrap-btn-success");
+        } else {
+          orderButton.innerText = lang({ no: "Legg til", en: "Add" });
+        }
         orderButton.addEventListener("click", async (event) => {
-          console.log(item);
           const newItem = { id, count: 1 };
           newItem.options = {};
           item.meta.foodoptions.forEach((e) => {
@@ -79,12 +85,13 @@ export const orderHandler = {
               newItem.options["id" + e.id] = 1;
             }
           });
-          console.log("checkOutHandler.content", checkOutHandler.content);
+
           checkOutHandler.content.unshift(newItem);
           mainHandler.refresh();
           checkOutHandler.build();
           event.target.innerText = lang({ no: "Lagt til!", en: "Added!" });
-
+          event.target.classList.remove("bootstrap-btn-primary");
+          event.target.classList.add("bootstrap-btn-success");
           orderHandler.orderIcon.classList.remove("bump");
           setTimeout(() => {
             orderHandler.orderIcon.classList.add("bump");

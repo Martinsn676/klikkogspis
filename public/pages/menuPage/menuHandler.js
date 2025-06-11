@@ -13,6 +13,9 @@ export const menuHandler = {
     this.mainContainer = document.getElementById("main-menu-page");
     this.mainContainer.innerHTML = "";
     this.mainContainer.classList = "flex-column align";
+    this.build();
+  },
+  async build() {
     const menuText = document.createElement("div");
     menuText.id = "menu-text";
     const restaurantDetaisl = restaurantPageHandler.restaurants.find(

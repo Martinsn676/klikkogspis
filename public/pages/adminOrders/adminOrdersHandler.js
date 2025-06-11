@@ -220,7 +220,7 @@ export const adminOrdersHandler = {
       } else {
         order.card.classList.remove("display-menu-edited");
       }
-      console.log("order.orgMinutesLeft", order.orgMinutesLeft);
+
       if (order.orgMinutesLeft == false) {
         order.card.classList.add("finished");
       } else {

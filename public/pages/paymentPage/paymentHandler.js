@@ -88,6 +88,7 @@ export const paymentHandler = {
 
     this.buildBottomBar();
     this.buildTopBar();
+    this.build();
   },
   checkIfReady() {
     const finishButton = document.getElementById("send-order-button");
