@@ -47,6 +47,7 @@ export const mainHandler = {
       orderHandler.init();
       checkOutHandler.init();
       paymentHandler.init();
+      const token = await lsList.get("token");
       if (token) {
         adminHandler.init();
         adminOrdersHandler.init();

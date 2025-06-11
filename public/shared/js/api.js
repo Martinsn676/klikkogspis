@@ -16,13 +16,15 @@ export const api = {
     }
     console.log("response", response);
     if (response.status == 401) {
-      await lsList.clearAll();
-      await ssList.clearAll();
+      // await lsList.clearAll();
+      // await ssList.clearAll();
+      console.error("kickout disabled");
       // userLogin();
     }
     if (response.status == 403) {
-      await lsList.clearAll();
-      await ssList.clearAll();
+      // await lsList.clearAll();
+      // await ssList.clearAll();
+      console.error("kickout disabled");
       // userLogin();
       // throw new Error("Forbidden");
       return { message: "You can't do this!", code: 403 };

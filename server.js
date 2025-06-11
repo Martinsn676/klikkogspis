@@ -195,18 +195,21 @@ app.post("/api/edit-order", async (req, res) => {
     ordersUrl: "/wp-json/wc/v3/orders/",
   };
 
-  const { restaurant_id, token, orderID } = req.body;
-
+  const { restaurant_id, token, orderID, body } = req.body;
+  console.log("restaurant_id, token, orderID ", restaurant_id, token, orderID);
   const userID = await verifyUserID(token);
   if (!userID) {
     res.status(403).json({ error: `You cant do this!` });
+    return;
   }
+  console.log("req.body", req.body);
   console.log("userID", userID);
 
   if (!accessAllowed(userID, restaurant_id)) {
     res.status(403).json({ error: `Not allowed!` });
     return;
   }
+  console.log(JSON.stringify(body));
   // Parse exportBody back to JSON object
   try {
     // Determine the base URL for the WooCommerce API based on the provided endUrl
@@ -219,11 +222,12 @@ app.post("/api/edit-order", async (req, res) => {
     const response = await fetch(fullUrl, {
       method: "PUT",
       headers: {
-        // Authorization:
-        //   "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
+        Authorization:
+          "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
         "Content-Type": "application/json",
         "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
       },
+      body: JSON.stringify(body),
     });
     if (!response.ok) {
       console.log("response", response);

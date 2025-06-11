@@ -205,18 +205,18 @@ export function createButton(data) {
     });
   }
   if (action) {
-    button.addEventListener("click", (event) => {
+    button.addEventListener("click", async (event) => {
       event.preventDefault();
       if (button.disabled) return; // Prevent double-fire
 
       button.disabled = true; // Temporarily disable
+
+      if (action) await action(data);
+      if (action2) await action2(data);
+      if (action3) await action3(data);
       setTimeout(() => {
         button.disabled = false; // Enable again after delay
       }, 50); // 0.5 second debounce
-
-      if (action) action(data);
-      if (action2) action2(data);
-      if (action3) action3(data);
     });
   }
 
@@ -675,7 +675,11 @@ export function numberAdjuster({
   const minusButton = document.createElement("button");
   minusButton.classList = "minus-button button bootstrap-btn flex-column align";
   minusButton.innerText = "-";
-  minusButton.addEventListener("click", () => {
+  minusButton.addEventListener("click", (event) => {
+    event.target.disabled = true; // Temporarily disable
+    setTimeout(() => {
+      event.target.disabled = false; // Enable again after delay
+    }, 50); // 0.5 second debounce
     const oldValue = Number(display.innerText);
     if (oldValue > 0) {
       display.innerText = oldValue - 1;
@@ -693,7 +697,11 @@ export function numberAdjuster({
   const plussButton = document.createElement("button");
   plussButton.classList = "button bootstrap-btn flex-column align";
   plussButton.innerText = "+";
-  plussButton.addEventListener("click", () => {
+  plussButton.addEventListener("click", (event) => {
+    event.target.disabled = true; // Temporarily disable
+    setTimeout(() => {
+      event.target.disabled = false; // Enable again after delay
+    }, 50); // 0.5 second debounce
     const oldValue = Number(display.innerText);
     if (!maxValue || oldValue < maxValue) {
       display.innerText = oldValue + 1;
@@ -732,7 +740,11 @@ export function toggleAdjuster({
   const noButton = document.createElement("button");
   noButton.classList = "no-button button bootstrap-btn flex-column align";
   noButton.innerText = lang({ no: "Nei", en: "No" });
-  noButton.addEventListener("click", () => {
+  noButton.addEventListener("click", (event) => {
+    event.target.disabled = true; // Temporarily disable
+    setTimeout(() => {
+      event.target.disabled = false; // Enable again after delay
+    }, 50); // 0.5 second debounce
     noAction();
     if (endAction) endAction();
     div.dataset.selected = "no";
@@ -743,7 +755,11 @@ export function toggleAdjuster({
   const yesButton = document.createElement("button");
   yesButton.classList = "yes-button button bootstrap-btn flex-column align";
   yesButton.innerText = lang({ no: "Ja", en: "Yes" });
-  yesButton.addEventListener("click", () => {
+  yesButton.addEventListener("click", (event) => {
+    event.target.disabled = true; // Temporarily disable
+    setTimeout(() => {
+      event.target.disabled = false; // Enable again after delay
+    }, 50); // 0.5 second debounce
     yesAction();
     if (endAction) endAction();
     div.dataset.selected = "yes";

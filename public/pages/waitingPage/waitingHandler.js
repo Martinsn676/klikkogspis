@@ -57,20 +57,26 @@ export const waitingHandler = {
   buildTopBar() {
     this.topBar.innerHTML = "";
     const now = new Date();
+    console.warn(this.orderDetails.ready_for_pickup_at);
     const pickupTime = new Date(this.orderDetails.ready_for_pickup_at);
     const diffMs = pickupTime - now;
     const diffMinutes = Math.ceil(diffMs / 60000);
+    console.log("diffMinutes", diffMinutes);
     let countDownText;
-    if (countDownText > 0) {
+    if (diffMinutes > 0) {
       countDownText = `${lang({
         no: "Ordre klar om:",
         en: "Order ready in:",
       })} ${diffMinutes} min`;
     } else {
       countDownText = `${lang({
-        no: "Ordren er klar for henting!:",
-        en: "Order ready to pick up!",
-      })}`;
+        no: "Ordre forsinket med:",
+        en: "Order delayed with:",
+      })} ${diffMinutes} min`;
+      // countDownText = `${lang({
+      //   no: "Ordren er klar for henting!:",
+      //   en: "Order ready to pick up!",
+      // })}`;
     }
 
     const container = document.createElement("div");
