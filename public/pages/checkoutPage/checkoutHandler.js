@@ -316,11 +316,11 @@ export const checkOutHandler = {
           createButton({
             text: lang({ no: "Fjern", en: "Remove" }),
             classes: "checkout-remove-button",
-            action: () => {
-              console.log("cartItem", cartItem);
+            action: async () => {
               cartItem.count -= 1;
+              await mainHandler.refresh();
+              orderHandler.build();
 
-              mainHandler.refresh();
               this.updateTotal();
               setTimeout(() => {
                 if (cartItem.count <= 0) {

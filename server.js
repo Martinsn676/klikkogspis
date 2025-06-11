@@ -189,6 +189,61 @@ app.post("/api/make-change", async (req, res) => {
     res.status(500).json({ error: `Failed to upload!` });
   }
 });
+app.post("/api/edit-order", async (req, res) => {
+  const links = {
+    baseUrl: "https://kos.craftedbymartin.com",
+    ordersUrl: "/wp-json/wc/v3/orders/",
+  };
+
+  const { restaurant_id, token, orderID } = req.body;
+
+  const userID = await verifyUserID(token);
+  if (!userID) {
+    res.status(403).json({ error: `You cant do this!` });
+  }
+  console.log("userID", userID);
+
+  if (!accessAllowed(userID, restaurant_id)) {
+    res.status(403).json({ error: `Not allowed!` });
+    return;
+  }
+  // Parse exportBody back to JSON object
+  try {
+    // Determine the base URL for the WooCommerce API based on the provided endUrl
+    // if (!password || password != "AbvaE344rfv") {
+    //   throw new Error("You are not allowed to do this");
+    // }
+
+    const fullUrl = baseUrl + links.ordersUrl + orderID;
+    // Fetch data from the WooCommerce API
+    const response = await fetch(fullUrl, {
+      method: "PUT",
+      headers: {
+        // Authorization:
+        //   "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+      },
+    });
+    if (!response.ok) {
+      console.log("response", response);
+    }
+    const responseData = await response.json(); // Parse the JSON data
+    res.status(200).json({
+      type: "basic",
+      url: fullUrl,
+      redirected: false,
+      status: 200,
+      ok: true,
+      data: responseData, // Return the parsed JSON data
+    });
+  } catch (error) {
+    console.log(error);
+    console.log("error", error.message);
+    // Return error in JSON format with a 500 status code
+    res.status(500).json({ error: `Failed to get orders!` });
+  }
+});
 app.post("/api/get-orders", async (req, res) => {
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",

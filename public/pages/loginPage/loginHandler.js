@@ -91,7 +91,7 @@ export const loginHandler = {
           if (response.content.code == "authentication_error") {
           } else if (response.statusCode == 200 && response.content.token) {
             await lsList.save("token", response.content.token);
-            mainHandler.initAll();
+            mainHandler.refresh(true);
             navigateTo("menu");
             modal.closeModal();
           }

@@ -1,81 +1,97 @@
 #admin-orders-page {
-  .order-card {
-    margin: 20px;
-
-    border: 0.5px solid grey;
-    border-radius: 20px;
-    .card-menu,
-    .card-display,
-    .card-menu-finished,
-    .card-menu-confirm {
-      position: relative;
-      padding: 10px;
+  #filter-orders-select {
+    width: 80%;
+    margin: 0 auto;
+  }
+  #items-container {
+    &[data-filter="completed"] {
+      .order-card[data-status="processing"] {
+        display: none;
+      }
     }
-    .card-display {
-      min-height: 60px;
-      cursor: pointer;
-      .orderItemsContainer {
-        padding-left: 10px;
+    &[data-filter="processing"] {
+      .order-card[data-status="completed"] {
+        display: none;
       }
-      .countdown,
-      .countdown-adjustment {
-        position: absolute;
-        right: -5px;
-        width: 40px;
-        text-align: center;
-        background-color: white;
-        border: 0.5px solid grey;
-      }
-      .countdown {
-        top: -5px;
-        color: green;
-        border-radius: 40px;
+    }
+    .order-card {
+      margin: 20px;
 
-        height: 40px;
-        z-index: 3;
-        &.count-down-negative {
-          color: red;
+      border: 0.5px solid grey;
+      border-radius: 20px;
+      .card-menu,
+      .card-display,
+      .card-menu-finished,
+      .card-menu-confirm {
+        position: relative;
+        padding: 10px;
+      }
+      .card-display {
+        min-height: 60px;
+        cursor: pointer;
+        .orderItemsContainer {
+          padding-left: 10px;
+        }
+        .countdown,
+        .countdown-adjustment {
+          position: absolute;
+          right: -5px;
+          width: 40px;
+          text-align: center;
+          background-color: white;
+          border: 0.5px solid grey;
+        }
+        .countdown {
+          top: -5px;
+          color: green;
+          border-radius: 40px;
+
+          height: 40px;
+          z-index: 3;
+          &.count-down-negative {
+            color: red;
+          }
+        }
+        .countdown-adjustment {
+          top: 20px;
+          height: 45px;
+          padding-top: 10px;
+          border-radius: 0 0 40px 40px;
+          z-index: 2;
+        }
+      }
+      &.display-menu .card-menu {
+        display: flex;
+      }
+      &.display-menu-edited.display-menu {
+        .card-menu-confirm,
+        .countdown-adjustment {
+          display: flex;
+        }
+        .card-menu-finished {
+          display: none;
+        }
+        .card-menu-confirm {
+          padding-top: 0;
         }
       }
       .countdown-adjustment {
-        top: 20px;
-        height: 45px;
-        padding-top: 10px;
-        border-radius: 0 0 40px 40px;
-        z-index: 2;
-      }
-    }
-    &.display-menu .card-menu {
-      display: flex;
-    }
-    &.display-menu-edited.display-menu {
-      .card-menu-confirm,
-      .countdown-adjustment {
-        display: flex;
-      }
-      .card-menu-finished {
         display: none;
       }
-      .card-menu-confirm {
-        padding-top: 0;
-      }
-    }
-    .countdown-adjustment {
-      display: none;
-    }
 
-    &.finished {
-      .card-menu-finished {
-        display: flex;
+      &.finished {
+        .card-menu-finished {
+          display: flex;
+        }
       }
-    }
-    .card-menu,
-    .card-menu-confirm,
-    .card-menu-finished {
-      display: none;
-      button {
-        margin: 2px;
-        flex: 1;
+      .card-menu,
+      .card-menu-confirm,
+      .card-menu-finished {
+        display: none;
+        button {
+          margin: 2px;
+          flex: 1;
+        }
       }
     }
   }

@@ -10,18 +10,22 @@ export const waitingHandler = {
     this.bottomBar = document.getElementById("waiting-bottom-bar");
 
     this.buildBottomBar();
+
     this.build();
   },
   async getOrder() {
     this.tracking_token = new URLSearchParams(location.search).get("order");
-    const response = await api.try("public-get-order", {
-      tracking_token: this.tracking_token,
-    });
-    this.orderID = response.data.order_id;
-    this.orderDetails = response.data;
+    if (this.tracking_token) {
+      const response = await api.try("public-get-order", {
+        tracking_token: this.tracking_token,
+      });
+      this.orderID = response.data.order_id;
+      this.orderDetails = response.data;
+    }
   },
   async build() {
     await this.getOrder();
+    this.buildTopBar();
     this.itemsContainer.innerHTML = "";
     this.orderDetails.items.forEach((e) => {
       const options = e.meta.find((meta) => meta.key == "option");
@@ -46,11 +50,29 @@ export const waitingHandler = {
         e.qty && e.qty > 1 ? `${e.qty} x ` : ""
       }${e.name}</div>${optionsText}</div>`;
     });
-
-    this.buildTopBar();
+    this.orderCountdownInterval = setInterval(() => {
+      this.build();
+    }, 60000);
   },
   buildTopBar() {
     this.topBar.innerHTML = "";
+    const now = new Date();
+    const pickupTime = new Date(this.orderDetails.ready_for_pickup_at);
+    const diffMs = pickupTime - now;
+    const diffMinutes = Math.ceil(diffMs / 60000);
+    let countDownText;
+    if (countDownText > 0) {
+      countDownText = `${lang({
+        no: "Ordre klar om:",
+        en: "Order ready in:",
+      })} ${diffMinutes} min`;
+    } else {
+      countDownText = `${lang({
+        no: "Ordren er klar for henting!:",
+        en: "Order ready to pick up!",
+      })}`;
+    }
+
     const container = document.createElement("div");
     container.classList = "container flex-row top-bar";
     container.classList = "container flex-column top-bar";
@@ -59,13 +81,14 @@ export const waitingHandler = {
       no: `Ordre: #${this.orderID}`,
       en: `Order: #${this.orderID}`,
     })}</div>
-    <div id="cart-total"></div>
+    <div id="time-counter">${countDownText}</div>
     `;
 
     this.topBar.appendChild(container);
   },
   buildBottomBar() {
     this.bottomBar.innerHTML = "";
+
     this.bottomBar.appendChild(
       createButton({
         text: lang({ no: "Hovedmeny", en: "Main menu" }),

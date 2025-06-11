@@ -8,9 +8,28 @@ import { lsList } from "../../shared/js/lists.js";
 export const adminOrdersHandler = {
   init() {
     this.topBar = document.getElementById("admin-orders-top-bar");
-    this.itemsContainer = document.getElementById(
+    this.mainContainer = document.getElementById(
       "admin-orders-items-container"
     );
+
+    const selectFilter = document.createElement("select");
+    selectFilter.classList = "bootstrap-select";
+    selectFilter.id = "filter-orders-select";
+    this.itemsContainer = document.createElement("div");
+    this.itemsContainer.id = "items-container";
+    selectFilter.innerHTML = `
+<option value=""></option>
+<option value="processing">${lang({
+      no: "Uferdige",
+      en: "Unfinished",
+    })}</option>
+<option value="completed">${lang({ no: "Ferdige", en: "Finished" })}</option>`;
+    selectFilter.addEventListener("change", (event) => {
+      this.itemsContainer.dataset.filter = event.target.value;
+    });
+    this.mainContainer.appendChild(selectFilter);
+
+    this.mainContainer.appendChild(this.itemsContainer);
     this.bottomBar = document.getElementById("admin-orders-bottom-bar");
     this.topBar.innerHTML = "";
     const backButton = document.createElement("button");
@@ -28,7 +47,6 @@ export const adminOrdersHandler = {
     });
     if (response.ok) {
       this.orders = response.data;
-
       this.build();
     }
   },
@@ -51,7 +69,7 @@ export const adminOrdersHandler = {
       const card = document.createElement("div");
       card.classList = "flex-column order-card";
       card.id = `order-${order.order_id}`;
-
+      card.dataset.status = order.status;
       let orderItemsContainer = document.createElement("div");
       orderItemsContainer.classList = "orderItemsContainer";
       order.items.forEach(
@@ -154,7 +172,7 @@ export const adminOrdersHandler = {
             no: "Lagre",
             en: "Save",
           }),
-          action: () => {
+          action: async () => {
             if (Number(order.countdownAdjustment.innerText)) {
               const date = new Date(
                 order.ready_for_pickup_at.replace("T", " ") + "Z"
@@ -164,6 +182,13 @@ export const adminOrdersHandler = {
               );
               order.ready_for_pickup_at = date.toISOString().slice(0, 19);
 
+              const response = await api.try("edit-order", {
+                estaurant_id: mainHandler.restaurant_id,
+                token: await lsList.get("token"),
+                orderID: order.id,
+                body: { ready_for_pickup_at: order.ready_for_pickup_at },
+              });
+              console.log("response", response);
               this.build();
             }
           },

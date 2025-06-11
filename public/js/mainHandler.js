@@ -39,7 +39,7 @@ export const mainHandler = {
   async refresh(full) {
     await lsList.save("cart", checkOutHandler.content);
     checkOutHandler.content = checkOutHandler.content.filter(
-      (cartItem) => cartItem.count !== 0 || cartItem.fixed
+      (cartItem) => cartItem.count > 0 || cartItem.fixed
     );
 
     if (full) {
@@ -47,6 +47,10 @@ export const mainHandler = {
       orderHandler.init();
       checkOutHandler.init();
       paymentHandler.init();
+      if (token) {
+        adminHandler.init();
+        adminOrdersHandler.init();
+      }
     }
     orderHandler.updateCount();
     checkOutHandler.updateTotal();

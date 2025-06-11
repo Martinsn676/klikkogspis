@@ -21,6 +21,7 @@ export const orderHandler = {
   build() {
     this.products = makeCopy(mainHandler.mainItems);
     this.itemsContainer.innerHTML = "";
+    console.log("checkOutHandler.content", checkOutHandler.content);
     this.products.forEach((item) => {
       const { id, title, meta, description, price, allergies, image, fixed } =
         item;
@@ -70,6 +71,7 @@ export const orderHandler = {
 
         orderButton.classList =
           "button bootstrap-btn bootstrap-btn-primary order-button";
+
         if (checkOutHandler.content.find((e) => e.id == item.id)) {
           orderButton.innerText = lang({ no: "Lagt til!", en: "Added!" });
           orderButton.classList.remove("bootstrap-btn-primary");
