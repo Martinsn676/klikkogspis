@@ -12,6 +12,19 @@ export const waitingHandler = {
     this.buildBottomBar();
 
     this.build();
+    if (this.orderCountdownInterval) {
+      clearInterval(this.orderCountdownInterval);
+    }
+    this.orderCountdownInterval = setInterval(() => {
+      console.warn("======interval public update======");
+      if (
+        (this.tracking_token = new URLSearchParams(location.search).get(
+          "order"
+        ))
+      ) {
+        this.build();
+      }
+    }, 60000);
   },
   async getOrder() {
     this.tracking_token = new URLSearchParams(location.search).get("order");
@@ -27,9 +40,7 @@ export const waitingHandler = {
     this.itemsContainer.innerHTML = "";
     await this.getOrder();
     this.buildTopBar();
-    if (this.orderCountdownInterval) {
-      clearInterval(this.orderCountdownInterval);
-    }
+
     this.orderDetails.items.forEach((e) => {
       const options = e.meta.find((meta) => meta.key == "option");
       let optionsText = "";
@@ -53,9 +64,6 @@ export const waitingHandler = {
         e.qty && e.qty > 1 ? `${e.qty} x ` : ""
       }${e.name}</div>${optionsText}</div>`;
     });
-    this.orderCountdownInterval = setInterval(() => {
-      this.build();
-    }, 60000);
   },
   buildTopBar() {
     this.topBar.innerHTML = "";

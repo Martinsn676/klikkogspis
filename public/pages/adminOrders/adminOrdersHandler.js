@@ -303,8 +303,8 @@ export const adminOrdersHandler = {
         order.card.classList.remove("finished");
       }
     }
-    this.orderCountdownInterval = setInterval(() => {
-      this.orders = this.getOrders();
+    this.orderCountdownInterval = setInterval(async () => {
+      this.orders = await this.getOrders();
       this.build();
       //   adminOrdersHandler.orders.forEach((order) => {
       //     if (order.minutesLeft !== false) {
