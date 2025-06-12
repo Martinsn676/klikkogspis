@@ -82,34 +82,37 @@ export const checkOutHandler = {
     let totalCost = 0;
     let totalCount = 0;
     this.content = this.content.filter((e) => e.count > 0);
-
+    const newItemContent = [];
     this.content.forEach((cartItem) => {
       const item = mainHandler.products.find((e) => {
         return e.id == cartItem.id;
       });
-      const count = Number(cartItem.count) || 0;
-      const price = Number(item.regular_price) || 0;
+      if (item) {
+        const count = Number(cartItem.count) || 0;
+        const price = Number(item.regular_price) || 0;
 
-      totalCost += count * price;
+        totalCost += count * price;
 
-      if (cartItem.options) {
-        for (const optionString in cartItem.options) {
-          const optionID = optionString.replace("id", "");
-          const option = item.meta.foodoptions.find((e) => e.id == optionID);
+        if (cartItem.options) {
+          for (const optionString in cartItem.options) {
+            const optionID = optionString.replace("id", "");
+            const option = item.meta.foodoptions.find((e) => e.id == optionID);
 
-          if (!option) {
-            console.warn("deleting", optionID);
-            delete cartItem.options[optionString];
-          } else {
-            const price = option.regular_price;
+            if (!option) {
+              console.warn("deleting", optionID);
+              delete cartItem.options[optionString];
+            } else {
+              const price = option.regular_price;
 
-            totalCost += cartItem.options[optionString] * price;
-            totalCount += cartItem.options[optionString];
+              totalCost += cartItem.options[optionString] * price;
+              totalCount += cartItem.options[optionString];
+            }
           }
         }
+        newItemContent.push(cartItem);
       }
     });
-
+    this.content = newItemContent;
     this.cartTotal.innerText = `${totalCost} kr`;
   },
   buildTopBar() {
