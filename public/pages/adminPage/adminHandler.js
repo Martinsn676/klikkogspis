@@ -433,6 +433,7 @@ export const adminHandler = {
         {
           meta: { title_translations: {} },
           meta_data: [],
+          restaurant_owner: mainHandler.restaurant_id,
           categories: [{ id: this.itemsContainer.dataset.filtertype || 19 }],
           name: lang({ no: "Nytt produkt", en: "New product" }),
         },
