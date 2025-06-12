@@ -2,6 +2,8 @@ import { accessAllowed } from "../utils/access";
 import { verifyUserID } from "../utils/general";
 
 exports.handler = async (event) => {
+  const apiKey = process.env.CONSUMER_KEY;
+  const apiSecret = process.env.CONSUMER_SECRET;
   const links = {
     baseUrl: "https://kos.craftedbymartin.com",
     ordersUrl: "/wp-json/wc/v3/orders/",
