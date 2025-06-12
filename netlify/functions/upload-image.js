@@ -64,7 +64,7 @@ export async function handler(event) {
 
       busboy.end(Buffer.from(event.body, "base64"));
     });
-
+    console.log("token", token);
     if (!token || !filePath) {
       throw new Error("Missing token or file");
     }
