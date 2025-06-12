@@ -145,6 +145,7 @@ export const adminHandler = {
         fileInput.innerHTML = `
         <label name="imageUrl">${lang({ no: "Bilde", en: "Image" })}</label>
         <input name="imageUrl" type="file" accept="image/*">
+        <input name="imageUrl" type="file" accept="image/*" capture="environment">
 `;
         //  capture="environment"
         standardInputs.appendChild(fileInput);

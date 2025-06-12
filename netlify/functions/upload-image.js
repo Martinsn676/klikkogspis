@@ -79,7 +79,7 @@ export async function handler(event) {
       contentType: fileType,
       knownLength: fileSize,
     });
-
+    console.log("token", token);
     const requestOptions = {
       method: "POST",
       host: "kos.craftedbymartin.com",
