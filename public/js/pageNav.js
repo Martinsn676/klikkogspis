@@ -43,9 +43,6 @@ export function navigateTo(
     main: "",
     ordering: lang({ no: "Bestilling", en: "Ordering" }),
   };
-  document.title = titleTranslates[pageName]
-    ? `China Restaurant Husnes - ${titleTranslates[pageName]}`
-    : "China Restaurant Husnes";
 
   const params = new URLSearchParams(location.search);
   const oldInformation = {};
@@ -114,7 +111,10 @@ let restaurantName = getRestaurantName(url);
 console.log(restaurantName); // 👉 "chinarestauranthusnes"
 if (restaurantName == 127) {
   restaurantName = "chinarestauranthusnes";
+  restaurantName = "demo";
 }
+document.title = `${restaurantName} - klikk og spis`;
+
 const restaurantIDS = {
   chinarestauranthusnes: 30,
   demo: 31,

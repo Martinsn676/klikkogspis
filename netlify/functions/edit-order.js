@@ -1,21 +1,24 @@
 import { verifyUserID } from "../utils/general";
 
 exports.handler = async (event) => {
-  let response;
-  const baseUrl = "https://calendar.craftedbymartin.com";
+  const links = {
+    baseUrl: "https://kos.craftedbymartin.com",
+    ordersUrl: "/wp-json/wc/v3/orders/",
+  };
 
   try {
     // Parse request body
-    const { token, month, year } = JSON.parse(event.body);
+    const { restaurant_id, token, orderID, body } = JSON.parse(event.body);
 
     // Validate required fields
-    if (!token || !month || !year) {
+    if ((!restaurant_id, !token, !orderID, !body)) {
       return {
         statusCode: 400,
         body: JSON.stringify({
           status: 400,
           ok: false,
-          message: "Missing required fields: token, month, or year",
+          message:
+            "Missing required fields: restaurant_id, token, orderID, body",
         }),
       };
     }
@@ -31,18 +34,30 @@ exports.handler = async (event) => {
         }),
       };
     }
-    const url =
-      baseUrl +
-      `/wp-json/calendar/v1/tracking/?user_id=${userID}&month=${month}&year=${year}`;
-
-    response = await fetch(url, {
-      method: "GET",
+    if (!accessAllowed(userID, restaurant_id)) {
+      return {
+        statusCode: 403,
+        body: JSON.stringify({
+          status: 401,
+          ok: false,
+          message: "Token not valid",
+        }),
+      };
+    }
+    const fullUrl = links.baseUrl + links.ordersUrl + orderID;
+    const response = await fetch(fullUrl, {
+      method: "PUT",
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization:
+          "Basic " + Buffer.from(apiKey + ":" + apiSecret).toString("base64"),
         "Content-Type": "application/json",
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
       },
+      body: JSON.stringify(body),
     });
-
+    if (!response.ok) {
+      console.log("response", response);
+    }
     // Check if response is OK
     if (!response.ok) {
       const errorDetails = await response.json();
@@ -62,13 +77,16 @@ exports.handler = async (event) => {
         }),
       };
     }
-    const json = await response.json();
+    const responseData = await response.json(); // Parse the JSON data
     return {
       statusCode: 200,
       body: JSON.stringify({
+        type: "basic",
+        url: fullUrl,
+        redirected: false,
         status: 200,
         ok: true,
-        content: json,
+        data: responseData, // Return the parsed JSON data
       }),
     };
   } catch (error) {

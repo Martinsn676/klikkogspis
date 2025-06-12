@@ -83,7 +83,7 @@ export const waitingHandler = {
       countDownText = `${lang({
         no: "Ordre forsinket med:",
         en: "Order delayed with:",
-      })} ${diffMinutes} min`;
+      })} ${diffMinutes * -1} min`;
       // countDownText = `${lang({
       //   no: "Ordren er klar for henting!:",
       //   en: "Order ready to pick up!",

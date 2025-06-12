@@ -22,7 +22,6 @@ export const adminOrdersHandler = {
     this.itemsContainer = document.createElement("div");
     this.itemsContainer.id = "items-container";
     selectFilter.innerHTML = `
-<option value="">All</option>
 <option value="processing" selected>${lang({
       no: "Uferdige",
       en: "Unfinished",
@@ -68,7 +67,7 @@ export const adminOrdersHandler = {
     });
     const container = document.createElement("div");
     container.classLisst = "flex-column";
-
+    console.log("    this.orders", this.orders);
     const now = new Date();
     this.orders.forEach((order) => {
       const card = document.createElement("div");
@@ -77,29 +76,43 @@ export const adminOrdersHandler = {
       card.dataset.status = order.status;
       let orderItemsContainer = document.createElement("div");
       orderItemsContainer.classList = "orderItemsContainer";
-      console.log("order", order);
+
       order.items.forEach((item) => {
-        let optionHTML = "";
+        item.optionHTML = "";
         if (item.meta) {
           item.meta.forEach((option) => {
             const parsedValue = tryParse(option.value);
             if (parsedValue.value != "no" && Number(option.value) != 0) {
-              console.log("parsedValue", parsedValue);
               parsedValue.forEach((e) => {
-                optionHTML += `<span class="option-text">${
+                item.optionHTML += `<span class="option-text">${
                   e.value > 1 ? `${e.value} x ` : ""
                 }${lang(e)}</span>`;
               });
             }
           });
         }
-        orderItemsContainer.innerHTML += `
-        <div class="flex-column item-container"><div class="title">${
-          item.qty > 1 ? `${item.qty} x ` : ""
-        }${item.name}</div>
-            <div class="options flex-column">${optionHTML}</div>
-        </div>`;
       });
+      const grouped = {};
+      order.items.forEach((item) => {
+        if (grouped[item.name + item.optionHTML]) {
+          grouped[item.name + item.optionHTML].quantity++;
+        } else {
+          grouped[item.name + item.optionHTML] = {
+            name: item.name,
+            quantity: 1,
+            optionHTML: item.optionHTML,
+          }; // clone to avoid mutating original
+        }
+      });
+      for (const item in grouped) {
+        const { quantity, name, optionHTML } = grouped[item];
+        orderItemsContainer.innerHTML += `
+      <div class="flex-column item-container"><div class="title">${
+        quantity > 1 ? `${quantity} x ` : ""
+      }${name}</div>
+                  <div class="options flex-column">${optionHTML}</div>
+              </div>`;
+      }
 
       card.innerHTML = `
     <div class="card-display">
@@ -109,27 +122,107 @@ export const adminOrdersHandler = {
       <div class="countdown-adjustment flex-column align" id="countdown-adjustment-${order.order_id}"></div>
 
     </div>
-    <div class="card-menu flex-row align"></div>
-    <div class="card-menu-confirm flex-row align"></div>
-    <div class="card-menu-finished flex-row align"></div>`;
+    <div class="card-menu card-menu-adjuster flex-row align"></div>
+    <div class="card-menu card-menu-confirm flex-row align"></div>
+    <div class="card-menu card-menu-finished flex-row align"></div>
+    <div class="card-menu card-menu-complete flex-row align"></div>`;
+      function resetCard() {
+        order.ready = order.ready_for_pickup == "1" ? true : false;
+        order.minutesLeft = order.orgMinutesLeft;
+        order.card.classList.remove("display-menu-edited");
+        order.countdownAdjustment.innerText = "";
+        countdown.innerText = order.minutesLeft;
+        updateTimeFor(order);
+      }
       card.querySelector(".card-display").addEventListener("click", () => {
-        if (order.minutesLeft != false) {
-          order.minutesLeft = order.orgMinutesLeft;
-          order.card.classList.remove("display-menu-edited");
-          order.countdownAdjustment.innerText = "";
-          updateTimeFor(order);
-        }
+        resetCard();
+
         card.classList.toggle("display-menu");
       });
+      createButtons(card.querySelector(".card-menu-complete"), [
+        {
+          text: lang({
+            no: "Angre hentet",
+            en: "Regret picked up",
+          }),
+          action: async () => {
+            const body = {
+              status: "processing",
+              meta_data: [],
+            };
+            order.readyConfirmed = false;
+            order.ready_for_pickup = "0";
+            order.status = "processing";
+            order.ready = false;
+            body.meta_data.push({
+              key: "_ready_for_pickup",
+              value: order.ready,
+            });
+            const response = await api.try("edit-order", {
+              restaurant_id: mainHandler.restaurant_id,
+              token: await lsList.get("token"),
+              orderID: order.order_id,
+              body,
+            });
 
-      createButtons(card.querySelector(".card-menu"), [
+            this.build();
+          },
+          classes: "bootstrap-btn-secondary",
+        },
+        // {
+        //   text: lang({
+        //     no: "Lagre",
+        //     en: "Save",
+        //   }),
+        //   action: async () => {
+        //     const body = {
+        //       meta_data: [],
+        //     };
+        //     order.readyConfirmed = false;
+        //     order.ready_for_pickup = "0";
+        //     if (order.ready) {
+        //       order.readyConfirmed = true;
+        //       order.ready_for_pickup = "1";
+        //     }
+        //     body.meta_data.push({
+        //       key: "_ready_for_pickup",
+        //       value: order.ready,
+        //     });
+
+        //     const date = new Date(
+        //       order.ready_for_pickup_at.replace("T", " ") + "Z"
+        //     );
+
+        //     date.setMinutes(
+        //       date.getMinutes() + Number(order.countdownAdjustment.innerText)
+        //     );
+
+        //     order.ready_for_pickup_at = date.toISOString().slice(0, 19);
+        //     body.meta_data.push({
+        //       key: "_ready_for_pickup_at",
+        //       value: order.ready_for_pickup_at,
+        //     });
+
+        //     const response = await api.try("edit-order", {
+        //       restaurant_id: mainHandler.restaurant_id,
+        //       token: await lsList.get("token"),
+        //       orderID: order.order_id,
+        //       body,
+        //     });
+
+        //     this.build();
+        //   },
+        //   classes: "bootstrap-btn-success",
+        // },
+      ]);
+      createButtons(card.querySelector(".card-menu-adjuster"), [
         {
           text: lang({
             no: "-1",
             en: "-1",
           }),
           action: () => {
-            console.log("click");
+            order.ready = false;
             order.minutesLeft--;
             order.countdownAdjustment.innerText--;
 
@@ -143,7 +236,8 @@ export const adminOrdersHandler = {
             en: "+1",
           }),
           action: () => {
-            console.log("click");
+            order.ready = false;
+
             order.minutesLeft++;
             order.countdownAdjustment.innerText++;
             updateTimeFor(order);
@@ -157,13 +251,9 @@ export const adminOrdersHandler = {
             en: "Ready!",
           }),
           action: () => {
-            console.log("click");
-            order.countdownAdjustment.innerText =
-              order.minutesLeft > 0 ? order.minutesLeft * -1 : "";
-            order.minutesLeft = "ready";
+            order.ready = true;
 
             updateTimeFor(order);
-            order.countdown.innerHTML = finishedIcon;
           },
           classes: "bootstrap-btn-success",
         },
@@ -183,12 +273,7 @@ export const adminOrdersHandler = {
             en: "Cancel",
           }),
           action: () => {
-            if (order.minutesLeft != false) {
-              order.minutesLeft = order.orgMinutesLeft;
-              order.card.classList.remove("display-menu-edited");
-              order.countdownAdjustment.innerText = "";
-              countdown.innerText = order.minutesLeft;
-            }
+            resetCard();
           },
           classes: "bootstrap-btn-danger",
         },
@@ -198,34 +283,41 @@ export const adminOrdersHandler = {
             en: "Save",
           }),
           action: async () => {
-            if (Number(order.countdownAdjustment.innerText)) {
-              const date = new Date(
-                order.ready_for_pickup_at.replace("T", " ") + "Z"
-              );
-              date.setMinutes(
-                date.getMinutes() + Number(order.countdownAdjustment.innerText)
-              );
-              order.ready_for_pickup_at = date.toISOString().slice(0, 19);
-            } else if (order.minutesLeft == "ready") {
-              order.ready_for_pickup_at = "ready";
-            }
             const body = {
-              meta_data: [
-                {
-                  key: "_ready_for_pickup_at",
-                  value: order.ready_for_pickup_at,
-                },
-              ],
+              meta_data: [],
             };
+            order.readyConfirmed = false;
+            order.ready_for_pickup = "0";
+            if (order.ready) {
+              order.readyConfirmed = true;
+              order.ready_for_pickup = "1";
+            }
+            body.meta_data.push({
+              key: "_ready_for_pickup",
+              value: order.ready,
+            });
 
-            console.log("body", body);
+            const date = new Date(
+              order.ready_for_pickup_at.replace("T", " ") + "Z"
+            );
+
+            date.setMinutes(
+              date.getMinutes() + Number(order.countdownAdjustment.innerText)
+            );
+
+            order.ready_for_pickup_at = date.toISOString().slice(0, 19);
+            body.meta_data.push({
+              key: "_ready_for_pickup_at",
+              value: order.ready_for_pickup_at,
+            });
+
             const response = await api.try("edit-order", {
               restaurant_id: mainHandler.restaurant_id,
               token: await lsList.get("token"),
               orderID: order.order_id,
               body,
             });
-            console.log("response", response);
+
             this.build();
           },
           classes: "bootstrap-btn-success",
@@ -238,6 +330,7 @@ export const adminOrdersHandler = {
             en: "Picked up",
           }),
           action: async () => {
+            order.status = "completed";
             const response = await api.try("edit-order", {
               restaurant_id: mainHandler.restaurant_id,
               token: await lsList.get("token"),
@@ -259,27 +352,24 @@ export const adminOrdersHandler = {
       order.countdown = countdown;
       order.countdownAdjustment = countdownAdjustment;
       order.card = card;
-      if (order.ready_for_pickup_at == "ready") {
-        order.minutesLeft = "ready";
-        order.orgMinutesLeft = order.minutesLeft;
-        updateTimeFor(order);
-      } else {
-        const pickupTime = new Date(order.ready_for_pickup_at);
-
-        const diffMs = pickupTime - now;
-        order.minutesLeft = Math.ceil(diffMs / 60000);
-
-        order.orgMinutesLeft = order.minutesLeft;
-
-        countdown.innerText = order.minutesLeft;
-        updateTimeFor(order);
+      order.ready = order.ready_for_pickup == "1" ? true : false;
+      if (order.ready) {
+        order.readyConfirmed = true;
       }
+      const pickupTime = new Date(order.ready_for_pickup_at);
+
+      const diffMs = pickupTime - now;
+      order.minutesLeft = Math.ceil(diffMs / 60000);
+
+      order.orgMinutesLeft = order.minutesLeft;
+
+      countdown.innerText = order.minutesLeft;
+      updateTimeFor(order);
     });
 
     this.itemsContainer.appendChild(container);
     function updateTimeFor(order) {
-      console.log("order.minutesLeft", order.minutesLeft);
-      if (order.minutesLeft == "ready" || order.status == "completed") {
+      if (order.ready || order.status == "completed") {
         order.countdown.innerHTML = finishedIcon;
       } else {
         if (order.minutesLeft < 0) {
@@ -291,13 +381,16 @@ export const adminOrdersHandler = {
         order.countdown.innerText = order.minutesLeft;
       }
 
-      if (order.orgMinutesLeft != order.minutesLeft) {
+      if (
+        order.orgMinutesLeft != order.minutesLeft ||
+        (order.ready && !order.readyConfirmed)
+      ) {
         order.card.classList.add("display-menu-edited");
       } else {
         order.card.classList.remove("display-menu-edited");
       }
-      console.log("order.orgMinutesLeft", order.orgMinutesLeft);
-      if (order.orgMinutesLeft == "ready") {
+
+      if (order.readyConfirmed) {
         order.card.classList.add("finished");
       } else {
         order.card.classList.remove("finished");

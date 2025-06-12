@@ -1312,7 +1312,7 @@ body footer {
 #admin-orders-page #items-container[data-filter=completed] .order-card[data-status=processing] {
   display: none;
 }
-#admin-orders-page #items-container[data-filter=completed] .order-card[data-status=completed] .card-menu,
+#admin-orders-page #items-container[data-filter=completed] .order-card[data-status=completed] .card-menu-adjuster,
 #admin-orders-page #items-container[data-filter=completed] .order-card[data-status=completed] .card-menu-confirm,
 #admin-orders-page #items-container[data-filter=completed] .order-card[data-status=completed] .card-menu-finished,
 #admin-orders-page #items-container[data-filter=completed] .order-card[data-status=completed] .countdown {
@@ -1321,15 +1321,16 @@ body footer {
 #admin-orders-page #items-container[data-filter=processing] .order-card[data-status=completed] {
   display: none;
 }
+#admin-orders-page #items-container[data-filter=processing] .order-card[data-status=processing] .card-menu-complete {
+  display: none;
+}
 #admin-orders-page #items-container .order-card {
   margin: 20px;
   border: 0.5px solid grey;
   border-radius: 20px;
 }
 #admin-orders-page #items-container .order-card .card-menu,
-#admin-orders-page #items-container .order-card .card-display,
-#admin-orders-page #items-container .order-card .card-menu-finished,
-#admin-orders-page #items-container .order-card .card-menu-confirm {
+#admin-orders-page #items-container .order-card .card-display {
   position: relative;
   padding: 10px;
 }
@@ -1379,7 +1380,10 @@ body footer {
   border-radius: 0 0 40px 40px;
   z-index: 2;
 }
-#admin-orders-page #items-container .order-card.display-menu .card-menu {
+#admin-orders-page #items-container .order-card.display-menu .card-menu-adjuster {
+  display: flex;
+}
+#admin-orders-page #items-container .order-card.display-menu .card-menu-complete {
   display: flex;
 }
 #admin-orders-page #items-container .order-card.display-menu-edited.display-menu .card-menu-confirm,
@@ -1398,14 +1402,10 @@ body footer {
 #admin-orders-page #items-container .order-card.finished .card-menu-finished {
   display: flex;
 }
-#admin-orders-page #items-container .order-card .card-menu,
-#admin-orders-page #items-container .order-card .card-menu-confirm,
-#admin-orders-page #items-container .order-card .card-menu-finished {
+#admin-orders-page #items-container .order-card .card-menu {
   display: none;
 }
-#admin-orders-page #items-container .order-card .card-menu button,
-#admin-orders-page #items-container .order-card .card-menu-confirm button,
-#admin-orders-page #items-container .order-card .card-menu-finished button {
+#admin-orders-page #items-container .order-card .card-menu button {
   margin: 2px;
   flex: 1;
 }
