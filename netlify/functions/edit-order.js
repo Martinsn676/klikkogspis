@@ -1,3 +1,4 @@
+import { accessAllowed } from "../utils/access";
 import { verifyUserID } from "../utils/general";
 
 exports.handler = async (event) => {

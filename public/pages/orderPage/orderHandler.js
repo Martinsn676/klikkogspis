@@ -83,8 +83,10 @@ export const orderHandler = {
           const newItem = { id, count: 1 };
           newItem.options = {};
           item.meta.foodoptions.forEach((e) => {
-            if (e.type == "toggle" && e.toggle == "yes") {
-              newItem.options["id" + e.id] = 1;
+            if (e.type == "toggle") {
+              newItem.options["id" + e.id] = e.toggle == "yes" ? 1 : 0;
+            } else {
+              newItem.options["id" + e.id] = 0;
             }
           });
 

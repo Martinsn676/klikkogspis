@@ -67,7 +67,7 @@ export const adminOrdersHandler = {
     });
     const container = document.createElement("div");
     container.classLisst = "flex-column";
-    console.log("    this.orders", this.orders);
+
     const now = new Date();
     this.orders.forEach((order) => {
       const card = document.createElement("div");
@@ -82,13 +82,14 @@ export const adminOrdersHandler = {
         if (item.meta) {
           item.meta.forEach((option) => {
             const parsedValue = tryParse(option.value);
-            if (parsedValue.value != "no" && Number(option.value) != 0) {
-              parsedValue.forEach((e) => {
+
+            parsedValue.forEach((e) => {
+              if (e.value != "no" && Number(e.value) != 0) {
                 item.optionHTML += `<span class="option-text">${
                   e.value > 1 ? `${e.value} x ` : ""
                 }${lang(e)}</span>`;
-              });
-            }
+              }
+            });
           });
         }
       });

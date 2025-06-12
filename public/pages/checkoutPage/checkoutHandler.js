@@ -229,7 +229,7 @@ export const checkOutHandler = {
   },
   createCard(item, cartItem) {
     const { id, number } = item;
-
+    console.log("cartItem", cartItem);
     const options = item.meta.foodoptions || item.meta.categoryItems;
     item.fixed = cartItem.fixed;
 
@@ -272,9 +272,10 @@ export const checkOutHandler = {
               cartItem.options["id" + option.id] = 1;
             },
             endAction: async () => {
-              // mainHandler.refresh();
-              checkOutHandler.updateTotal();
-              paymentHandler.build();
+              mainHandler.refresh();
+              // checkOutHandler.updateTotal();
+              // paymentHandler.build();
+              console.log("cartItem", cartItem);
             },
           });
         } else {

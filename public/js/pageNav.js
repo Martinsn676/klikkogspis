@@ -111,7 +111,7 @@ let restaurantName = getRestaurantName(url);
 console.log(restaurantName); // 👉 "chinarestauranthusnes"
 if (restaurantName == 127) {
   restaurantName = "chinarestauranthusnes";
-  restaurantName = "demo";
+  // restaurantName = "demo";
 }
 document.title = `${restaurantName} - klikk og spis`;
 
