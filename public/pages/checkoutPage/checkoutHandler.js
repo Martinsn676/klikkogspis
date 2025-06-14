@@ -139,11 +139,11 @@ export const checkOutHandler = {
         const item = mainHandler.products.find((e) => e.id == cartItem.id);
         if (!item) {
           console.warn("couldnt find", cartItem.id);
-        }
-        console.log("item", cartItem.id);
-        if (!item.fixed) {
-          cartItem.number = item.meta.itemnumber;
-          newSort.push(cartItem);
+        } else {
+          if (!item.fixed) {
+            cartItem.number = item.meta.itemnumber;
+            newSort.push(cartItem);
+          }
         }
       }
     });
@@ -159,7 +159,7 @@ export const checkOutHandler = {
     //     newSort.push(cartItem);
     //   }
     // });
-    // this.content = newSort;
+    this.content = newSort;
     this.content.forEach((cartItem, index) => {
       if (!cartItem.fixed) {
         const item = mainHandler.products.find((e) => e.id == cartItem.id);
