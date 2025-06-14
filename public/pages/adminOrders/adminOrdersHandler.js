@@ -79,15 +79,20 @@ export const adminOrdersHandler = {
 
       order.items.forEach((item) => {
         item.optionHTML = "";
+
         if (item.meta) {
           item.meta.forEach((option) => {
             const parsedValue = tryParse(option.value);
 
             parsedValue.forEach((e) => {
-              if (e.value != "no" && Number(e.value) != 0) {
-                item.optionHTML += `<span class="option-text">${
-                  e.value > 1 ? `${e.value} x ` : ""
-                }${lang(e)}</span>`;
+              if (e.title) {
+                item.details = e;
+              } else {
+                if (e.value != "no" && Number(e.value) != 0) {
+                  item.optionHTML += `<span class="option-text">${
+                    e.value > 1 ? `${e.value} x ` : ""
+                  }${lang(e)}</span>`;
+                }
               }
             });
           });
@@ -100,17 +105,25 @@ export const adminOrdersHandler = {
         } else {
           grouped[item.name + item.optionHTML] = {
             name: item.name,
+            number: item.meta.itemnumber,
             quantity: 1,
+
             optionHTML: item.optionHTML,
           }; // clone to avoid mutating original
+          if (item.details) {
+            grouped[item.name + item.optionHTML].name = item.details.title;
+            grouped[item.name + item.optionHTML].id = item.details.id;
+            grouped[item.name + item.optionHTML].number = item.details.number;
+          }
         }
       });
       for (const item in grouped) {
-        const { quantity, name, optionHTML } = grouped[item];
+        const { quantity, name, optionHTML, number } = grouped[item];
+
         orderItemsContainer.innerHTML += `
       <div class="flex-column item-container"><div class="title">${
         quantity > 1 ? `${quantity} x ` : ""
-      }${name}</div>
+      }${number ? `Nr ${number} ` : ""}${name}</div>
                   <div class="options flex-column">${optionHTML}</div>
               </div>`;
       }

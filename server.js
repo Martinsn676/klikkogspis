@@ -433,6 +433,15 @@ app.post("/api/post-order", async (req, res) => {
           });
         }
       }
+      meta.push({
+        key: "option",
+        value: {
+          title: item.name,
+          id: item.id,
+          number: e.number,
+        },
+      });
+      console.log("meta", meta);
       sendItems.push({
         product_id: item.id,
         quantity: e.count,
