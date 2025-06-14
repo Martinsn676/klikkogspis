@@ -140,7 +140,7 @@ export const checkOutHandler = {
         if (!item) {
           console.warn("couldnt find", cartItem.id);
         }
-
+        console.log("item", cartItem.id);
         if (!item.fixed) {
           cartItem.number = item.meta.itemnumber;
           newSort.push(cartItem);
