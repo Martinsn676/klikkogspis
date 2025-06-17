@@ -70,6 +70,14 @@ exports.handler = async (event) => {
           });
         }
       }
+      meta.push({
+        key: "option",
+        value: {
+          title: item.name,
+          id: item.id,
+          number: e.number,
+        },
+      });
       sendItems.push({
         product_id: item.id,
         quantity: e.count,
