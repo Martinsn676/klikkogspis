@@ -81,7 +81,7 @@ export const orderHandler = {
 
         orderButton.classList = "button bootstrap-btn order-button";
 
-        if (status == "draft") {
+        if (status == "private") {
           orderButton.innerText = lang({
             no: "Utilgjengelig",
             en: "Unavailable",

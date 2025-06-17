@@ -73,7 +73,10 @@ export const waitingHandler = {
           }
         });
       }
-
+      if (!itemDetails) {
+        itemDetails.number = "";
+        itemDetails.title = e.name;
+      }
       this.itemsContainer.innerHTML += `<div class="p-3 flex-column"><div class="title">${
         e.qty && e.qty > 1 ? `${e.qty} x ` : ""
       }${itemDetails.number ? `Nr ${itemDetails.number} ` : ""}${
