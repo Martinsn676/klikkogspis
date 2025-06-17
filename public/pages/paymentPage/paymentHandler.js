@@ -206,8 +206,12 @@ export const paymentHandler = {
               userData: formData,
               restaurant_id,
             });
-
-            paymentHandler.submittingOrder = false;
+            document.getElementById("send-order-button").innerText = lang({
+              no: "Sendt!",
+              en: "Sent!",
+            });
+            await lsList.remove("cart");
+            mainHandler.refresh();
             this.userForm.querySelectorAll("input").forEach((input) => {
               this.checkIfReady();
 
@@ -219,13 +223,16 @@ export const paymentHandler = {
                 }
               }
             });
-            waitingHandler.init();
+
             if (response.data.tracking_token) {
               await ssList.save("tracking_token", response.data.tracking_token);
-              navigateTo("waiting", false, {
-                order: response.data.tracking_token,
-              });
+              setTimeout(() => {
+                navigateTo("waiting", false, {
+                  order: response.data.tracking_token,
+                });
+              }, 1000);
             }
+            paymentHandler.submittingOrder = false;
           }
         },
       })

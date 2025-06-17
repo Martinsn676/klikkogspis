@@ -255,7 +255,7 @@ app.post("/api/get-orders", async (req, res) => {
     ordersUrl: "/wp-json/custom-orders/v1/restaurant",
   };
 
-  const { restaurant_id, token } = req.body;
+  const { restaurant_id, token, date } = req.body;
 
   const userID = await verifyUserID(token);
   if (!userID) {
@@ -274,7 +274,10 @@ app.post("/api/get-orders", async (req, res) => {
     //   throw new Error("You are not allowed to do this");
     // }
 
-    const fullUrl = baseUrl + links.ordersUrl + "/" + restaurant_id;
+    let fullUrl = baseUrl + links.ordersUrl + "/" + restaurant_id;
+    if (date) {
+      fullUrl += "?date=" + date;
+    }
     // Fetch data from the WooCommerce API
     const response = await fetch(fullUrl, {
       method: "GET",

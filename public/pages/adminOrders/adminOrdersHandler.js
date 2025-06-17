@@ -41,24 +41,39 @@ export const adminOrdersHandler = {
     backButton.id = "test-back-button";
     backButton.addEventListener("click", () => navigateTo("menu"));
     this.topBar.appendChild(backButton);
-    this.orders = await this.getOrders();
+
     this.build();
   },
   async getOrders() {
     const token = await lsList.get("token");
+    const today = new Date().toISOString().slice(0, 10);
+
     const response = await api.try("get-orders", {
       restaurant_id: mainHandler.restaurant_id,
       token,
+      date: today,
     });
     if (response.ok) {
       return response.data;
     }
   },
   build() {
+    this.updateSkipTimer = 0;
     this.itemsContainer.innerHTML = "";
     if (this.orderCountdownInterval) {
       clearInterval(this.orderCountdownInterval);
     }
+    if (this.updateSkipInterval) {
+      clearInterval(this.updateSkipInterval);
+    }
+    this.updateSkipInterval = setInterval(async () => {
+      if (this.updateSkipTimer > 60) {
+        this.updateSkipTimer = 60;
+      }
+      if (this.updateSkipTimer > 0) {
+        this.updateSkipTimer--;
+      }
+    }, 1000);
     this.orders.forEach((order) => {
       order.pickupTime = new Date(order.ready_for_pickup_at);
     });
@@ -378,11 +393,12 @@ export const adminOrdersHandler = {
       order.orgMinutesLeft = order.minutesLeft;
 
       countdown.innerText = order.minutesLeft;
-      updateTimeFor(order);
+      updateTimeFor(order, true);
     });
 
     this.itemsContainer.appendChild(container);
-    function updateTimeFor(order) {
+    function updateTimeFor(order, isSetup) {
+      if (!isSetup) adminOrdersHandler.updateSkipTimer += 10;
       if (order.ready || order.status == "completed") {
         order.countdown.innerHTML = finishedIcon;
       } else {
@@ -411,15 +427,10 @@ export const adminOrdersHandler = {
       }
     }
     this.orderCountdownInterval = setInterval(async () => {
-      this.orders = await this.getOrders();
-      this.build();
-      //   adminOrdersHandler.orders.forEach((order) => {
-      //     if (order.minutesLeft !== false) {
-      //       order.minutesLeft--;
-      //       order.orgMinutesLeft--;
-      //       updateTimeFor(order);
-      //     }
-      //   });
+      if (this.updateSkipTimer > 0) {
+        this.orders = await this.getOrders();
+        this.build();
+      }
     }, 60000);
   },
 };

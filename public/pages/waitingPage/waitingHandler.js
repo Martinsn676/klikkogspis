@@ -10,7 +10,7 @@ export const waitingHandler = {
     this.bottomBar = document.getElementById("waiting-bottom-bar");
 
     this.buildBottomBar();
-
+    this.itemsContainer.innerHTML = "";
     this.build();
     if (this.orderCountdownInterval) {
       clearInterval(this.orderCountdownInterval);
@@ -37,57 +37,69 @@ export const waitingHandler = {
     }
   },
   async build() {
-    this.itemsContainer.innerHTML = "";
     await this.getOrder();
     this.buildTopBar();
+    let codeArray = this.tracking_token.split("");
+    codeArray = codeArray.splice(0, 3);
 
+    const code = codeArray.join("");
+    this.itemsContainer.innerHTML = `<div class="text-center p-3"><p>${lang({
+      no: "Takk for din bestilling! Estimert tid vises ovenfor, og vil bli oppdatert for å være mest nøyaktig",
+      en: "Thank you for your order! Estimated time for it to be ready will be displayed above, and will be updated for best accuracy",
+    })}`;
+    // this.itemsContainer.innerHTML += `<div class="text-center p-3"><p>${lang({
+    //   no: "Hentekode:",
+    //   en: "Pickupcode:",
+    // })} ${code}`;
     this.orderDetails.items.forEach((e) => {
       const options = e.meta.find((meta) => meta.key == "option");
       let optionsText = "";
+      let itemDetails;
       if (options) {
         const parsedOptions = tryParse(options.value);
-        console.log("parsedOptions", parsedOptions);
 
         parsedOptions.forEach((option) => {
-          if (option.value != "no" && Number(option.value) != 0) {
-            optionsText += `<div>${
-              Number(option.value) > 0 ? `${option.value} x ` : ""
-            }${lang({
-              no: option.no,
-              en: option.en,
-            })}</div>`;
+          if (option.title) {
+            itemDetails = option;
+          } else {
+            if (option.value != "no" && Number(option.value) != 0) {
+              optionsText += `<div>${
+                Number(option.value) > 0 ? `${option.value} x ` : ""
+              }${lang({
+                no: option.no,
+                en: option.en,
+              })}</div>`;
+            }
           }
         });
       }
 
       this.itemsContainer.innerHTML += `<div class="p-3 flex-column"><div class="title">${
         e.qty && e.qty > 1 ? `${e.qty} x ` : ""
-      }${e.name}</div>${optionsText}</div>`;
+      }${itemDetails.number ? `Nr ${itemDetails.number} ` : ""}${
+        itemDetails.title
+      }</div>${optionsText}</div>`;
     });
   },
   buildTopBar() {
     this.topBar.innerHTML = "";
     const now = new Date();
-    console.warn(this.orderDetails.ready_for_pickup_at);
+
     const pickupTime = new Date(this.orderDetails.ready_for_pickup_at);
     const diffMs = pickupTime - now;
     const diffMinutes = Math.ceil(diffMs / 60000);
-    console.log("diffMinutes", diffMinutes);
+
     let countDownText;
     if (diffMinutes > 0) {
       countDownText = `${lang({
-        no: "Ordre klar om:",
-        en: "Order ready in:",
+        no: "Ordre klar om ca",
+        en: "Order ready in about",
       })} ${diffMinutes} min`;
     } else {
       countDownText = `${lang({
-        no: "Ordre forsinket med:",
-        en: "Order delayed with:",
+        no: "Ordre forsinket med",
+        en: "Order delayed with",
       })} ${diffMinutes * -1} min`;
-      // countDownText = `${lang({
-      //   no: "Ordren er klar for henting!:",
-      //   en: "Order ready to pick up!",
-      // })}`;
     }
 
     const container = document.createElement("div");
@@ -115,9 +127,8 @@ export const waitingHandler = {
     this.bottomBar.appendChild(
       createButton({
         text: lang({ no: "Ring oss", en: "Call us" }),
-        // icon: "./icons/callIcon.png",
+
         change: this.mainContentContainer,
-        // classes: "bootstrap-btn-neutral",
 
         action: () => window.open("tel:90418429", "_new"),
       })

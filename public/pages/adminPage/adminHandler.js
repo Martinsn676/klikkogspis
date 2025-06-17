@@ -143,10 +143,16 @@ export const adminHandler = {
         const fileInput = document.createElement("div");
         fileInput.classList = "formDiv only-normal";
         fileInput.innerHTML = `
-        <label name="imageUrl">${lang({ no: "Bilde", en: "Image" })}</label>
+        <label name="imageUrl">${lang({
+          no: "Legg til bilde",
+          en: "Add image",
+        })}</label>
         <input name="imageUrl" type="file" accept="image/*">
-        <input name="imageUrl" type="file" accept="image/*" capture="environment">
-`;
+        <label name="imageUrl">${lang({
+          no: "Ta bilde",
+          en: "Take image",
+        })}</label>
+        <input name="imageUrl" type="file" accept="image/*" capture="environment">`;
         //  capture="environment"
         standardInputs.appendChild(fileInput);
         createManyInputs({

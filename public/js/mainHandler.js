@@ -30,6 +30,7 @@ export const mainHandler = {
     const token = await lsList.get("token");
     if (token) {
       adminHandler.init();
+      adminOrdersHandler.orders = await adminOrdersHandler.getOrders();
       adminOrdersHandler.init();
     }
   },

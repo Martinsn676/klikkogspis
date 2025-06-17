@@ -23,11 +23,21 @@ export const orderHandler = {
     this.itemsContainer.innerHTML = "";
     console.log("checkOutHandler.content", checkOutHandler.content);
     this.products.forEach((item) => {
-      const { id, title, meta, description, price, allergies, image, fixed } =
-        item;
-      const allergiesDiv = document.createElement("div");
-      allergiesDiv.classList = "allergies-container";
-      if (!fixed) {
+      const {
+        id,
+        title,
+        meta,
+        description,
+        price,
+        allergies,
+        image,
+        fixed,
+        status,
+      } = item;
+      if (status != "private") {
+        const allergiesDiv = document.createElement("div");
+        allergiesDiv.classList = "allergies-container";
+
         const itemCard = document.createElement("div");
         itemCard.classList = "flex-column item-card";
         itemCard.id = "order-item-" + id;
@@ -60,7 +70,7 @@ export const orderHandler = {
                 <span>${text}</span>`;
                 allergiesDiv.appendChild(allergyDiv);
               } else {
-                console.warn("Couldn't fnd allegry:", allergy, "for", item);
+                console.warn("Couldn't find allegry:", allergy, "for", item);
               }
             }
           }
@@ -69,38 +79,47 @@ export const orderHandler = {
         itemCard.innerHTML = template.orderCard(item, allergiesDiv);
         const orderButton = document.createElement("button");
 
-        orderButton.classList =
-          "button bootstrap-btn bootstrap-btn-primary order-button";
+        orderButton.classList = "button bootstrap-btn order-button";
 
-        if (checkOutHandler.content.find((e) => e.id == item.id)) {
-          orderButton.innerText = lang({ no: "Lagt til!", en: "Added!" });
-          orderButton.classList.remove("bootstrap-btn-primary");
-          orderButton.classList.add("bootstrap-btn-success");
-        } else {
-          orderButton.innerText = lang({ no: "Legg til", en: "Add" });
-        }
-        orderButton.addEventListener("click", async (event) => {
-          const newItem = { id, count: 1 };
-          newItem.options = {};
-          item.meta.foodoptions.forEach((e) => {
-            if (e.type == "toggle") {
-              newItem.options["id" + e.id] = e.toggle == "yes" ? 1 : 0;
-            } else {
-              newItem.options["id" + e.id] = 0;
-            }
+        if (status == "draft") {
+          orderButton.innerText = lang({
+            no: "Utilgjengelig",
+            en: "Unavailable",
           });
+          orderButton.classList.add("bootstrap-btn-secondary");
+          orderButton.disabled = true;
+        } else {
+          if (checkOutHandler.content.find((e) => e.id == item.id)) {
+            orderButton.innerText = lang({ no: "Lagt til!", en: "Added!" });
+            orderButton.classList.remove("bootstrap-btn-primary");
+            orderButton.classList.add("bootstrap-btn-success");
+          } else {
+            orderButton.innerText = lang({ no: "Legg til", en: "Add" });
+            orderButton.classList.add("bootstrap-btn-primary");
+          }
+          orderButton.addEventListener("click", async (event) => {
+            const newItem = { id, count: 1 };
+            newItem.options = {};
+            item.meta.foodoptions.forEach((e) => {
+              if (e.type == "toggle") {
+                newItem.options["id" + e.id] = e.toggle == "yes" ? 1 : 0;
+              } else {
+                newItem.options["id" + e.id] = 0;
+              }
+            });
 
-          checkOutHandler.content.unshift(newItem);
-          mainHandler.refresh();
-          checkOutHandler.build();
-          event.target.innerText = lang({ no: "Lagt til!", en: "Added!" });
-          event.target.classList.remove("bootstrap-btn-primary");
-          event.target.classList.add("bootstrap-btn-success");
-          orderHandler.orderIcon.classList.remove("bump");
-          setTimeout(() => {
-            orderHandler.orderIcon.classList.add("bump");
-          }, 10);
-        });
+            checkOutHandler.content.unshift(newItem);
+            mainHandler.refresh();
+            checkOutHandler.build();
+            event.target.innerText = lang({ no: "Lagt til!", en: "Added!" });
+            event.target.classList.remove("bootstrap-btn-primary");
+            event.target.classList.add("bootstrap-btn-success");
+            orderHandler.orderIcon.classList.remove("bump");
+            setTimeout(() => {
+              orderHandler.orderIcon.classList.add("bump");
+            }, 10);
+          });
+        }
         itemCard.querySelector(".bottom-part").appendChild(orderButton);
         this.itemsContainer.appendChild(itemCard);
       }
