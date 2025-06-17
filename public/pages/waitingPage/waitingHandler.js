@@ -54,7 +54,7 @@ export const waitingHandler = {
     this.orderDetails.items.forEach((e) => {
       const options = e.meta.find((meta) => meta.key == "option");
       let optionsText = "";
-      let itemDetails;
+      let itemDetails = {};
       if (options) {
         const parsedOptions = tryParse(options.value);
 
